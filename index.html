@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PersonaScope 是一个基于公开社交线索的人际沟通画像工具。">
+  <title>PersonaScope | 人际沟通画像工具</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="PersonaScope 首页">
+      <span class="brand-mark"></span>
+      <span>PersonaScope</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">菜单</button>
+    <nav class="main-nav" id="mainNav" aria-label="主导航">
+      <a href="#home">首页</a>
+      <a href="#analyze">开始分析</a>
+      <a href="#sample">示例报告</a>
+      <a href="#theory">理论依据</a>
+      <a href="#history">历史记录</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero section-panel" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow">SOCIAL SIGNALS · COMMUNICATION PROFILE</p>
+        <h1>看懂一个人的社交信号</h1>
+        <p class="hero-desc">
+          上传头像、个性签名与最近三条社交文案，生成一份可复制到 ChatGPT 的深度沟通画像 Prompt，并获得结构化报告模板。
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#analyze">开始生成报告</a>
+          <a class="button ghost" href="#sample">查看示例报告</a>
+        </div>
+      </div>
+      <div class="hero-card glass-card">
+        <div class="scan-orbit">
+          <div class="avatar-ring">
+            <span>PS</span>
+          </div>
+        </div>
+        <div class="metric-list">
+          <div>
+            <span>表达温度</span>
+            <strong>82%</strong>
+          </div>
+          <div>
+            <span>边界感</span>
+            <strong>76%</strong>
+          </div>
+          <div>
+            <span>自我呈现强度</span>
+            <strong>91%</strong>
+          </div>
+          <div>
+            <span>沟通开放度</span>
+            <strong>68%</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-panel" id="analyze">
+      <div class="section-heading">
+        <p class="eyebrow">START ANALYSIS</p>
+        <h2>开始分析</h2>
+        <p>所有输入仅保存在你的浏览器中，不上传服务器，不调用任何外部 API。</p>
+      </div>
+
+      <div class="analysis-layout">
+        <form class="input-card glass-card" id="personaForm">
+          <label class="upload-box" for="avatarInput">
+            <input id="avatarInput" name="avatar" type="file" accept="image/*">
+            <span class="upload-preview" id="avatarPreview">+</span>
+            <span>
+              <strong>上传头像</strong>
+              <small>仅用于页面预览与本地记录</small>
+            </span>
+          </label>
+
+          <label>
+            <span>对象昵称或备注</span>
+            <input id="nicknameInput" type="text" placeholder="例如：某位朋友 / 合作伙伴 / 暗恋对象">
+          </label>
+
+          <label>
+            <span>个性签名</span>
+            <textarea id="signatureInput" rows="3" placeholder="输入公开可见的个性签名、简介或主页文案"></textarea>
+          </label>
+
+          <label>
+            <span>最近社交文案 1</span>
+            <textarea class="post-input" rows="3" placeholder="粘贴最近一条朋友圈、微博、小红书或其他公开文案"></textarea>
+          </label>
+
+          <label>
+            <span>最近社交文案 2</span>
+            <textarea class="post-input" rows="3" placeholder="粘贴第二条文案"></textarea>
+          </label>
+
+          <label>
+            <span>最近社交文案 3</span>
+            <textarea class="post-input" rows="3" placeholder="粘贴第三条文案"></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button class="button primary" type="submit">生成分析 Prompt</button>
+            <button class="button ghost" type="reset">清空输入</button>
+          </div>
+        </form>
+
+        <aside class="result-card glass-card" aria-live="polite">
+          <div class="result-header">
+            <div>
+              <p class="eyebrow">GENERATED PROMPT</p>
+              <h3>可复制到 ChatGPT 的深度分析 Prompt</h3>
+            </div>
+            <button class="button small" id="copyPromptBtn" type="button">复制</button>
+          </div>
+          <pre id="promptOutput">填写左侧信息后，系统会在这里生成一段结构化 Prompt。</pre>
+          <div class="report-mini">
+            <h4>报告模板预览</h4>
+            <ul>
+              <li>沟通风格判断</li>
+              <li>情绪表达与压力线索</li>
+              <li>关系边界与互动建议</li>
+              <li>适合的开场白与禁忌表达</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section-panel" id="sample">
+      <div class="section-heading">
+        <p class="eyebrow">SAMPLE REPORT</p>
+        <h2>示例报告</h2>
+        <p>以下为生成报告的展示模板，实际分析请复制 Prompt 到 ChatGPT 后完成。</p>
+      </div>
+
+      <div class="report-grid">
+        <article class="report-card glass-card">
+          <span class="card-index">01</span>
+          <h3>沟通画像摘要</h3>
+          <p>该对象可能偏好高信息密度、低情绪消耗的交流方式。表达中存在自我要求与独立倾向，适合用明确、尊重边界的方式开启对话。</p>
+        </article>
+        <article class="report-card glass-card">
+          <span class="card-index">02</span>
+          <h3>情绪与动机线索</h3>
+          <p>文案中的时间感、目标感和自我调侃，可能暗示其在压力下仍希望保持掌控感。过度追问容易让对方感到被评估。</p>
+        </article>
+        <article class="report-card glass-card">
+          <span class="card-index">03</span>
+          <h3>互动建议</h3>
+          <p>建议使用具体、轻量、可选择的表达，例如“看到你最近提到这个主题，感觉很有意思，想听听你的看法”。避免上来就要求深度回应。</p>
+        </article>
+        <article class="report-card glass-card">
+          <span class="card-index">04</span>
+          <h3>风险提醒</h3>
+          <p>公开社交线索只能提供假设，不能替代真实沟通。报告应作为理解对方的辅助视角，而不是人格定论。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-panel" id="theory">
+      <div class="section-heading">
+        <p class="eyebrow">FRAMEWORK</p>
+        <h2>理论依据</h2>
+        <p>PersonaScope 不做医学诊断，也不进行人格判定，只把公开文本转化为可讨论的沟通假设。</p>
+      </div>
+
+      <div class="theory-list">
+        <div class="theory-item">
+          <h3>语言风格线索</h3>
+          <p>从词汇密度、情绪词、时间指向、确定性表达等维度，观察一个人更倾向于理性表达、情绪表达还是关系表达。</p>
+        </div>
+        <div class="theory-item">
+          <h3>自我呈现理论</h3>
+          <p>社交主页往往是选择性呈现。头像、签名和文案共同构成一种“希望被如何看见”的公开形象。</p>
+        </div>
+        <div class="theory-item">
+          <h3>沟通边界判断</h3>
+          <p>通过公开表达中的开放程度、模糊程度与回应暗示，推测更合适的互动距离与开场方式。</p>
+        </div>
+        <div class="theory-item">
+          <h3>Prompt 工程拆解</h3>
+          <p>把零散线索整理成任务、背景、约束、输出格式，让 ChatGPT 更容易生成结构化、可复核的沟通建议。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-panel" id="history">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">LOCAL HISTORY</p>
+          <h2>历史记录</h2>
+          <p>记录保存在当前浏览器的 localStorage 中，清理浏览器数据会同步删除。</p>
+        </div>
+        <button class="button ghost" id="clearHistoryBtn" type="button">清空历史</button>
+      </div>
+
+      <div class="history-list" id="historyList">
+        <p class="empty-state">暂无历史记录。完成一次 Prompt 生成后会自动保存。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <span>PersonaScope</span>
+      <span>Static site · No backend · No database · No API</span>
+    </div>
+    <p class="compliance-note">
+      本工具仅基于公开社交线索进行概率化沟通画像分析，不作为心理诊断、招聘录用、金融风控或重大决策依据。
+    </p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
