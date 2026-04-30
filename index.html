@@ -12,6 +12,11 @@
   <div class="ambient ambient-two"></div>
   <div class="ambient ambient-three"></div>
 
+  <div class="global-signal-bg unicorn-background" id="unicornBackground" aria-hidden="true">
+    <div class="unicorn-scene" id="unicornScene" data-us-project="Yj3EFGnjZ1bEOuWjo6Ad"></div>
+  </div>
+
+  <div class="site-content">
   <header class="site-header">
     <a class="brand" href="#home" aria-label="PersonaScope 首页">
       <span class="brand-mark"></span>
@@ -32,7 +37,10 @@
     <section class="hero section-panel" id="home">
       <div class="hero-copy">
         <p class="eyebrow">SOCIAL SIGNALS · COMMUNICATION PROFILE</p>
-        <h1>看懂一个人的社交信号</h1>
+        <h1 class="hero-title">
+          <span>看懂一个人的</span>
+          <span>社交信号</span>
+        </h1>
         <p class="hero-desc">
           上传头像、个性签名与最近三条社交文案，生成一份可复制到 ChatGPT 的深度沟通画像 Prompt，并获得结构化报告模板。
         </p>
@@ -44,6 +52,10 @@
 
       <aside class="hero-card glass-card" aria-label="PersonaScope 分析维度预览">
         <div class="scan-orbit">
+          <span class="orbit-ring orbit-ring-outer" aria-hidden="true"></span>
+          <span class="orbit-ring orbit-ring-middle" aria-hidden="true"></span>
+          <span class="orbit-ring orbit-ring-inner" aria-hidden="true"></span>
+          <span class="scan-wave" aria-hidden="true"></span>
           <div class="avatar-ring">
             <span>PS</span>
           </div>
@@ -274,7 +286,7 @@
         <div class="empty-state">
           <p class="eyebrow">WAITING FOR JSON</p>
           <h3>等待生成可视化报告</h3>
-          <p>粘贴 ChatGPT 返回的严格 JSON 后，点击“生成可视化报告”。</p>
+          <p>粘贴 ChatGPT 返回的 JSON 后，点击“生成可视化报告”。如果 ChatGPT 带了 ```json 代码块或少量说明文字，系统会尝试自动提取中间的 JSON。</p>
         </div>
       </div>
     </section>
@@ -406,6 +418,7 @@
       本工具仅基于公开社交线索进行概率化沟通画像分析，不作为心理诊断、招聘录用、金融风控、医疗建议或重大决策依据。
     </p>
   </footer>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="script.js"></script>

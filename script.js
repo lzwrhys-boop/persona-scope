@@ -30,6 +30,75 @@ const toast = document.querySelector("#toast");
 const menuToggle = document.querySelector(".menu-toggle");
 const mainNav = document.querySelector("#mainNav");
 const navLinks = Array.from(document.querySelectorAll(".main-nav a"));
+const unicornBackground = document.querySelector("#unicornBackground");
+const unicornScene = document.querySelector("#unicornScene");
+
+const UNICORN_PROJECT_ID = "Yj3EFGnjZ1bEOuWjo6Ad";
+const UNICORN_SDK_URL = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.11/dist/unicornStudio.umd.js";
+const REPORT_EMPTY_STATE_HTML = `
+  <div class="empty-state">
+    <p class="eyebrow">WAITING FOR JSON</p>
+    <h3>等待生成可视化报告</h3>
+    <p>粘贴 ChatGPT 返回的 JSON 后，点击“生成可视化报告”。如果 ChatGPT 带了 \`\`\`json 代码块或少量说明文字，系统会尝试自动提取中间的 JSON。</p>
+  </div>
+`;
+
+const SAMPLE_REPORT_DATA = {
+  basicProfile: {
+    oneSentence: "该对象呈现出审美敏感、边界清晰、重视表达质量的公开社交形象。",
+    personaSummary: "TA 的公开表达更偏克制和有选择地暴露自我，常通过具体场景、审美判断和轻微自嘲来建立辨识度。沟通时适合先从共同语境和具体内容切入，再逐步深入。",
+    confidence: "中",
+    confidenceReason: "样例包含头像风格、个性签名和三条社交文案，但仍只代表公开自我呈现，不能等同于完整人格。"
+  },
+  scores: {
+    "表达温度": 78,
+    "边界感": 84,
+    "自我呈现强度": 88,
+    "沟通开放度": 66,
+    "情绪稳定线索": 72
+  },
+  bigFive: {
+    "开放性": 86,
+    "尽责性": 74,
+    "外向性": 52,
+    "宜人性": 68,
+    "情绪稳定性": 70
+  },
+  personaTags: ["审美驱动", "克制表达", "边界清晰", "慢热观察型", "重视质感"],
+  communicationAdvice: [
+    "开场时引用对方公开内容中的具体细节，避免泛泛寒暄。",
+    "给对方保留选择空间，例如用“如果你愿意的话”降低压力。",
+    "沟通节奏宜稳定，不要用连续追问测试对方的回应热情。"
+  ],
+  riskPoints: [
+    "不要把公开动态直接等同于真实人格或关系意愿。",
+    "避免过快推进亲密感，或用标签化语言概括对方。",
+    "不要围绕隐私、收入、健康、政治宗教等敏感属性做推断。"
+  ],
+  approachStyle: [
+    "从作品、观点、地点或共同兴趣切入。",
+    "用低压邀请代替高强度索取回应。",
+    "先建立共同语境，再表达进一步了解的意图。"
+  ],
+  evidenceChain: [
+    {
+      conclusion: "边界感较强",
+      evidence: "个性签名强调自我节奏，文案中较少直接索取情绪回应。",
+      source: "个性签名/第1条文案"
+    },
+    {
+      conclusion: "开放性偏高",
+      evidence: "内容中出现审美判断、跨场景联想和对新体验的正向表达。",
+      source: "第2条文案/社交截图"
+    },
+    {
+      conclusion: "更适合具体而轻量的开场",
+      evidence: "表达方式偏含蓄，直接追问可能增加防御感。",
+      source: "第3条文案"
+    }
+  ],
+  disclaimer: DISCLAIMER
+};
 
 let avatarDataUrl = "";
 let socialScreenshots = [];
@@ -37,12 +106,88 @@ let generatedPrompt = "";
 let generatedRecordDraft = null;
 let expandedHistoryId = "";
 let toastTimer = null;
+let unicornSceneInstance = null;
+let unicornSdkPromise = null;
 
 function showToast(message) {
   clearTimeout(toastTimer);
   toast.textContent = message;
   toast.classList.add("show");
   toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function shouldDisableUnicornBackground() {
+  return window.matchMedia("(max-width: 760px)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function setUnicornFallback() {
+  if (!unicornBackground) return;
+  unicornBackground.classList.remove("is-loading");
+  unicornBackground.classList.add("is-fallback");
+}
+
+function loadUnicornSdk() {
+  if (window.UnicornStudio) return Promise.resolve(window.UnicornStudio);
+  if (unicornSdkPromise) return unicornSdkPromise;
+
+  unicornSdkPromise = new Promise((resolve, reject) => {
+    const existingScript = document.querySelector(`script[src="${UNICORN_SDK_URL}"]`);
+    const script = existingScript || document.createElement("script");
+    const timeout = window.setTimeout(() => reject(new Error("Unicorn Studio SDK 加载超时")), 8000);
+
+    script.addEventListener("load", () => {
+      window.clearTimeout(timeout);
+      resolve(window.UnicornStudio);
+    }, { once: true });
+    script.addEventListener("error", () => {
+      window.clearTimeout(timeout);
+      reject(new Error("Unicorn Studio SDK 加载失败"));
+    }, { once: true });
+
+    if (!existingScript) {
+      script.src = UNICORN_SDK_URL;
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  });
+
+  return unicornSdkPromise;
+}
+
+async function UnicornBackground() {
+  if (!unicornBackground || !unicornScene) return;
+  if (shouldDisableUnicornBackground()) {
+    unicornBackground.classList.add("is-disabled");
+    return;
+  }
+
+  unicornBackground.classList.add("is-loading");
+  try {
+    const UnicornStudio = await loadUnicornSdk();
+    if (!UnicornStudio) throw new Error("Unicorn Studio SDK 不可用");
+
+    if (typeof UnicornStudio.addScene === "function") {
+      unicornSceneInstance = await UnicornStudio.addScene({
+        elementId: "unicornScene",
+        projectId: UNICORN_PROJECT_ID,
+        scale: 0.85,
+        dpi: 1.15,
+        fps: 30,
+        lazyLoad: true,
+        production: true,
+      });
+    } else if (typeof UnicornStudio.init === "function") {
+      UnicornStudio.init();
+    } else {
+      throw new Error("Unicorn Studio SDK 初始化方法不可用");
+    }
+
+    unicornBackground.classList.remove("is-loading", "is-fallback");
+    unicornBackground.classList.add("is-ready");
+  } catch (error) {
+    console.warn("Unicorn Studio 背景加载失败，已使用渐变背景兜底。", error);
+    setUnicornFallback();
+  }
 }
 
 function getHistory() {
@@ -75,7 +220,8 @@ function createId() {
 }
 
 function clampScore(value) {
-  const number = typeof value === "string" ? Number(value.replace("%", "").trim()) : Number(value);
+  const normalizedValue = extractScoreNumber(value);
+  const number = typeof normalizedValue === "string" ? Number(normalizedValue.replace("%", "").trim()) : Number(normalizedValue);
   if (Number.isNaN(number)) return 0;
   return Math.max(0, Math.min(100, Math.round(number)));
 }
@@ -351,36 +497,72 @@ function saveCurrentPrompt() {
 }
 
 function parseReportJson() {
-  const rawJson = jsonInput.value.trim();
-  if (!rawJson) throw new Error("请先粘贴 ChatGPT 返回的 JSON。");
-  if (!rawJson.startsWith("{") || !rawJson.endsWith("}")) {
-    throw new Error("这里不能粘贴普通文字报告。请粘贴 ChatGPT 返回的严格 JSON。JSON 应该以 { 开头，以 } 结尾。如果 ChatGPT 输出了 ```json 代码块，请只复制中间的 JSON 内容。");
-  }
+  const rawInput = jsonInput.value.trim();
+  if (!rawInput) throw new Error("请先粘贴 ChatGPT 返回的 JSON。");
+  const rawJson = extractJsonCandidate(rawInput);
   try {
     return { data: JSON.parse(rawJson), rawJson };
   } catch (error) {
-    throw new Error("这里不能粘贴普通文字报告。请粘贴 ChatGPT 返回的严格 JSON。JSON 应该以 { 开头，以 } 结尾。如果 ChatGPT 输出了 ```json 代码块，请只复制中间的 JSON 内容。");
+    console.warn("JSON 解析失败。", error);
+    throw new Error("JSON 格式仍无法解析。请检查是否缺少逗号、引号或括号；也可以点击“填入示例 JSON”对照格式。");
   }
 }
 
+function extractJsonCandidate(rawInput) {
+  const trimmedInput = rawInput.trim();
+  const fencedMatch = trimmedInput.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const text = (fencedMatch ? fencedMatch[1] : trimmedInput).trim();
+  if (text.startsWith("{") && text.endsWith("}")) return text;
+
+  const start = text.indexOf("{");
+  if (start === -1) {
+    throw new Error("没有检测到 JSON 对象。请粘贴以 { 开头的 JSON，或直接点击“填入示例 JSON”查看格式。");
+  }
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let index = start; index < text.length; index += 1) {
+    const char = text[index];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (char === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (char === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+    if (depth === 0) return text.slice(start, index + 1);
+  }
+
+  throw new Error("JSON 看起来没有完整闭合。请检查最后是否缺少 }。");
+}
+
 function normalizeReportData(data) {
-  if (!data || typeof data !== "object") throw new Error("JSON 内容不是有效对象。");
-  const basicProfile = getFirstObject(data, ["basicProfile", "profile", "basic_profile", "summaryProfile"]);
+  if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("JSON 内容不是有效对象。");
+  const basicProfile = getFirstObject(data, ["basicProfile", "profile", "basic_profile", "summaryProfile", "基础画像", "基本画像"]);
   return {
     basicProfile: {
-      oneSentence: getFirstValue(basicProfile, ["oneSentence", "oneSentenceProfile", "one_sentence", "profile", "headline"]) || getFirstValue(data, ["oneSentence", "oneSentenceProfile", "one_sentence"]) || "未提供一句话画像",
-      personaSummary: getFirstValue(basicProfile, ["personaSummary", "persona_summary", "summary", "persona", "description"]) || getFirstValue(data, ["personaSummary", "persona_summary", "summary"]) || "未提供人设总结",
-      confidence: getFirstValue(basicProfile, ["confidence", "confidenceLevel", "confidence_level"]) || getFirstValue(data, ["confidence"]) || "中",
-      confidenceReason: getFirstValue(basicProfile, ["confidenceReason", "confidence_reason", "reason", "confidenceExplanation"]) || getFirstValue(data, ["confidenceReason", "confidence_reason"]) || "未提供置信度说明",
+      oneSentence: coerceText(getFirstValue(basicProfile, ["oneSentence", "oneSentenceProfile", "one_sentence", "profile", "headline", "一句话画像", "一句话总结"]) || getFirstValue(data, ["oneSentence", "oneSentenceProfile", "one_sentence", "一句话画像", "一句话总结"]), ["text", "content", "summary", "value"]) || "未提供一句话画像",
+      personaSummary: coerceText(getFirstValue(basicProfile, ["personaSummary", "persona_summary", "summary", "persona", "description", "人设总结", "画像总结"]) || getFirstValue(data, ["personaSummary", "persona_summary", "summary", "人设总结", "画像总结"]), ["text", "content", "summary", "value"]) || "未提供人设总结",
+      confidence: coerceText(getFirstValue(basicProfile, ["confidence", "confidenceLevel", "confidence_level", "置信度"]) || getFirstValue(data, ["confidence", "置信度"]), ["level", "value", "text"]) || "中",
+      confidenceReason: coerceText(getFirstValue(basicProfile, ["confidenceReason", "confidence_reason", "reason", "confidenceExplanation", "置信度说明", "置信度原因"]) || getFirstValue(data, ["confidenceReason", "confidence_reason", "置信度说明", "置信度原因"]), ["reason", "content", "text", "value"]) || "未提供置信度说明",
     },
-    scores: normalizeScores(getFirstObject(data, ["scores", "score", "metrics", "profileScores"]), ["表达温度", "边界感", "自我呈现强度", "沟通开放度", "情绪稳定线索"]),
-    bigFive: normalizeScores(getFirstObject(data, ["bigFive", "big_five", "big5", "personality", "personalityScores"]), ["开放性", "尽责性", "外向性", "宜人性", "情绪稳定性"]),
-    personaTags: normalizeStringArray(getFirstValue(data, ["personaTags", "tags", "persona_tags", "labels"]), ["tag", "name", "label", "value", "title", "text"]),
-    communicationAdvice: normalizeStringArray(getFirstValue(data, ["communicationAdvice", "advice", "communication_advice", "suggestions"]), ["advice", "content", "text", "value", "title"]),
-    riskPoints: normalizeStringArray(getFirstValue(data, ["riskPoints", "risks", "risk_points", "redFlags"]), ["risk", "point", "content", "text", "value", "title"]),
-    approachStyle: normalizeStringArray(getFirstValue(data, ["approachStyle", "approach", "approach_style", "approaches"]), ["style", "content", "text", "value", "title"]),
-    evidenceChain: normalizeEvidenceChain(getFirstValue(data, ["evidenceChain", "evidence_chain", "evidence", "proofs"])),
-    disclaimer: data.disclaimer || DISCLAIMER,
+    scores: normalizeScores(getFirstValue(data, ["scores", "score", "metrics", "profileScores", "综合评分", "画像分数"]), ["表达温度", "边界感", "自我呈现强度", "沟通开放度", "情绪稳定线索"]),
+    bigFive: normalizeScores(getFirstValue(data, ["bigFive", "big_five", "big5", "personality", "personalityScores", "大五人格", "人格倾向"]), ["开放性", "尽责性", "外向性", "宜人性", "情绪稳定性"]),
+    personaTags: normalizeStringArray(getFirstValue(data, ["personaTags", "tags", "persona_tags", "labels", "人设标签", "标签"]), ["tag", "name", "label", "value", "title", "text", "标签"]),
+    communicationAdvice: normalizeStringArray(getFirstValue(data, ["communicationAdvice", "advice", "communication_advice", "suggestions", "沟通建议", "建议"]), ["advice", "content", "text", "value", "title", "建议"]),
+    riskPoints: normalizeStringArray(getFirstValue(data, ["riskPoints", "risks", "risk_points", "redFlags", "相处雷区", "风险点", "雷区"]), ["risk", "point", "content", "text", "value", "title", "风险", "雷区"]),
+    approachStyle: normalizeStringArray(getFirstValue(data, ["approachStyle", "approach", "approach_style", "approaches", "接近方式", "适合接近方式"]), ["style", "content", "text", "value", "title", "方式"]),
+    evidenceChain: normalizeEvidenceChain(getFirstValue(data, ["evidenceChain", "evidence_chain", "evidence", "proofs", "证据链", "依据"])),
+    disclaimer: coerceText(getFirstValue(data, ["disclaimer", "免责声明"]), ["text", "content", "value"]) || DISCLAIMER,
   };
 }
 
@@ -393,6 +575,12 @@ function getFirstValue(source, keys) {
   if (!source || typeof source !== "object") return undefined;
   for (const key of keys) {
     if (source[key] !== undefined && source[key] !== null && source[key] !== "") return source[key];
+  }
+  const normalizedEntries = Object.entries(source).map(([key, value]) => [normalizeKey(key), value]);
+  for (const key of keys) {
+    const normalizedKey = normalizeKey(key);
+    const entry = normalizedEntries.find(([sourceKey, value]) => sourceKey === normalizedKey && value !== undefined && value !== null && value !== "");
+    if (entry) return entry[1];
   }
   return undefined;
 }
@@ -407,42 +595,91 @@ function normalizeScores(source, keys) {
 function findScoreValue(source, key) {
   if (!source || typeof source !== "object") return 0;
   const aliases = {
-    表达温度: ["表达温度", "expressionWarmth", "warmth", "表达热度"],
-    边界感: ["边界感", "boundary", "boundarySense", "边界清晰度"],
-    自我呈现强度: ["自我呈现强度", "selfPresentation", "self_presentation", "personaStrength"],
-    沟通开放度: ["沟通开放度", "communicationOpenness", "opennessCommunication", "openCommunication"],
-    情绪稳定线索: ["情绪稳定线索", "emotionalStabilityClues", "emotionStability", "情绪稳定度"],
-    开放性: ["开放性", "openness", "开放"],
-    尽责性: ["尽责性", "conscientiousness", "责任感"],
-    外向性: ["外向性", "extraversion", "extroversion"],
-    宜人性: ["宜人性", "agreeableness"],
-    情绪稳定性: ["情绪稳定性", "emotionalStability", "emotional_stability"],
+    表达温度: ["表达温度", "expressionWarmth", "warmth", "表达热度", "表达温暖度"],
+    边界感: ["边界感", "boundary", "boundarySense", "边界清晰度", "边界意识"],
+    自我呈现强度: ["自我呈现强度", "selfPresentation", "self_presentation", "personaStrength", "自我展示强度"],
+    沟通开放度: ["沟通开放度", "communicationOpenness", "opennessCommunication", "openCommunication", "沟通开放性"],
+    情绪稳定线索: ["情绪稳定线索", "emotionalStabilityClues", "emotionStability", "情绪稳定度", "情绪稳定"],
+    开放性: ["开放性", "openness", "开放", "open"],
+    尽责性: ["尽责性", "conscientiousness", "责任感", "责任心"],
+    外向性: ["外向性", "extraversion", "extroversion", "外倾性"],
+    宜人性: ["宜人性", "agreeableness", "亲和性"],
+    情绪稳定性: ["情绪稳定性", "emotionalStability", "emotional_stability", "神经质反向", "稳定性"],
   };
-  return getFirstValue(source, aliases[key] || [key]) ?? 0;
+  const directValue = getFirstValue(source, aliases[key] || [key]);
+  if (directValue !== undefined) return directValue;
+  if (Array.isArray(source)) {
+    const matchedItem = source.find((item) => {
+      if (!item || typeof item !== "object") return false;
+      const itemLabel = coerceText(getFirstValue(item, ["label", "name", "metric", "dimension", "key", "维度", "名称"]), ["value", "text"]);
+      return (aliases[key] || [key]).some((alias) => normalizeKey(alias) === normalizeKey(itemLabel));
+    });
+    return getFirstValue(matchedItem, ["score", "value", "分数", "得分"]) ?? 0;
+  }
+  const fuzzyEntry = Object.entries(source).find(([sourceKey]) => {
+    const normalizedSourceKey = normalizeKey(sourceKey);
+    return (aliases[key] || [key]).some((alias) => normalizedSourceKey.includes(normalizeKey(alias)));
+  });
+  return fuzzyEntry ? fuzzyEntry[1] : 0;
 }
 
 function normalizeStringArray(value, preferredKeys = ["tag", "name", "label", "text", "content", "value", "title", "advice", "risk", "point", "style"]) {
-  if (!Array.isArray(value)) return [];
-  return value.map((item) => extractText(item, preferredKeys)).filter(Boolean);
+  if (value === undefined || value === null || value === "") return [];
+  if (Array.isArray(value)) return value.map((item) => coerceText(item, preferredKeys)).filter(Boolean);
+  if (typeof value === "string" || typeof value === "number") return [String(value)];
+  if (typeof value === "object") {
+    const directText = coerceText(getFirstValue(value, preferredKeys), preferredKeys);
+    if (directText) return [directText];
+    return Object.values(value).map((item) => coerceText(item, preferredKeys)).filter(Boolean);
+  }
+  return [];
 }
 
 function extractText(item, preferredKeys) {
-  if (typeof item === "string" || typeof item === "number") return String(item);
-  if (!item || typeof item !== "object") return "";
-  for (const key of preferredKeys) {
-    if (item[key] !== undefined && item[key] !== null && item[key] !== "") {
-      const value = item[key];
-      if (typeof value === "string" || typeof value === "number") return String(value);
-      if (typeof value === "object") return extractText(value, preferredKeys);
-    }
+  return coerceText(item, preferredKeys);
+}
+
+function normalizeKey(key) {
+  return String(key ?? "").toLowerCase().replace(/[\s_\-·:：]/g, "");
+}
+
+function extractScoreNumber(value) {
+  if (typeof value === "number" || typeof value === "string") return value;
+  if (Array.isArray(value)) return extractScoreNumber(value[0]);
+  if (!value || typeof value !== "object") return 0;
+  const scoreValue = getFirstValue(value, ["score", "value", "分数", "得分", "percentage", "percent"]);
+  if (scoreValue !== undefined) return extractScoreNumber(scoreValue);
+  const primitiveValue = Object.values(value).find((item) => typeof item === "number" || (typeof item === "string" && /\d/.test(item)));
+  return primitiveValue ?? 0;
+}
+
+function coerceText(value, preferredKeys = ["text", "content", "value", "summary", "description"]) {
+  if (value === undefined || value === null || value === "") return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
+  if (Array.isArray(value)) return value.map((item) => coerceText(item, preferredKeys)).filter(Boolean).join("；");
+  if (typeof value !== "object") return "";
+
+  const preferredValue = getFirstValue(value, preferredKeys);
+  if (preferredValue !== undefined && preferredValue !== value) {
+    const text = coerceText(preferredValue, preferredKeys);
+    if (text) return text;
   }
-  const fallback = Object.values(item).find((value) => typeof value === "string" || typeof value === "number");
-  return fallback === undefined ? "" : String(fallback);
+
+  const textParts = Object.values(value)
+    .map((item) => coerceText(item, preferredKeys))
+    .filter(Boolean);
+  if (textParts.length) return textParts.join("；");
+  try {
+    return JSON.stringify(value);
+  } catch (error) {
+    return "";
+  }
 }
 
 function normalizeEvidenceChain(value) {
-  if (!Array.isArray(value)) return [];
-  return value.map((item) => {
+  if (!value) return [];
+  const evidenceItems = Array.isArray(value) ? value : Object.values(value);
+  return evidenceItems.map((item) => {
     if (typeof item === "string") {
       return { conclusion: item, evidence: "未提供具体证据", source: "未提供来源" };
     }
@@ -450,9 +687,9 @@ function normalizeEvidenceChain(value) {
       return { conclusion: "未提供结论", evidence: "未提供具体证据", source: "未提供来源" };
     }
     return {
-      conclusion: extractText({ value: getFirstValue(item, ["conclusion", "insight", "finding", "title", "point"]) }, ["value"]) || "未提供结论",
-      evidence: extractText({ value: getFirstValue(item, ["evidence", "reason", "proof", "content", "text", "description"]) }, ["value"]) || "未提供具体证据",
-      source: extractText({ value: getFirstValue(item, ["source", "from", "origin", "来源"]) }, ["value"]) || "未提供来源",
+      conclusion: coerceText(getFirstValue(item, ["conclusion", "insight", "finding", "title", "point", "结论"]), ["value", "text", "content"]) || "未提供结论",
+      evidence: coerceText(getFirstValue(item, ["evidence", "reason", "proof", "content", "text", "description", "证据", "依据", "理由"]), ["value", "text", "content"]) || "未提供具体证据",
+      source: coerceText(getFirstValue(item, ["source", "from", "origin", "来源"]), ["value", "text", "content"]) || "未提供来源",
     };
   });
 }
@@ -603,16 +840,17 @@ function handleRenderReport() {
   }
 }
 
+function fillExampleJson() {
+  jsonInput.value = JSON.stringify(SAMPLE_REPORT_DATA, null, 2);
+  jsonError.textContent = "";
+  showToast("示例 JSON 已填入，可直接生成报告");
+  jsonInput.focus();
+}
+
 function clearJsonReport() {
   jsonInput.value = "";
   jsonError.textContent = "";
-  visualReportOutput.innerHTML = `
-    <div class="empty-state">
-      <p class="eyebrow">WAITING FOR JSON</p>
-      <h3>等待生成可视化报告</h3>
-      <p>粘贴 ChatGPT 返回的严格 JSON 后，点击“生成可视化报告”。</p>
-    </div>
-  `;
+  visualReportOutput.innerHTML = REPORT_EMPTY_STATE_HTML;
 }
 
 function renderHistory() {
@@ -739,13 +977,60 @@ function handleHistoryClick(event) {
 
 function updateActiveNav() {
   const sections = navLinks.map((link) => document.querySelector(link.getAttribute("href"))).filter(Boolean);
+  const headerHeight = getHeaderHeight();
   let current = sections[0];
   for (const section of sections) {
-    if (section.getBoundingClientRect().top <= 130) current = section;
+    const anchor = getSectionScrollAnchor(section);
+    if (anchor.getBoundingClientRect().top <= headerHeight + 72) current = section;
   }
+  setActiveNav(current?.id);
+}
+
+function setActiveNav(sectionId) {
   navLinks.forEach((link) => {
-    link.classList.toggle("active", Boolean(current) && link.getAttribute("href") === `#${current.id}`);
+    link.classList.toggle("active", Boolean(sectionId) && link.getAttribute("href") === `#${sectionId}`);
   });
+}
+
+function getHeaderHeight() {
+  return document.querySelector(".site-header")?.offsetHeight || 80;
+}
+
+function getSectionScrollAnchor(section) {
+  if (!section || section.id === "home") return section;
+  return section.querySelector(".section-heading") || section;
+}
+
+function scrollToSection(section, updateHash = true) {
+  if (!section) return;
+  const headerHeight = getHeaderHeight();
+  const anchor = getSectionScrollAnchor(section);
+  const extraOffset = section.id === "home" ? 8 : 24;
+  const targetTop = Math.max(0, anchor.getBoundingClientRect().top + window.pageYOffset - headerHeight - extraOffset);
+  window.scrollTo({ top: targetTop, behavior: "smooth" });
+  if (updateHash && window.location.hash !== `#${section.id}`) {
+    history.pushState(null, "", `#${section.id}`);
+  }
+  setActiveNav(section.id);
+}
+
+function handleNavClick(event) {
+  const href = event.currentTarget.getAttribute("href");
+  if (!href || !href.startsWith("#")) return;
+  const section = document.querySelector(href);
+  if (!section) return;
+
+  event.preventDefault();
+  mainNav.classList.remove("open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  scrollToSection(section);
+}
+
+function alignInitialHash() {
+  if (!window.location.hash) return;
+  const section = document.querySelector(window.location.hash);
+  if (!section) return;
+  window.setTimeout(() => scrollToSection(section, false), 0);
 }
 
 form.addEventListener("submit", handleSubmit);
@@ -765,6 +1050,7 @@ bindDropZone(screenshotDropZone, addScreenshotFiles);
 copyPromptBtn.addEventListener("click", () => copyText(generatedPrompt));
 saveHistoryBtn.addEventListener("click", saveCurrentPrompt);
 renderReportBtn.addEventListener("click", handleRenderReport);
+fillExampleJsonBtn.addEventListener("click", fillExampleJson);
 clearJsonBtn.addEventListener("click", clearJsonReport);
 clearHistoryBtn.addEventListener("click", clearAllHistory);
 historyList.addEventListener("click", handleHistoryClick);
@@ -774,12 +1060,13 @@ menuToggle.addEventListener("click", () => {
   menuToggle.setAttribute("aria-expanded", String(isOpen));
 });
 navLinks.forEach((link) => {
-  link.addEventListener("click", () => {
-    mainNav.classList.remove("open");
-    menuToggle.setAttribute("aria-expanded", "false");
-  });
+  link.addEventListener("click", handleNavClick);
 });
 window.addEventListener("scroll", updateActiveNav, { passive: true });
-window.addEventListener("load", updateActiveNav);
+window.addEventListener("load", () => {
+  alignInitialHash();
+  updateActiveNav();
+});
 
+UnicornBackground();
 renderHistory();
