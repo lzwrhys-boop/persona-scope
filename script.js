@@ -1,5 +1,412 @@
 const STORAGE_KEY = "personascope.history.v3";
+const LANGUAGE_STORAGE_KEY = "personascope.language";
 const DISCLAIMER = "本结果仅基于公开社交线索进行概率化沟通画像分析，不作为心理诊断、招聘录用、金融风控、医疗建议或重大决策依据。";
+const translations = {
+  zh: {
+    languageToggleAria: "切换为英文",
+    menuToggle: "菜单",
+    navHome: "首页",
+    navAnalyze: "开始分析",
+    navVisual: "可视化报告",
+    navSample: "示例报告",
+    navTheory: "理论依据",
+    navHistory: "历史记录",
+    heroEyebrow: "SOCIAL SIGNALS · COMMUNICATION PROFILE",
+    heroTitleLine1: "看懂一个人的",
+    heroTitleLine2: "社交信号",
+    heroDesc: "整理头像、签名与近期社交内容，生成可复制到 ChatGPT 的沟通画像 Prompt，并沉淀为结构化报告。",
+    heroPrimary: "开始生成报告",
+    heroSecondary: "查看示例报告",
+    previewKicker: "预览报告",
+    previewTitle: "沟通画像预览",
+    previewSummary: "公开表达中呈现出较强的边界意识、选择性暴露与理性沟通倾向。整体更偏向克制型表达风格，在建立信任时重视内容质量与表达分寸。",
+    previewTraitsTitle: "核心特征",
+    previewTagBoundary: "边界意识",
+    previewTagExpression: "表达克制",
+    previewTagExposure: "选择性暴露",
+    previewTagObserve: "观察型沟通",
+    previewDimensionsTitle: "核心维度",
+    previewMetricWarmth: "表达温度",
+    previewMetricBoundary: "边界清晰度",
+    previewMetricOpenness: "沟通开放度",
+    previewMetricPresentation: "自我呈现强度",
+    previewFrameworkTitle: "分析框架",
+    previewFrameworkBigFive: "五大人格模型（Big Five）",
+    previewFrameworkLanguage: "语言心理线索",
+    previewFrameworkPresentation: "自我呈现理论",
+    previewFrameworkSocial: "社交表达线索分析",
+    previewFooter: "基于公开社交线索生成，仅作为沟通风格参考，不构成诊断结论。",
+    valuePersonaTitle: "外在人设",
+    valuePersonaDesc: "识别对方在社交平台上想呈现的形象，区分真实人格与公开表达之间的距离。",
+    valuePreferenceTitle: "沟通偏好",
+    valuePreferenceDesc: "判断更适合直接沟通、情绪铺垫还是价值共鸣，让开场方式更自然。",
+    valueRiskTitle: "相处雷区",
+    valueRiskDesc: "提示容易引发防御、反感或误解的表达方式，减少沟通中的无效试探。",
+    workflowEyebrow: "HOW IT WORKS",
+    workflowTitle: "四步生成沟通画像",
+    workflowStep1Label: "步骤 1",
+    workflowStep1Title: "上传头像",
+    workflowStep2Label: "步骤 2",
+    workflowStep2Title: "输入签名与三条文案",
+    workflowStep3Label: "步骤 3",
+    workflowStep3Title: "生成专业 Prompt",
+    workflowStep4Label: "步骤 4",
+    workflowStep4Title: "复制到 ChatGPT 获得分析报告",
+    homeCompliance: "本工具仅基于公开社交线索进行概率化沟通画像分析，不作为心理诊断、招聘录用、金融风控、医疗建议或重大决策依据。",
+    analyzeEyebrow: "START ANALYSIS",
+    analyzeTitle: "开始分析",
+    analyzeDesc: "上传或输入最近三条社交内容。你可以手动粘贴文案，也可以上传朋友圈、小红书、微博、LinkedIn 等社交媒体截图。图文结合会让分析更准确。",
+    betterInputEyebrow: "BETTER INPUT",
+    betterInputTitle: "为了获得更准确的画像，建议同时提供：",
+    betterInputAvatar: "头像",
+    betterInputBio: "个性签名",
+    betterInputPosts: "最近三条文案",
+    betterInputScreenshots: "朋友圈或社交媒体截图",
+    nicknameLabel: "分析对象昵称",
+    optionalLabel: "可选",
+    optionalQuestionLabel: "选填",
+    nicknamePlaceholder: "例如：某位朋友 / 客户 A / 自我画像",
+    avatarLabel: "头像资料",
+    removeAvatar: "删除当前头像",
+    avatarUploadTitle: "点击或拖拽上传头像",
+    avatarUploadDesc: "支持 jpg、jpeg、png、webp；仅在本地浏览器预览，可重新上传",
+    signatureLabel: "个性签名",
+    signaturePlaceholder: "输入公开可见的个性签名、简介或主页文案",
+    post1Label: "社交文案 1",
+    post1Placeholder: "如果你上传的是截图，也建议补充截图中的关键文字，方便生成更准确的分析 Prompt。",
+    post2Label: "社交文案 2",
+    post2Placeholder: "补充第二条社交文案或截图中的关键文字",
+    post3Label: "社交文案 3",
+    post3Placeholder: "补充第三条社交文案或截图中的关键文字",
+    screenshotLabel: "朋友圈 / 社交截图",
+    screenshotCount: "已上传 {count} / 6 张",
+    screenshotUploadTitle: "点击或拖拽上传社交截图",
+    screenshotUploadDesc: "最多 6 张；支持朋友圈、小红书、微博、LinkedIn 等截图；图片不会上传服务器",
+    scenarioLabel: "分析场景",
+    scenarioDating: "恋爱了解",
+    scenarioClient: "客户沟通",
+    scenarioWork: "同事协作",
+    scenarioFriend: "朋友相处",
+    scenarioSelf: "自我画像",
+    questionLabel: "我最想知道的问题",
+    questionPlaceholder: "例如：我该如何自然地开启话题？合作时需要注意什么？",
+    generatePromptBtn: "生成分析 Prompt",
+    resetBtn: "清空当前内容",
+    generatedPromptEyebrow: "GENERATED PROMPT",
+    generatedPromptTitle: "专业分析 Prompt",
+    promptStatusEmpty: "填写左侧信息后生成，复制到 ChatGPT 即可获得报告。",
+    promptStatusReady: "Prompt 已生成。复制后连同头像和社交截图一起发给 ChatGPT，并要求其返回严格 JSON。",
+    promptUsageNote: "复制下方 Prompt 后，请将头像和社交截图一起上传到 ChatGPT，再粘贴 Prompt 进行分析。",
+    promptOutputEmpty: "填写左侧信息后，系统会在这里生成一段结构化 Prompt。",
+    copyPromptBtn: "一键复制 Prompt",
+    privacyInline: "当前网站不会读取或上传你的图片，所有图片仅在本地浏览器预览。",
+    saveHistoryBtn: "保存到历史记录",
+    visualEyebrow: "VISUAL REPORT",
+    visualTitle: "可视化报告",
+    visualDesc: "将 ChatGPT 按 Prompt 返回的严格 JSON 粘贴到这里，PersonaScope 会在本地生成雷达图、柱状图、标签云和结构化分析卡片。",
+    jsonPasteLabel: "粘贴 ChatGPT 返回的 JSON",
+    jsonHelper: "请粘贴 ChatGPT 返回的严格 JSON。如果出现字段不匹配，系统会尽量自动识别；但为了获得最佳效果，建议使用“开始分析”页生成的 Prompt，并要求 ChatGPT 只输出 JSON。",
+    jsonPlaceholder: "请粘贴完整 JSON，例如包含 basicProfile、scores、bigFive、personaTags、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。",
+    renderReportBtn: "生成可视化报告",
+    fillExampleJsonBtn: "填入示例 JSON",
+    clearJsonBtn: "清空内容",
+    localDashboardEyebrow: "LOCAL DASHBOARD",
+    localDashboardTitle: "半自动图文分析流程",
+    localDashboardStep1: "在“开始分析”生成 Prompt。",
+    localDashboardStep2: "将 Prompt、头像和社交截图一起发送给 ChatGPT。",
+    localDashboardStep3: "复制 ChatGPT 返回的 JSON。",
+    localDashboardStep4: "粘贴到左侧并生成本地可视化报告。",
+    localDashboardPrivacy: "本站不会调用 API，也不会上传你的 JSON 或图片。报告记录仅保存在当前浏览器 localStorage。",
+    waitingJsonEyebrow: "WAITING FOR JSON",
+    waitingJsonTitle: "等待生成可视化报告",
+    waitingJsonDesc: "粘贴 ChatGPT 返回的 JSON 后，点击“生成可视化报告”。如果 ChatGPT 带了 ```json 代码块或少量说明文字，系统会尝试自动提取中间的 JSON。",
+    chartBarTitle: "综合画像柱状图",
+    chartRadarTitle: "Big Five 雷达图",
+    tagCloudTitle: "人设标签云",
+    communicationAdviceTitle: "沟通建议",
+    riskPointsTitle: "相处雷区",
+    approachStyleTitle: "适合接近方式",
+    evidenceChainTitle: "证据链",
+    confidenceLabel: "置信度",
+    disclaimerTitle: "免责声明",
+    emptyTags: "暂无标签",
+    emptyAdvice: "暂无沟通建议",
+    emptyRisks: "暂无相处雷区",
+    emptyApproach: "暂无接近方式",
+    emptyEvidenceTitle: "暂无证据链",
+    emptyEvidenceDesc: "请检查 JSON 是否包含 evidenceChain。",
+    emptySource: "未提供",
+    emptyConclusion: "未提供结论",
+    emptyEvidence: "未提供证据",
+    sampleEyebrow: "SAMPLE REPORT",
+    sampleTitle: "《PersonaScope 示例报告：公开社交线索沟通画像》",
+    sampleDesc: "以下样例展示报告的结构与表达方式。真实报告需要将生成的 Prompt 复制到 ChatGPT 后完成。",
+    sampleCard1Title: "一句话画像",
+    sampleCard1Desc: "该对象更像是一个重视表达质感、强调自我节奏，同时希望被理解为独立而有审美判断的人。沟通时适合先建立共同语境，再进入具体话题。",
+    sampleCard2Title: "外在人设判断",
+    sampleCard2Desc: "头像与签名共同传递出“克制、清醒、有边界”的公开形象。对方可能不希望被过度热情地靠近，更愿意通过内容质量建立信任。",
+    sampleCard3Title: "性格倾向推测",
+    sampleCard3Desc: "从大五人格角度看，开放性可能偏中高，尽责性中等偏高，外向性不宜过度判断。该推测来自文案中的审美表达、计划感和有限自我暴露。",
+    sampleCard4Title: "情绪表达方式",
+    sampleCard4Desc: "情绪表达偏间接，常通过隐喻、自嘲或场景描述释放压力。与其直接追问“你怎么了”，不如用低压方式邀请对方补充。",
+    sampleCard5Title: "沟通偏好",
+    sampleCard5Desc: "更适合具体、真诚、可选择的沟通方式。对方可能更容易回应有观察、有边界、有信息量的开场，而不是泛泛寒暄。",
+    sampleCard6Title: "相处雷区",
+    sampleCard6Desc: "避免过快推进关系、连续追问隐私、用标签概括对方，或把公开动态当作对方完整人格的证据。",
+    sampleCard7Title: "适合的接近方式",
+    sampleCard7Desc: "可以从对方公开表达中的具体主题切入：“你最近提到的那个观点挺有意思，我很好奇你为什么会这样看。”",
+    sampleCard8Title: "证据链",
+    sampleCard8Desc: "证据来自头像风格、个性签名中的边界表达、第 1 条文案的目标感、第 2 条文案的情绪隐喻，以及第 3 条文案的自我调侃。",
+    sampleCard9Title: "置信度",
+    sampleCard9Desc: "中。原因是线索覆盖头像、签名与三条文本，但仍然属于公开自我呈现，无法代表完整人格与真实关系状态。",
+    sampleCard10Title: "使用提醒",
+    sampleCard10Desc: "报告只用于辅助理解和改善沟通，不应作为诊断、筛选、控制或重大决策依据。真实关系仍需要通过持续互动验证。",
+    theoryEyebrow: "FRAMEWORK",
+    theoryTitle: "理论依据",
+    theoryDesc: "PersonaScope 不做诊断，只做辅助理解和沟通建议。它把公开线索整理为可讨论、可复核、概率化的分析框架。",
+    theoryBigFiveTitle: "Big Five 大五人格",
+    theoryBigFiveDesc: "用于描述开放性、尽责性、外向性、宜人性、情绪稳定性等人格倾向。PersonaScope 只使用它作为沟通倾向参考，不把任何结果当作人格定论。",
+    theoryLanguageTitle: "语言心理学",
+    theoryLanguageDesc: "语言中的情绪词、自我指代、关系词、行动词，可以反映表达方式、关系需求、控制感和自我关注程度。结论必须回到具体文本证据。",
+    theorySocialTitle: "社交媒体自我呈现",
+    theorySocialDesc: "头像、签名和动态不是完整人格，而是一个人想让外界看到的形象。公开表达更适合分析“呈现策略”，而不是判断真实本质。",
+    theoryAvatarTitle: "头像视觉线索",
+    theoryAvatarDesc: "头像只作为辅助线索，例如风格、距离感、色彩和场景氛围，不能单独判断一个人，更不能推断敏感属性或重大风险。",
+    principleTitle: "边界原则",
+    principleDesc: "PersonaScope 不做心理诊断、不判断敏感属性、不替代真实沟通，只帮助你把公开线索转化为更谨慎的沟通假设。",
+    historyEyebrow: "LOCAL HISTORY",
+    historyTitle: "历史记录",
+    historyDesc: "最近生成并手动保存的记录会保存在当前浏览器 localStorage 中。",
+    clearHistoryBtn: "清空全部记录",
+    noHistoryEyebrow: "NO HISTORY",
+    noHistoryTitle: "还没有保存任何记录",
+    noHistoryDesc: "保存 Prompt 或生成可视化报告后，会在这里看到最近记录。",
+    goAnalyzeBtn: "去开始分析",
+    promptRecord: "Prompt 记录",
+    reportRecord: "可视化报告记录",
+    unnamedObject: "未命名对象",
+    unnamedReport: "未命名报告",
+    unsetScenario: "未设置场景",
+    emptyField: "未填写",
+    postSummary: "文案摘要",
+    uploadedAvatar: "已上传头像",
+    yes: "是",
+    no: "否",
+    screenshotMeta: "社交截图",
+    imageCountUnit: "张",
+    viewPrompt: "查看 Prompt",
+    collapsePrompt: "收起 Prompt",
+    copyPrompt: "复制 Prompt",
+    deleteRecord: "删除记录",
+    viewReport: "查看报告",
+    copyJson: "复制 JSON",
+    totalScore: "综合分",
+    bigFiveLabel: "Big Five",
+    footerCompliance: "本工具仅基于公开社交线索进行概率化沟通画像分析，不作为心理诊断、招聘录用、金融风控、医疗建议或重大决策依据。"
+  },
+  en: {
+    languageToggleAria: "Switch to Chinese",
+    menuToggle: "Menu",
+    navHome: "Home",
+    navAnalyze: "Analyze",
+    navVisual: "Visual Report",
+    navSample: "Sample Report",
+    navTheory: "Framework",
+    navHistory: "History",
+    heroEyebrow: "SOCIAL SIGNALS · COMMUNICATION PROFILE",
+    heroTitleLine1: "Decode a Person’s",
+    heroTitleLine2: "Social Signals",
+    heroDesc: "Turn avatars, bios, and recent social posts into a ChatGPT-ready communication-profile prompt and a structured report.",
+    heroPrimary: "Start Analysis",
+    heroSecondary: "View Sample Report",
+    previewKicker: "PREVIEW REPORT",
+    previewTitle: "Communication Profile Preview",
+    previewSummary: "Public expressions suggest strong boundary awareness, selective disclosure, and rational communication tendencies, with trust built through quality and restraint.",
+    previewTraitsTitle: "Key Traits",
+    previewTagBoundary: "Boundary-Aware",
+    previewTagExpression: "Controlled Expression",
+    previewTagExposure: "Selective Exposure",
+    previewTagObserve: "Observational Style",
+    previewDimensionsTitle: "Core Dimensions",
+    previewMetricWarmth: "Expression Warmth",
+    previewMetricBoundary: "Boundary Clarity",
+    previewMetricOpenness: "Communication Openness",
+    previewMetricPresentation: "Self-Presentation",
+    previewFrameworkTitle: "Analysis Framework",
+    previewFrameworkBigFive: "Big Five Model",
+    previewFrameworkLanguage: "Linguistic Cues",
+    previewFrameworkPresentation: "Self-Presentation",
+    previewFrameworkSocial: "Social Expression Signals",
+    previewFooter: "Generated from public social signals as a communication-style reference, not a diagnostic conclusion.",
+    valuePersonaTitle: "Public Persona",
+    valuePersonaDesc: "Identify the image someone presents in public social spaces and separate that presentation from the whole person.",
+    valuePreferenceTitle: "Communication Preference",
+    valuePreferenceDesc: "Estimate whether direct context, emotional pacing, or shared values will make the opening feel more natural.",
+    valueRiskTitle: "Interaction Risks",
+    valueRiskDesc: "Spot expressions that may trigger defensiveness, discomfort, or misunderstanding before the conversation drifts.",
+    workflowEyebrow: "HOW IT WORKS",
+    workflowTitle: "Build a Communication Profile in 4 Steps",
+    workflowStep1Label: "Step 1",
+    workflowStep1Title: "Upload Avatar",
+    workflowStep2Label: "Step 2",
+    workflowStep2Title: "Add Bio and Social Posts",
+    workflowStep3Label: "Step 3",
+    workflowStep3Title: "Generate Professional Prompt",
+    workflowStep4Label: "Step 4",
+    workflowStep4Title: "Copy to ChatGPT for Analysis",
+    homeCompliance: "This tool only turns public social clues into probabilistic communication hypotheses. It is not psychological diagnosis, hiring advice, financial risk assessment, medical advice, or a basis for major decisions.",
+    analyzeEyebrow: "START ANALYSIS",
+    analyzeTitle: "Analyze",
+    analyzeDesc: "Upload or enter three recent social posts. You can paste text manually or upload screenshots from Moments, Xiaohongshu, Weibo, LinkedIn, and similar platforms.",
+    betterInputEyebrow: "BETTER INPUT",
+    betterInputTitle: "For a more accurate profile, provide:",
+    betterInputAvatar: "Avatar",
+    betterInputBio: "Personal bio",
+    betterInputPosts: "Three recent posts",
+    betterInputScreenshots: "Social media screenshots",
+    nicknameLabel: "Profile nickname",
+    optionalLabel: "Optional",
+    optionalQuestionLabel: "Optional",
+    nicknamePlaceholder: "Example: a friend / client A / self profile",
+    avatarLabel: "Avatar",
+    removeAvatar: "Remove avatar",
+    avatarUploadTitle: "Click or drag to upload avatar",
+    avatarUploadDesc: "Supports jpg, jpeg, png, webp. Preview stays in your browser.",
+    signatureLabel: "Personal Bio",
+    signaturePlaceholder: "Enter a public bio, signature, or profile intro",
+    post1Label: "Social Post 1",
+    post1Placeholder: "If you upload screenshots, also paste key text to make the prompt more accurate.",
+    post2Label: "Social Post 2",
+    post2Placeholder: "Add the second social post or key screenshot text",
+    post3Label: "Social Post 3",
+    post3Placeholder: "Add the third social post or key screenshot text",
+    screenshotLabel: "Social Screenshots",
+    screenshotCount: "{count} / 6 uploaded",
+    screenshotUploadTitle: "Click or drag to upload social screenshots",
+    screenshotUploadDesc: "Up to 6 images. Screenshots stay local and are never uploaded.",
+    scenarioLabel: "Scenario",
+    scenarioDating: "Dating",
+    scenarioClient: "Client Communication",
+    scenarioWork: "Work Collaboration",
+    scenarioFriend: "Friendship",
+    scenarioSelf: "Self Profile",
+    questionLabel: "Main question",
+    questionPlaceholder: "Example: How can I start a conversation naturally? What should I watch for when working together?",
+    generatePromptBtn: "Generate Analysis Prompt",
+    resetBtn: "Clear Current Input",
+    generatedPromptEyebrow: "GENERATED PROMPT",
+    generatedPromptTitle: "Professional Analysis Prompt",
+    promptStatusEmpty: "Fill in the form to generate a prompt, then copy it to ChatGPT for the report.",
+    promptStatusReady: "Prompt generated. Copy it to ChatGPT with the avatar and screenshots, and ask for strict JSON.",
+    promptUsageNote: "After copying the prompt below, upload the avatar and social screenshots to ChatGPT, then paste the prompt for analysis.",
+    promptOutputEmpty: "After you fill in the form, a structured prompt will appear here.",
+    copyPromptBtn: "Copy Prompt",
+    privacyInline: "This site does not read or upload your images. Image previews stay in your browser.",
+    saveHistoryBtn: "Save to History",
+    visualEyebrow: "VISUAL REPORT",
+    visualTitle: "Visual Report",
+    visualDesc: "Paste the strict JSON returned by ChatGPT. PersonaScope will generate charts, tags, and structured report cards locally.",
+    jsonPasteLabel: "Paste JSON returned by ChatGPT",
+    jsonHelper: "Paste strict JSON from ChatGPT. If fields do not match, the system will try to recognize them automatically.",
+    jsonPlaceholder: "Paste complete JSON, such as fields including basicProfile, scores, bigFive, personaTags, communicationAdvice, riskPoints, approachStyle, evidenceChain, and disclaimer.",
+    renderReportBtn: "Generate Visual Report",
+    fillExampleJsonBtn: "Fill Example JSON",
+    clearJsonBtn: "Clear Content",
+    localDashboardEyebrow: "LOCAL DASHBOARD",
+    localDashboardTitle: "Semi-Automated Visual Analysis Flow",
+    localDashboardStep1: "Generate a prompt in Analyze.",
+    localDashboardStep2: "Send the prompt, avatar, and screenshots to ChatGPT.",
+    localDashboardStep3: "Copy the JSON returned by ChatGPT.",
+    localDashboardStep4: "Paste it on the left and generate a local visual report.",
+    localDashboardPrivacy: "This site does not call APIs or upload your JSON or images. Report records stay in localStorage.",
+    waitingJsonEyebrow: "WAITING FOR JSON",
+    waitingJsonTitle: "Waiting for Visual Report",
+    waitingJsonDesc: "Paste the JSON returned by ChatGPT, then click Generate Visual Report. If ChatGPT includes a JSON code block or short notes, the system will try to extract the JSON.",
+    chartBarTitle: "Profile Score Bar Chart",
+    chartRadarTitle: "Big Five Radar Chart",
+    tagCloudTitle: "Persona Tag Cloud",
+    communicationAdviceTitle: "Communication Advice",
+    riskPointsTitle: "Interaction Risks",
+    approachStyleTitle: "Best Approach Style",
+    evidenceChainTitle: "Evidence Chain",
+    confidenceLabel: "Confidence",
+    disclaimerTitle: "Disclaimer",
+    emptyTags: "No tags yet",
+    emptyAdvice: "No communication advice yet",
+    emptyRisks: "No interaction risks yet",
+    emptyApproach: "No approach style yet",
+    emptyEvidenceTitle: "No evidence chain yet",
+    emptyEvidenceDesc: "Check whether the JSON includes evidenceChain.",
+    emptySource: "No source",
+    emptyConclusion: "No conclusion",
+    emptyEvidence: "No evidence",
+    sampleEyebrow: "SAMPLE REPORT",
+    sampleTitle: "PersonaScope Sample Report: Public Social Clue Communication Profile",
+    sampleDesc: "This sample shows the structure and writing style of a report. A real report is completed after copying the generated prompt to ChatGPT.",
+    sampleCard1Title: "One-Sentence Profile",
+    sampleCard1Desc: "This person appears to value expressive quality, personal rhythm, and being understood as independent with aesthetic judgment.",
+    sampleCard2Title: "Public Persona",
+    sampleCard2Desc: "The avatar and bio suggest a restrained, clear, and boundary-aware public image.",
+    sampleCard3Title: "Personality Tendency",
+    sampleCard3Desc: "From a Big Five lens, openness may be medium-high, conscientiousness medium-high, and extraversion should not be overread.",
+    sampleCard4Title: "Emotional Expression",
+    sampleCard4Desc: "Emotions are expressed indirectly through metaphor, self-deprecation, or scene descriptions.",
+    sampleCard5Title: "Communication Preference",
+    sampleCard5Desc: "Specific, sincere, and optional communication is more suitable than generic small talk.",
+    sampleCard6Title: "Interaction Risks",
+    sampleCard6Desc: "Avoid rushing intimacy, repeatedly probing privacy, labeling the person, or treating public posts as the whole personality.",
+    sampleCard7Title: "Best Approach",
+    sampleCard7Desc: "Start from a specific public topic: \"That point you mentioned recently was interesting. I'm curious how you came to see it that way.\"",
+    sampleCard8Title: "Evidence Chain",
+    sampleCard8Desc: "Evidence comes from avatar style, boundary language in the bio, goal orientation in post 1, emotional metaphor in post 2, and self-deprecation in post 3.",
+    sampleCard9Title: "Confidence",
+    sampleCard9Desc: "Medium. The sample covers avatar, bio, and three posts, but still reflects public self-presentation rather than the whole person.",
+    sampleCard10Title: "Usage Reminder",
+    sampleCard10Desc: "Use the report only to improve understanding and communication. It should not be used for diagnosis, screening, control, or major decisions.",
+    theoryEyebrow: "FRAMEWORK",
+    theoryTitle: "Framework",
+    theoryDesc: "PersonaScope is not diagnostic. It organizes public clues into reviewable, probabilistic communication hypotheses.",
+    theoryBigFiveTitle: "Big Five Personality Model",
+    theoryBigFiveDesc: "Used to describe openness, conscientiousness, extraversion, agreeableness, and emotional stability as communication references.",
+    theoryLanguageTitle: "Language Psychology",
+    theoryLanguageDesc: "Emotion words, self-references, relationship words, and action words can reveal expression style, relational needs, and attention patterns.",
+    theorySocialTitle: "Social Media Self-Presentation",
+    theorySocialDesc: "Avatars, bios, and posts are not the whole person. They are public presentation strategies.",
+    theoryAvatarTitle: "Avatar Visual Cues",
+    theoryAvatarDesc: "Avatar style, distance, color, and scene mood can be auxiliary clues, but cannot support sensitive or absolute judgments.",
+    principleTitle: "Boundary Principle",
+    principleDesc: "PersonaScope does not diagnose, infer sensitive attributes, or replace real communication. It helps turn public clues into cautious hypotheses.",
+    historyEyebrow: "LOCAL HISTORY",
+    historyTitle: "History",
+    historyDesc: "Recently generated and manually saved records are stored in this browser's localStorage.",
+    clearHistoryBtn: "Clear All Records",
+    noHistoryEyebrow: "NO HISTORY",
+    noHistoryTitle: "No History Yet",
+    noHistoryDesc: "After saving a prompt or generating a visual report, recent records will appear here.",
+    goAnalyzeBtn: "Start Analysis",
+    promptRecord: "Prompt Record",
+    reportRecord: "Visual Report Record",
+    unnamedObject: "Unnamed Profile",
+    unnamedReport: "Untitled Report",
+    unsetScenario: "No scenario set",
+    emptyField: "Not filled",
+    postSummary: "Post summary",
+    uploadedAvatar: "Avatar uploaded",
+    yes: "Yes",
+    no: "No",
+    screenshotMeta: "Screenshots",
+    imageCountUnit: "images",
+    viewPrompt: "View Prompt",
+    collapsePrompt: "Collapse Prompt",
+    copyPrompt: "Copy Prompt",
+    deleteRecord: "Delete",
+    viewReport: "View Report",
+    copyJson: "Copy JSON",
+    totalScore: "Overall scores",
+    bigFiveLabel: "Big Five",
+    footerCompliance: "This tool only turns public social clues into probabilistic communication hypotheses. It is not psychological diagnosis, hiring advice, financial risk assessment, medical advice, or a basis for major decisions."
+  }
+};
 
 const form = document.querySelector("#personaForm");
 const avatarInput = document.querySelector("#avatarInput");
@@ -30,19 +437,12 @@ const toast = document.querySelector("#toast");
 const menuToggle = document.querySelector(".menu-toggle");
 const mainNav = document.querySelector("#mainNav");
 const navLinks = Array.from(document.querySelectorAll(".main-nav a"));
+const languageToggle = document.querySelector("#languageToggle");
 const unicornBackground = document.querySelector("#unicornBackground");
 const unicornScene = document.querySelector("#unicornScene");
 
 const UNICORN_PROJECT_ID = "Yj3EFGnjZ1bEOuWjo6Ad";
 const UNICORN_SDK_URL = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.11/dist/unicornStudio.umd.js";
-const REPORT_EMPTY_STATE_HTML = `
-  <div class="empty-state">
-    <p class="eyebrow">WAITING FOR JSON</p>
-    <h3>等待生成可视化报告</h3>
-    <p>粘贴 ChatGPT 返回的 JSON 后，点击“生成可视化报告”。如果 ChatGPT 带了 \`\`\`json 代码块或少量说明文字，系统会尝试自动提取中间的 JSON。</p>
-  </div>
-`;
-
 const SAMPLE_REPORT_DATA = {
   basicProfile: {
     oneSentence: "该对象呈现出审美敏感、边界清晰、重视表达质量的公开社交形象。",
@@ -108,6 +508,51 @@ let expandedHistoryId = "";
 let toastTimer = null;
 let unicornSceneInstance = null;
 let unicornSdkPromise = null;
+let currentLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY) === "en" ? "en" : "zh";
+let renderedReportData = null;
+
+function t(key, replacements = {}) {
+  const value = translations[currentLanguage]?.[key] ?? translations.zh[key] ?? key;
+  return Object.entries(replacements).reduce((text, [name, replacement]) => text.replaceAll(`{${name}}`, replacement), value);
+}
+
+function getReportEmptyStateHtml() {
+  return `
+    <div class="empty-state">
+      <p class="eyebrow" data-i18n="waitingJsonEyebrow">${t("waitingJsonEyebrow")}</p>
+      <h3 data-i18n="waitingJsonTitle">${t("waitingJsonTitle")}</h3>
+      <p data-i18n="waitingJsonDesc">${t("waitingJsonDesc")}</p>
+    </div>
+  `;
+}
+
+function applyLanguage() {
+  document.documentElement.lang = currentLanguage === "en" ? "en" : "zh-CN";
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
+  });
+  if (languageToggle) {
+    languageToggle.textContent = currentLanguage === "zh" ? "EN" : "中";
+    languageToggle.setAttribute("aria-label", t("languageToggleAria"));
+  }
+  updateGeneratedState(generatedPrompt, generatedRecordDraft);
+  renderScreenshotGrid();
+  if (renderedReportData) {
+    renderVisualReport(renderedReportData);
+  } else {
+    visualReportOutput.innerHTML = getReportEmptyStateHtml();
+  }
+  renderHistory();
+}
+
+function toggleLanguage() {
+  currentLanguage = currentLanguage === "zh" ? "en" : "zh";
+  localStorage.setItem(LANGUAGE_STORAGE_KEY, currentLanguage);
+  applyLanguage();
+}
 
 function showToast(message) {
   clearTimeout(toastTimer);
@@ -227,7 +672,7 @@ function clampScore(value) {
 }
 
 function truncateText(value, length = 64) {
-  const text = value || "未填写";
+  const text = value || t("emptyField");
   return text.length > length ? `${text.slice(0, length)}...` : text;
 }
 
@@ -338,10 +783,10 @@ ${normalizedQuestion}
 function updateGeneratedState(prompt, recordDraft) {
   generatedPrompt = prompt;
   generatedRecordDraft = recordDraft;
-  promptOutput.textContent = prompt || "填写左侧信息后，系统会在这里生成一段结构化 Prompt。";
+  promptOutput.textContent = prompt || t("promptOutputEmpty");
   copyPromptBtn.disabled = !prompt;
   saveHistoryBtn.disabled = !prompt;
-  promptStatus.textContent = prompt ? "Prompt 已生成。复制后连同头像和社交截图一起发给 ChatGPT，并要求其返回严格 JSON。" : "填写左侧信息后生成，复制到 ChatGPT 即可获得报告。";
+  promptStatus.textContent = prompt ? t("promptStatusReady") : t("promptStatusEmpty");
 }
 
 function handleSubmit(event) {
@@ -408,7 +853,7 @@ function removeAvatar() {
 }
 
 function renderScreenshotGrid() {
-  screenshotCount.textContent = `已上传 ${socialScreenshots.length} / 6 张`;
+  screenshotCount.textContent = t("screenshotCount", { count: socialScreenshots.length });
   screenshotGrid.innerHTML = socialScreenshots
     .map((item, index) => `
       <div class="screenshot-item">
@@ -750,6 +1195,7 @@ function renderListCards(title, items, emptyText) {
 }
 
 function renderVisualReport(data) {
+  renderedReportData = data;
   const personaTags = normalizeStringArray(Array.isArray(data.personaTags) ? data.personaTags : []);
   const communicationAdvice = normalizeStringArray(Array.isArray(data.communicationAdvice) ? data.communicationAdvice : []);
   const riskPoints = normalizeStringArray(Array.isArray(data.riskPoints) ? data.riskPoints : []);
@@ -763,47 +1209,47 @@ function renderVisualReport(data) {
         <h3>${escapeHtml(data.basicProfile.oneSentence)}</h3>
         <p>${escapeHtml(data.basicProfile.personaSummary)}</p>
         <div class="confidence-strip">
-          <span>置信度：${escapeHtml(data.basicProfile.confidence)}</span>
+          <span>${t("confidenceLabel")}：${escapeHtml(data.basicProfile.confidence)}</span>
           <p>${escapeHtml(data.basicProfile.confidenceReason)}</p>
         </div>
       </article>
 
       <article class="dashboard-card glass-card">
-        <h3>综合画像柱状图</h3>
+        <h3>${t("chartBarTitle")}</h3>
         ${renderBarChart(data.scores)}
       </article>
 
       <article class="dashboard-card glass-card">
-        <h3>Big Five 雷达图</h3>
+        <h3>${t("chartRadarTitle")}</h3>
         ${renderRadarChart(data.bigFive)}
       </article>
 
       <article class="dashboard-card glass-card tag-card">
-        <h3>人设标签云</h3>
+        <h3>${t("tagCloudTitle")}</h3>
         <div class="tag-cloud">
-          ${(personaTags.length ? personaTags : ["暂无标签"]).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
+          ${(personaTags.length ? personaTags : [t("emptyTags")]).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
         </div>
       </article>
 
-      ${renderListCards("沟通建议", communicationAdvice, "暂无沟通建议")}
-      ${renderListCards("相处雷区", riskPoints, "暂无相处雷区")}
-      ${renderListCards("适合接近方式", approachStyle, "暂无接近方式")}
+      ${renderListCards(t("communicationAdviceTitle"), communicationAdvice, t("emptyAdvice"))}
+      ${renderListCards(t("riskPointsTitle"), riskPoints, t("emptyRisks"))}
+      ${renderListCards(t("approachStyleTitle"), approachStyle, t("emptyApproach"))}
 
       <article class="dashboard-card glass-card evidence-card">
-        <h3>证据链</h3>
+        <h3>${t("evidenceChainTitle")}</h3>
         <div class="evidence-list">
-          ${(evidenceChain.length ? evidenceChain : [{ conclusion: "暂无证据链", evidence: "请检查 JSON 是否包含 evidenceChain。", source: "未提供" }]).map((item) => `
+          ${(evidenceChain.length ? evidenceChain : [{ conclusion: t("emptyEvidenceTitle"), evidence: t("emptyEvidenceDesc"), source: t("emptySource") }]).map((item) => `
             <div>
-              <strong>${escapeHtml(item.conclusion || "未提供结论")}</strong>
-              <p>${escapeHtml(item.evidence || "未提供证据")}</p>
-              <span>${escapeHtml(item.source || "未提供来源")}</span>
+              <strong>${escapeHtml(item.conclusion || t("emptyConclusion"))}</strong>
+              <p>${escapeHtml(item.evidence || t("emptyEvidence"))}</p>
+              <span>${escapeHtml(item.source || t("emptySource"))}</span>
             </div>
           `).join("")}
         </div>
       </article>
 
       <article class="dashboard-card glass-card disclaimer-card">
-        <h3>免责声明</h3>
+        <h3>${t("disclaimerTitle")}</h3>
         <p>${escapeHtml(data.disclaimer)}</p>
       </article>
     </div>
@@ -850,7 +1296,8 @@ function fillExampleJson() {
 function clearJsonReport() {
   jsonInput.value = "";
   jsonError.textContent = "";
-  visualReportOutput.innerHTML = REPORT_EMPTY_STATE_HTML;
+  renderedReportData = null;
+  visualReportOutput.innerHTML = getReportEmptyStateHtml();
 }
 
 function renderHistory() {
@@ -858,10 +1305,10 @@ function renderHistory() {
   if (!records.length) {
     historyList.innerHTML = `
       <div class="empty-state">
-        <p class="eyebrow">NO HISTORY</p>
-        <h3>还没有保存任何记录</h3>
-        <p>保存 Prompt 或生成可视化报告后，会在这里看到最近记录。</p>
-        <a class="button primary" href="#analyze">去开始分析</a>
+        <p class="eyebrow">${t("noHistoryEyebrow")}</p>
+        <h3>${t("noHistoryTitle")}</h3>
+        <p>${t("noHistoryDesc")}</p>
+        <a class="button primary" href="#analyze">${t("goAnalyzeBtn")}</a>
       </div>
     `;
     return;
@@ -881,22 +1328,22 @@ function renderPromptHistoryCard(record, date, isExpanded) {
     <article class="history-card">
       <div class="history-top">
         <div>
-          <span class="record-type">Prompt 记录</span>
-          <h3>${escapeHtml(record.nickname || "未命名对象")}</h3>
-          <time datetime="${escapeHtml(record.createdAt)}">${date.toLocaleString("zh-CN")}</time>
+          <span class="record-type">${t("promptRecord")}</span>
+          <h3>${escapeHtml(record.nickname || t("unnamedObject"))}</h3>
+          <time datetime="${escapeHtml(record.createdAt)}">${date.toLocaleString(currentLanguage === "en" ? "en-US" : "zh-CN")}</time>
         </div>
-        <span class="scenario-tag">${escapeHtml(record.scenario || "未设置场景")}</span>
+        <span class="scenario-tag">${escapeHtml(record.scenario || t("unsetScenario"))}</span>
       </div>
       <p>${escapeHtml(truncateText(record.signature))}</p>
       <ul class="history-meta">
-        <li>文案摘要：${escapeHtml(truncateText((record.posts || []).filter(Boolean).join(" / "), 42))}</li>
-        <li>已上传头像：${record.hasAvatar ? "是" : "否"}</li>
-        <li>社交截图：${Number(record.screenshotCount || 0)} 张</li>
+        <li>${t("postSummary")}：${escapeHtml(truncateText((record.posts || []).filter(Boolean).join(" / "), 42))}</li>
+        <li>${t("uploadedAvatar")}：${record.hasAvatar ? t("yes") : t("no")}</li>
+        <li>${t("screenshotMeta")}：${Number(record.screenshotCount || 0)} ${t("imageCountUnit")}</li>
       </ul>
       <div class="history-actions">
-        <button class="button small view-history" type="button" data-id="${escapeHtml(record.id)}">${isExpanded ? "收起 Prompt" : "查看 Prompt"}</button>
-        <button class="button small copy-history" type="button" data-id="${escapeHtml(record.id)}">复制 Prompt</button>
-        <button class="button small danger delete-history" type="button" data-id="${escapeHtml(record.id)}">删除记录</button>
+        <button class="button small view-history" type="button" data-id="${escapeHtml(record.id)}">${isExpanded ? t("collapsePrompt") : t("viewPrompt")}</button>
+        <button class="button small copy-history" type="button" data-id="${escapeHtml(record.id)}">${t("copyPrompt")}</button>
+        <button class="button small danger delete-history" type="button" data-id="${escapeHtml(record.id)}">${t("deleteRecord")}</button>
       </div>
       ${isExpanded ? `<pre class="history-prompt">${escapeHtml(record.prompt)}</pre>` : ""}
     </article>
@@ -908,20 +1355,20 @@ function renderReportHistoryCard(record, date) {
     <article class="history-card report-history-card">
       <div class="history-top">
         <div>
-          <span class="record-type">可视化报告记录</span>
-          <h3>${escapeHtml(record.oneSentence || "未命名报告")}</h3>
-          <time datetime="${escapeHtml(record.createdAt)}">${date.toLocaleString("zh-CN")}</time>
+          <span class="record-type">${t("reportRecord")}</span>
+          <h3>${escapeHtml(record.oneSentence || t("unnamedReport"))}</h3>
+          <time datetime="${escapeHtml(record.createdAt)}">${date.toLocaleString(currentLanguage === "en" ? "en-US" : "zh-CN")}</time>
         </div>
-        <span class="scenario-tag">置信度：${escapeHtml(record.confidence || "中")}</span>
+        <span class="scenario-tag">${t("confidenceLabel")}：${escapeHtml(record.confidence || "中")}</span>
       </div>
       <ul class="history-meta">
-        <li>综合分：${Object.values(record.scores || {}).map(clampScore).join(" / ")}</li>
-        <li>Big Five：${Object.values(record.bigFive || {}).map(clampScore).join(" / ")}</li>
+        <li>${t("totalScore")}：${Object.values(record.scores || {}).map(clampScore).join(" / ")}</li>
+        <li>${t("bigFiveLabel")}：${Object.values(record.bigFive || {}).map(clampScore).join(" / ")}</li>
       </ul>
       <div class="history-actions">
-        <button class="button small view-report-history" type="button" data-id="${escapeHtml(record.id)}">查看报告</button>
-        <button class="button small copy-json-history" type="button" data-id="${escapeHtml(record.id)}">复制 JSON</button>
-        <button class="button small danger delete-history" type="button" data-id="${escapeHtml(record.id)}">删除记录</button>
+        <button class="button small view-report-history" type="button" data-id="${escapeHtml(record.id)}">${t("viewReport")}</button>
+        <button class="button small copy-json-history" type="button" data-id="${escapeHtml(record.id)}">${t("copyJson")}</button>
+        <button class="button small danger delete-history" type="button" data-id="${escapeHtml(record.id)}">${t("deleteRecord")}</button>
       </div>
     </article>
   `;
@@ -1054,6 +1501,7 @@ fillExampleJsonBtn.addEventListener("click", fillExampleJson);
 clearJsonBtn.addEventListener("click", clearJsonReport);
 clearHistoryBtn.addEventListener("click", clearAllHistory);
 historyList.addEventListener("click", handleHistoryClick);
+if (languageToggle) languageToggle.addEventListener("click", toggleLanguage);
 
 menuToggle.addEventListener("click", () => {
   const isOpen = mainNav.classList.toggle("open");
@@ -1069,4 +1517,4 @@ window.addEventListener("load", () => {
 });
 
 UnicornBackground();
-renderHistory();
+applyLanguage();
