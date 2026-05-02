@@ -31,7 +31,11 @@
         <a href="#theory"><span data-i18n="navTheory">理论依据</span></a>
         <a href="#history"><span data-i18n="navHistory">历史记录</span></a>
       </nav>
-      <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch language">EN</button>
+      <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch language">
+        <span class="language-option language-option-zh">中文</span>
+        <span class="language-divider">/</span>
+        <span class="language-option language-option-en">EN</span>
+      </button>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav" data-i18n="menuToggle">菜单</button>
     </div>
   </header>
@@ -45,10 +49,10 @@
           <span data-i18n="heroTitleLine2">社交信号</span>
         </h1>
         <p class="hero-desc" data-i18n="heroDesc">
-          整理头像、签名与近期社交内容，生成可复制到 ChatGPT 的沟通画像 Prompt，并沉淀为结构化报告。
+          整理头像、签名与近期社交内容，生成结构化沟通画像，并沉淀为可视化分析报告。
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="#analyze" data-i18n="heroPrimary">开始生成报告</a>
+          <a class="button primary" href="#analyze" data-i18n="heroPrimary">开始分析</a>
           <a class="button ghost" href="#sample" data-i18n="heroSecondary">查看示例报告</a>
         </div>
       </div>
@@ -84,20 +88,24 @@
             <p class="preview-section-title" data-i18n="previewDimensionsTitle">核心维度</p>
             <div class="preview-metrics">
               <div class="preview-metric">
-                <div><span data-i18n="previewMetricWarmth">表达温度</span><strong>82</strong></div>
+                <span data-i18n="previewMetricWarmth">表达温度</span>
                 <span class="preview-track"><span style="width: 82%"></span></span>
+                <strong>82%</strong>
               </div>
               <div class="preview-metric">
-                <div><span data-i18n="previewMetricBoundary">边界清晰度</span><strong>76</strong></div>
+                <span data-i18n="previewMetricBoundary">边界清晰度</span>
                 <span class="preview-track"><span style="width: 76%"></span></span>
+                <strong>76%</strong>
               </div>
               <div class="preview-metric">
-                <div><span data-i18n="previewMetricOpenness">沟通开放度</span><strong>68</strong></div>
-                <span class="preview-track"><span style="width: 68%"></span></span>
-              </div>
-              <div class="preview-metric">
-                <div><span data-i18n="previewMetricPresentation">自我呈现强度</span><strong>74</strong></div>
+                <span data-i18n="previewMetricPresentation">自我呈现强度</span>
                 <span class="preview-track"><span style="width: 74%"></span></span>
+                <strong>74%</strong>
+              </div>
+              <div class="preview-metric">
+                <span data-i18n="previewMetricOpenness">沟通开放度</span>
+                <span class="preview-track"><span style="width: 68%"></span></span>
+                <strong>68%</strong>
               </div>
             </div>
           </div>
@@ -127,19 +135,19 @@
         <div class="workflow-steps">
           <div>
             <span data-i18n="workflowStep1Label">步骤 1</span>
-            <strong data-i18n="workflowStep1Title">上传头像</strong>
+            <strong data-i18n="workflowStep1Title">上传社交线索</strong>
           </div>
           <div>
             <span data-i18n="workflowStep2Label">步骤 2</span>
-            <strong data-i18n="workflowStep2Title">输入签名与三条文案</strong>
+            <strong data-i18n="workflowStep2Title">选择分析框架</strong>
           </div>
           <div>
             <span data-i18n="workflowStep3Label">步骤 3</span>
-            <strong data-i18n="workflowStep3Title">生成专业 Prompt</strong>
+            <strong data-i18n="workflowStep3Title">AI 生成画像</strong>
           </div>
           <div>
             <span data-i18n="workflowStep4Label">步骤 4</span>
-            <strong data-i18n="workflowStep4Title">复制到 ChatGPT 获得分析报告</strong>
+            <strong data-i18n="workflowStep4Title">查看可视化报告</strong>
           </div>
         </div>
       </div>
@@ -216,7 +224,7 @@
 
           <label>
             <span data-i18n="post1Label">社交文案 1</span>
-            <textarea class="post-input" rows="3" placeholder="如果你上传的是截图，也建议补充截图中的关键文字，方便生成更准确的分析 Prompt。" data-i18n-placeholder="post1Placeholder"></textarea>
+            <textarea class="post-input" rows="3" placeholder="如果你上传的是截图，也建议补充截图中的关键文字，方便生成更准确的沟通画像。" data-i18n-placeholder="post1Placeholder"></textarea>
           </label>
 
           <label>
@@ -260,7 +268,7 @@
           </label>
 
           <div class="form-actions">
-            <button class="button primary" type="submit" data-i18n="generatePromptBtn">生成分析 Prompt</button>
+            <button class="button primary" type="submit" data-i18n="generatePromptBtn">开始 AI 分析</button>
             <button class="button ghost" id="resetBtn" type="reset" data-i18n="resetBtn">清空当前内容</button>
           </div>
         </form>
@@ -268,17 +276,17 @@
         <aside class="result-card glass-card" aria-live="polite">
           <div class="result-header">
             <div>
-              <p class="eyebrow" data-i18n="generatedPromptEyebrow">GENERATED PROMPT</p>
-              <h3 data-i18n="generatedPromptTitle">专业分析 Prompt</h3>
-              <p id="promptStatus" data-i18n="promptStatusEmpty">填写左侧信息后生成，复制到 ChatGPT 即可获得报告。</p>
+              <p class="eyebrow" data-i18n="generatedPromptEyebrow">DEBUG MODE</p>
+              <h3 data-i18n="generatedPromptTitle">开发者调试 Prompt</h3>
+              <p id="promptStatus" data-i18n="promptStatusEmpty">填写左侧信息后开始分析；调试 Prompt 会在这里备用。</p>
             </div>
           </div>
           <div class="usage-note" data-i18n="promptUsageNote">
-            复制下方 Prompt 后，请将头像和社交截图一起上传到 ChatGPT，再粘贴 Prompt 进行分析。
+            当前为静态原型，主流程会先生成本地 mock 报告；下方 Prompt 仅作为无 API 备用调试材料。
           </div>
-          <pre id="promptOutput" data-i18n="promptOutputEmpty">填写左侧信息后，系统会在这里生成一段结构化 Prompt。</pre>
+          <pre id="promptOutput" data-i18n="promptOutputEmpty">开始分析后，系统会在这里生成一段开发者调试 Prompt。</pre>
           <div class="result-actions">
-            <button class="button primary" id="copyPromptBtn" type="button" disabled data-i18n="copyPromptBtn">一键复制 Prompt</button>
+            <button class="button ghost" id="copyPromptBtn" type="button" disabled data-i18n="copyPromptBtn">复制调试 Prompt</button>
             <p class="privacy-inline" data-i18n="privacyInline">当前网站不会读取或上传你的图片，所有图片仅在本地浏览器预览。</p>
             <button class="button ghost" id="saveHistoryBtn" type="button" disabled data-i18n="saveHistoryBtn">保存到历史记录</button>
           </div>
@@ -290,19 +298,19 @@
       <div class="section-heading">
         <p class="eyebrow" data-i18n="visualEyebrow">VISUAL REPORT</p>
         <h2 data-i18n="visualTitle">可视化报告</h2>
-        <p data-i18n="visualDesc">将 ChatGPT 按 Prompt 返回的严格 JSON 粘贴到这里，PersonaScope 会在本地生成雷达图、柱状图、标签云和结构化分析卡片。</p>
+        <p data-i18n="visualDesc">分析完成后，系统将在这里生成可视化沟通画像报告。</p>
       </div>
 
       <div class="json-workspace">
         <div class="json-input-card glass-card">
           <label>
-            <span data-i18n="jsonPasteLabel">粘贴 ChatGPT 返回的 JSON</span>
-            <small class="json-helper" data-i18n="jsonHelper">请粘贴 ChatGPT 返回的严格 JSON。如果出现字段不匹配，系统会尽量自动识别；但为了获得最佳效果，建议使用“开始分析”页生成的 Prompt，并要求 ChatGPT 只输出 JSON。</small>
-            <textarea id="jsonInput" rows="16" placeholder='请粘贴完整 JSON，例如包含 basicProfile、scores、bigFive、personaTags、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。' data-i18n-placeholder="jsonPlaceholder"></textarea>
+            <span data-i18n="jsonPasteLabel">手动导入报告数据</span>
+            <small class="json-helper" data-i18n="jsonHelper">开发者调试模式：可导入结构化报告 JSON，系统会尽量自动识别兼容字段。</small>
+            <textarea id="jsonInput" rows="16" placeholder='可导入完整报告 JSON，例如包含 basicProfile、scores、bigFive、personaTags、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。' data-i18n-placeholder="jsonPlaceholder"></textarea>
           </label>
           <div class="result-actions">
-            <button class="button primary" id="renderReportBtn" type="button" data-i18n="renderReportBtn">生成可视化报告</button>
-            <button class="button ghost" id="fillExampleJsonBtn" type="button" data-i18n="fillExampleJsonBtn">填入示例 JSON</button>
+            <button class="button primary" id="renderReportBtn" type="button" data-i18n="renderReportBtn">导入报告数据</button>
+            <button class="button ghost" id="fillExampleJsonBtn" type="button" data-i18n="fillExampleJsonBtn">生成示例报告</button>
             <button class="button ghost" id="clearJsonBtn" type="button" data-i18n="clearJsonBtn">清空内容</button>
           </div>
           <p class="json-error" id="jsonError" role="alert"></p>
@@ -310,22 +318,22 @@
 
         <div class="json-guide glass-card">
           <p class="eyebrow" data-i18n="localDashboardEyebrow">LOCAL DASHBOARD</p>
-          <h3 data-i18n="localDashboardTitle">半自动图文分析流程</h3>
+          <h3 data-i18n="localDashboardTitle">API-ready 分析流程</h3>
           <ol>
-            <li data-i18n="localDashboardStep1">在“开始分析”生成 Prompt。</li>
-            <li data-i18n="localDashboardStep2">将 Prompt、头像和社交截图一起发送给 ChatGPT。</li>
-            <li data-i18n="localDashboardStep3">复制 ChatGPT 返回的 JSON。</li>
-            <li data-i18n="localDashboardStep4">粘贴到左侧并生成本地可视化报告。</li>
+            <li data-i18n="localDashboardStep1">上传头像、签名、文案与社交截图。</li>
+            <li data-i18n="localDashboardStep2">点击开始 AI 分析。</li>
+            <li data-i18n="localDashboardStep3">当前版本先使用本地 mock 数据生成报告。</li>
+            <li data-i18n="localDashboardStep4">未来可替换为安全 API 服务自动返回报告数据。</li>
           </ol>
-          <p data-i18n="localDashboardPrivacy">本站不会调用 API，也不会上传你的 JSON 或图片。报告记录仅保存在当前浏览器 localStorage。</p>
+          <p data-i18n="localDashboardPrivacy">当前为静态原型，后续可接入安全 API 服务；报告记录仅保存在当前浏览器 localStorage。</p>
         </div>
       </div>
 
       <div class="visual-report-output" id="visualReportOutput">
         <div class="empty-state">
-          <p class="eyebrow" data-i18n="waitingJsonEyebrow">WAITING FOR JSON</p>
+          <p class="eyebrow" data-i18n="waitingJsonEyebrow">WAITING FOR REPORT</p>
           <h3 data-i18n="waitingJsonTitle">等待生成可视化报告</h3>
-          <p data-i18n="waitingJsonDesc">粘贴 ChatGPT 返回的 JSON 后，点击“生成可视化报告”。如果 ChatGPT 带了 ```json 代码块或少量说明文字，系统会尝试自动提取中间的 JSON。</p>
+          <p data-i18n="waitingJsonDesc">分析完成后，系统将在这里生成可视化沟通画像报告。也可以使用开发者调试模式手动导入报告数据。</p>
         </div>
       </div>
     </section>
@@ -334,7 +342,7 @@
       <div class="section-heading">
         <p class="eyebrow" data-i18n="sampleEyebrow">SAMPLE REPORT</p>
         <h2 data-i18n="sampleTitle">《PersonaScope 示例报告：公开社交线索沟通画像》</h2>
-        <p data-i18n="sampleDesc">以下样例展示报告的结构与表达方式。真实报告需要将生成的 Prompt 复制到 ChatGPT 后完成。</p>
+        <p data-i18n="sampleDesc">以下样例展示报告的结构与表达方式。当前静态原型会使用本地示例数据模拟分析结果。</p>
       </div>
 
       <div class="sample-report-grid">
@@ -440,8 +448,8 @@
       <div class="history-list" id="historyList">
         <div class="empty-state">
           <p class="eyebrow" data-i18n="noHistoryEyebrow">NO HISTORY</p>
-          <h3 data-i18n="noHistoryTitle">还没有保存任何 Prompt</h3>
-          <p data-i18n="noHistoryDesc">完成一次分析并点击“保存到历史记录”后，会在这里看到最近记录。</p>
+          <h3 data-i18n="noHistoryTitle">还没有保存任何记录</h3>
+          <p data-i18n="noHistoryDesc">开始 AI 分析或生成可视化报告后，会在这里看到最近记录。</p>
           <a class="button primary" href="#analyze" data-i18n="goAnalyzeBtn">去开始分析</a>
         </div>
       </div>
@@ -451,7 +459,7 @@
   <footer class="site-footer">
     <div>
       <span>PersonaScope</span>
-      <span>Static site · No backend · No database · No API</span>
+      <span>API-ready static prototype · No backend · No database</span>
     </div>
     <p class="compliance-note" data-i18n="homeCompliance">
       本工具仅基于公开社交线索进行概率化沟通画像分析，不作为心理诊断、招聘录用、金融风控、医疗建议或重大决策依据。

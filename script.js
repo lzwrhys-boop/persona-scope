@@ -14,8 +14,8 @@ const translations = {
     heroEyebrow: "SOCIAL SIGNALS · COMMUNICATION PROFILE",
     heroTitleLine1: "看懂一个人的",
     heroTitleLine2: "社交信号",
-    heroDesc: "整理头像、签名与近期社交内容，生成可复制到 ChatGPT 的沟通画像 Prompt，并沉淀为结构化报告。",
-    heroPrimary: "开始生成报告",
+    heroDesc: "整理头像、签名与近期社交内容，生成结构化沟通画像，并沉淀为可视化分析报告。",
+    heroPrimary: "开始分析",
     heroSecondary: "查看示例报告",
     previewKicker: "预览报告",
     previewTitle: "沟通画像预览",
@@ -45,13 +45,13 @@ const translations = {
     workflowEyebrow: "HOW IT WORKS",
     workflowTitle: "四步生成沟通画像",
     workflowStep1Label: "步骤 1",
-    workflowStep1Title: "上传头像",
+    workflowStep1Title: "上传社交线索",
     workflowStep2Label: "步骤 2",
-    workflowStep2Title: "输入签名与三条文案",
+    workflowStep2Title: "选择分析框架",
     workflowStep3Label: "步骤 3",
-    workflowStep3Title: "生成专业 Prompt",
+    workflowStep3Title: "AI 生成画像",
     workflowStep4Label: "步骤 4",
-    workflowStep4Title: "复制到 ChatGPT 获得分析报告",
+    workflowStep4Title: "查看可视化报告",
     homeCompliance: "本工具仅基于公开社交线索进行概率化沟通画像分析，不作为心理诊断、招聘录用、金融风控、医疗建议或重大决策依据。",
     analyzeEyebrow: "START ANALYSIS",
     analyzeTitle: "开始分析",
@@ -73,7 +73,7 @@ const translations = {
     signatureLabel: "个性签名",
     signaturePlaceholder: "输入公开可见的个性签名、简介或主页文案",
     post1Label: "社交文案 1",
-    post1Placeholder: "如果你上传的是截图，也建议补充截图中的关键文字，方便生成更准确的分析 Prompt。",
+    post1Placeholder: "如果你上传的是截图，也建议补充截图中的关键文字，方便生成更准确的沟通画像。",
     post2Label: "社交文案 2",
     post2Placeholder: "补充第二条社交文案或截图中的关键文字",
     post3Label: "社交文案 3",
@@ -90,36 +90,36 @@ const translations = {
     scenarioSelf: "自我画像",
     questionLabel: "我最想知道的问题",
     questionPlaceholder: "例如：我该如何自然地开启话题？合作时需要注意什么？",
-    generatePromptBtn: "生成分析 Prompt",
+    generatePromptBtn: "开始 AI 分析",
     resetBtn: "清空当前内容",
-    generatedPromptEyebrow: "GENERATED PROMPT",
-    generatedPromptTitle: "专业分析 Prompt",
-    promptStatusEmpty: "填写左侧信息后生成，复制到 ChatGPT 即可获得报告。",
-    promptStatusReady: "Prompt 已生成。复制后连同头像和社交截图一起发给 ChatGPT，并要求其返回严格 JSON。",
-    promptUsageNote: "复制下方 Prompt 后，请将头像和社交截图一起上传到 ChatGPT，再粘贴 Prompt 进行分析。",
-    promptOutputEmpty: "填写左侧信息后，系统会在这里生成一段结构化 Prompt。",
-    copyPromptBtn: "一键复制 Prompt",
+    generatedPromptEyebrow: "DEBUG MODE",
+    generatedPromptTitle: "开发者调试 Prompt",
+    promptStatusEmpty: "填写左侧信息后开始分析；调试 Prompt 会在这里备用。",
+    promptStatusReady: "分析已完成。调试 Prompt 已同步生成，可作为无 API 备用方案。",
+    promptUsageNote: "当前为静态原型，主流程会先生成本地 mock 报告；下方 Prompt 仅作为无 API 备用调试材料。",
+    promptOutputEmpty: "开始分析后，系统会在这里生成一段开发者调试 Prompt。",
+    copyPromptBtn: "复制调试 Prompt",
     privacyInline: "当前网站不会读取或上传你的图片，所有图片仅在本地浏览器预览。",
     saveHistoryBtn: "保存到历史记录",
     visualEyebrow: "VISUAL REPORT",
     visualTitle: "可视化报告",
-    visualDesc: "将 ChatGPT 按 Prompt 返回的严格 JSON 粘贴到这里，PersonaScope 会在本地生成雷达图、柱状图、标签云和结构化分析卡片。",
-    jsonPasteLabel: "粘贴 ChatGPT 返回的 JSON",
-    jsonHelper: "请粘贴 ChatGPT 返回的严格 JSON。如果出现字段不匹配，系统会尽量自动识别；但为了获得最佳效果，建议使用“开始分析”页生成的 Prompt，并要求 ChatGPT 只输出 JSON。",
-    jsonPlaceholder: "请粘贴完整 JSON，例如包含 basicProfile、scores、bigFive、personaTags、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。",
-    renderReportBtn: "生成可视化报告",
-    fillExampleJsonBtn: "填入示例 JSON",
+    visualDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。",
+    jsonPasteLabel: "手动导入报告数据",
+    jsonHelper: "开发者调试模式：可导入结构化报告 JSON，系统会尽量自动识别兼容字段。",
+    jsonPlaceholder: "可导入完整报告 JSON，例如包含 basicProfile、scores、bigFive、personaTags、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。",
+    renderReportBtn: "导入报告数据",
+    fillExampleJsonBtn: "生成示例报告",
     clearJsonBtn: "清空内容",
     localDashboardEyebrow: "LOCAL DASHBOARD",
-    localDashboardTitle: "半自动图文分析流程",
-    localDashboardStep1: "在“开始分析”生成 Prompt。",
-    localDashboardStep2: "将 Prompt、头像和社交截图一起发送给 ChatGPT。",
-    localDashboardStep3: "复制 ChatGPT 返回的 JSON。",
-    localDashboardStep4: "粘贴到左侧并生成本地可视化报告。",
-    localDashboardPrivacy: "本站不会调用 API，也不会上传你的 JSON 或图片。报告记录仅保存在当前浏览器 localStorage。",
-    waitingJsonEyebrow: "WAITING FOR JSON",
+    localDashboardTitle: "API-ready 分析流程",
+    localDashboardStep1: "上传头像、签名、文案与社交截图。",
+    localDashboardStep2: "点击开始 AI 分析。",
+    localDashboardStep3: "当前版本先使用本地 mock 数据生成报告。",
+    localDashboardStep4: "未来可替换为安全 API 服务自动返回报告数据。",
+    localDashboardPrivacy: "当前为静态原型，后续可接入安全 API 服务；报告记录仅保存在当前浏览器 localStorage。",
+    waitingJsonEyebrow: "WAITING FOR REPORT",
     waitingJsonTitle: "等待生成可视化报告",
-    waitingJsonDesc: "粘贴 ChatGPT 返回的 JSON 后，点击“生成可视化报告”。如果 ChatGPT 带了 ```json 代码块或少量说明文字，系统会尝试自动提取中间的 JSON。",
+    waitingJsonDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。也可以使用开发者调试模式手动导入报告数据。",
     chartBarTitle: "综合画像柱状图",
     chartRadarTitle: "Big Five 雷达图",
     tagCloudTitle: "人设标签云",
@@ -140,7 +140,7 @@ const translations = {
     emptyEvidence: "未提供证据",
     sampleEyebrow: "SAMPLE REPORT",
     sampleTitle: "《PersonaScope 示例报告：公开社交线索沟通画像》",
-    sampleDesc: "以下样例展示报告的结构与表达方式。真实报告需要将生成的 Prompt 复制到 ChatGPT 后完成。",
+    sampleDesc: "以下样例展示报告的结构与表达方式。当前静态原型会使用本地示例数据模拟分析结果。",
     sampleCard1Title: "一句话画像",
     sampleCard1Desc: "该对象更像是一个重视表达质感、强调自我节奏，同时希望被理解为独立而有审美判断的人。沟通时适合先建立共同语境，再进入具体话题。",
     sampleCard2Title: "外在人设判断",
@@ -180,9 +180,9 @@ const translations = {
     clearHistoryBtn: "清空全部记录",
     noHistoryEyebrow: "NO HISTORY",
     noHistoryTitle: "还没有保存任何记录",
-    noHistoryDesc: "保存 Prompt 或生成可视化报告后，会在这里看到最近记录。",
+    noHistoryDesc: "开始 AI 分析或生成可视化报告后，会在这里看到最近记录。",
     goAnalyzeBtn: "去开始分析",
-    promptRecord: "Prompt 记录",
+    promptRecord: "调试 Prompt 记录",
     reportRecord: "可视化报告记录",
     unnamedObject: "未命名对象",
     unnamedReport: "未命名报告",
@@ -194,9 +194,9 @@ const translations = {
     no: "否",
     screenshotMeta: "社交截图",
     imageCountUnit: "张",
-    viewPrompt: "查看 Prompt",
-    collapsePrompt: "收起 Prompt",
-    copyPrompt: "复制 Prompt",
+    viewPrompt: "查看调试 Prompt",
+    collapsePrompt: "收起调试 Prompt",
+    copyPrompt: "复制调试 Prompt",
     deleteRecord: "删除记录",
     viewReport: "查看报告",
     copyJson: "复制 JSON",
@@ -216,7 +216,7 @@ const translations = {
     heroEyebrow: "SOCIAL SIGNALS · COMMUNICATION PROFILE",
     heroTitleLine1: "Decode a Person’s",
     heroTitleLine2: "Social Signals",
-    heroDesc: "Turn avatars, bios, and recent social posts into a ChatGPT-ready communication-profile prompt and a structured report.",
+    heroDesc: "Organize avatars, bios, and recent social posts into a structured communication profile and visual analysis report.",
     heroPrimary: "Start Analysis",
     heroSecondary: "View Sample Report",
     previewKicker: "PREVIEW REPORT",
@@ -231,7 +231,7 @@ const translations = {
     previewMetricWarmth: "Expression Warmth",
     previewMetricBoundary: "Boundary Clarity",
     previewMetricOpenness: "Communication Openness",
-    previewMetricPresentation: "Self-Presentation",
+    previewMetricPresentation: "Self-Presentation Strength",
     previewFrameworkTitle: "Analysis Framework",
     previewFrameworkBigFive: "Big Five Model",
     previewFrameworkLanguage: "Linguistic Cues",
@@ -247,13 +247,13 @@ const translations = {
     workflowEyebrow: "HOW IT WORKS",
     workflowTitle: "Build a Communication Profile in 4 Steps",
     workflowStep1Label: "Step 1",
-    workflowStep1Title: "Upload Avatar",
+    workflowStep1Title: "Upload Social Signals",
     workflowStep2Label: "Step 2",
-    workflowStep2Title: "Add Bio and Social Posts",
+    workflowStep2Title: "Select Frameworks",
     workflowStep3Label: "Step 3",
-    workflowStep3Title: "Generate Professional Prompt",
+    workflowStep3Title: "Generate Profile",
     workflowStep4Label: "Step 4",
-    workflowStep4Title: "Copy to ChatGPT for Analysis",
+    workflowStep4Title: "View Visual Report",
     homeCompliance: "This tool only turns public social clues into probabilistic communication hypotheses. It is not psychological diagnosis, hiring advice, financial risk assessment, medical advice, or a basis for major decisions.",
     analyzeEyebrow: "START ANALYSIS",
     analyzeTitle: "Analyze",
@@ -275,7 +275,7 @@ const translations = {
     signatureLabel: "Personal Bio",
     signaturePlaceholder: "Enter a public bio, signature, or profile intro",
     post1Label: "Social Post 1",
-    post1Placeholder: "If you upload screenshots, also paste key text to make the prompt more accurate.",
+    post1Placeholder: "If you upload screenshots, also paste key text to make the communication profile more accurate.",
     post2Label: "Social Post 2",
     post2Placeholder: "Add the second social post or key screenshot text",
     post3Label: "Social Post 3",
@@ -292,36 +292,36 @@ const translations = {
     scenarioSelf: "Self Profile",
     questionLabel: "Main question",
     questionPlaceholder: "Example: How can I start a conversation naturally? What should I watch for when working together?",
-    generatePromptBtn: "Generate Analysis Prompt",
+    generatePromptBtn: "Start AI Analysis",
     resetBtn: "Clear Current Input",
-    generatedPromptEyebrow: "GENERATED PROMPT",
-    generatedPromptTitle: "Professional Analysis Prompt",
-    promptStatusEmpty: "Fill in the form to generate a prompt, then copy it to ChatGPT for the report.",
-    promptStatusReady: "Prompt generated. Copy it to ChatGPT with the avatar and screenshots, and ask for strict JSON.",
-    promptUsageNote: "After copying the prompt below, upload the avatar and social screenshots to ChatGPT, then paste the prompt for analysis.",
-    promptOutputEmpty: "After you fill in the form, a structured prompt will appear here.",
-    copyPromptBtn: "Copy Prompt",
+    generatedPromptEyebrow: "DEBUG MODE",
+    generatedPromptTitle: "Developer Debug Prompt",
+    promptStatusEmpty: "Start analysis after filling the form. A debug prompt will remain here as a fallback.",
+    promptStatusReady: "Analysis complete. A debug prompt was also generated as a no-API fallback.",
+    promptUsageNote: "This static prototype currently generates a local mock report. The prompt below is only a fallback for developer debugging.",
+    promptOutputEmpty: "After analysis starts, a developer debug prompt will appear here.",
+    copyPromptBtn: "Copy Debug Prompt",
     privacyInline: "This site does not read or upload your images. Image previews stay in your browser.",
     saveHistoryBtn: "Save to History",
     visualEyebrow: "VISUAL REPORT",
     visualTitle: "Visual Report",
-    visualDesc: "Paste the strict JSON returned by ChatGPT. PersonaScope will generate charts, tags, and structured report cards locally.",
-    jsonPasteLabel: "Paste JSON returned by ChatGPT",
-    jsonHelper: "Paste strict JSON from ChatGPT. If fields do not match, the system will try to recognize them automatically.",
-    jsonPlaceholder: "Paste complete JSON, such as fields including basicProfile, scores, bigFive, personaTags, communicationAdvice, riskPoints, approachStyle, evidenceChain, and disclaimer.",
-    renderReportBtn: "Generate Visual Report",
-    fillExampleJsonBtn: "Fill Example JSON",
+    visualDesc: "Once analysis is complete, the system will generate a visual communication profile report here.",
+    jsonPasteLabel: "Import Report Data Manually",
+    jsonHelper: "Developer debug mode: import structured report JSON and the system will try to recognize compatible fields.",
+    jsonPlaceholder: "Import complete report JSON, such as fields including basicProfile, scores, bigFive, personaTags, communicationAdvice, riskPoints, approachStyle, evidenceChain, and disclaimer.",
+    renderReportBtn: "Import Report Data",
+    fillExampleJsonBtn: "Generate Sample Report",
     clearJsonBtn: "Clear Content",
     localDashboardEyebrow: "LOCAL DASHBOARD",
-    localDashboardTitle: "Semi-Automated Visual Analysis Flow",
-    localDashboardStep1: "Generate a prompt in Analyze.",
-    localDashboardStep2: "Send the prompt, avatar, and screenshots to ChatGPT.",
-    localDashboardStep3: "Copy the JSON returned by ChatGPT.",
-    localDashboardStep4: "Paste it on the left and generate a local visual report.",
-    localDashboardPrivacy: "This site does not call APIs or upload your JSON or images. Report records stay in localStorage.",
-    waitingJsonEyebrow: "WAITING FOR JSON",
+    localDashboardTitle: "API-ready Analysis Flow",
+    localDashboardStep1: "Upload avatar, bio, posts, and social screenshots.",
+    localDashboardStep2: "Click Start AI Analysis.",
+    localDashboardStep3: "The current version generates a local mock report first.",
+    localDashboardStep4: "A secure API service can replace the mock data later.",
+    localDashboardPrivacy: "This is a static prototype that can later connect to a secure API service. Report records stay in localStorage.",
+    waitingJsonEyebrow: "WAITING FOR REPORT",
     waitingJsonTitle: "Waiting for Visual Report",
-    waitingJsonDesc: "Paste the JSON returned by ChatGPT, then click Generate Visual Report. If ChatGPT includes a JSON code block or short notes, the system will try to extract the JSON.",
+    waitingJsonDesc: "Once analysis is complete, the system will generate a visual communication profile report here. Developer debug mode can also import report data manually.",
     chartBarTitle: "Profile Score Bar Chart",
     chartRadarTitle: "Big Five Radar Chart",
     tagCloudTitle: "Persona Tag Cloud",
@@ -342,7 +342,7 @@ const translations = {
     emptyEvidence: "No evidence",
     sampleEyebrow: "SAMPLE REPORT",
     sampleTitle: "PersonaScope Sample Report: Public Social Clue Communication Profile",
-    sampleDesc: "This sample shows the structure and writing style of a report. A real report is completed after copying the generated prompt to ChatGPT.",
+    sampleDesc: "This sample shows the structure and writing style of a report. The current static prototype simulates analysis with local sample data.",
     sampleCard1Title: "One-Sentence Profile",
     sampleCard1Desc: "This person appears to value expressive quality, personal rhythm, and being understood as independent with aesthetic judgment.",
     sampleCard2Title: "Public Persona",
@@ -382,9 +382,9 @@ const translations = {
     clearHistoryBtn: "Clear All Records",
     noHistoryEyebrow: "NO HISTORY",
     noHistoryTitle: "No History Yet",
-    noHistoryDesc: "After saving a prompt or generating a visual report, recent records will appear here.",
+    noHistoryDesc: "After starting AI analysis or generating a visual report, recent records will appear here.",
     goAnalyzeBtn: "Start Analysis",
-    promptRecord: "Prompt Record",
+    promptRecord: "Debug Prompt Record",
     reportRecord: "Visual Report Record",
     unnamedObject: "Unnamed Profile",
     unnamedReport: "Untitled Report",
@@ -396,9 +396,9 @@ const translations = {
     no: "No",
     screenshotMeta: "Screenshots",
     imageCountUnit: "images",
-    viewPrompt: "View Prompt",
-    collapsePrompt: "Collapse Prompt",
-    copyPrompt: "Copy Prompt",
+    viewPrompt: "View Debug Prompt",
+    collapsePrompt: "Collapse Debug Prompt",
+    copyPrompt: "Copy Debug Prompt",
     deleteRecord: "Delete",
     viewReport: "View Report",
     copyJson: "Copy JSON",
@@ -535,8 +535,9 @@ function applyLanguage() {
     element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
   });
   if (languageToggle) {
-    languageToggle.textContent = currentLanguage === "zh" ? "EN" : "中";
+    languageToggle.dataset.currentLanguage = currentLanguage;
     languageToggle.setAttribute("aria-label", t("languageToggleAria"));
+    languageToggle.setAttribute("aria-pressed", currentLanguage === "en" ? "true" : "false");
   }
   updateGeneratedState(generatedPrompt, generatedRecordDraft);
   renderScreenshotGrid();
@@ -685,7 +686,7 @@ function isSupportedImage(file) {
   return ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
 }
 
-function collectFormData() {
+function collectAnalysisInput() {
   return {
     nickname: nicknameInput.value.trim(),
     signature: signatureInput.value.trim(),
@@ -697,8 +698,23 @@ function collectFormData() {
   };
 }
 
+function collectFormData() {
+  return collectAnalysisInput();
+}
+
 function hasMeaningfulInput(data) {
   return Boolean(data.nickname || data.signature || data.posts.some(Boolean) || data.question || data.hasAvatar || data.screenshotCount);
+}
+
+function buildAnalysisPayload(input) {
+  return {
+    version: "personascope.api-ready.v1",
+    locale: currentLanguage,
+    input,
+    frameworks: ["bigFive", "languagePsychology", "selfPresentation", "socialSignalAnalysis"],
+    outputFormat: "visualReportJson",
+    debugPrompt: buildPrompt(input),
+  };
 }
 
 function buildPrompt(data) {
@@ -722,7 +738,7 @@ function buildPrompt(data) {
 - 分析场景：${data.scenario}
 - ${avatarMaterial}
 - ${screenshotMaterial}
-- 请将本 Prompt 与已上传的头像/社交截图一并发送给 ChatGPT，才能完成图文综合分析。当前网站不调用 API，也不做 OCR。
+- 调试说明：本 Prompt 仅作为开发者调试或无 API 备用方案。当前静态原型不会上传图片，也不做 OCR。
 
 个性签名：
 ${normalizedSignature}
@@ -780,6 +796,43 @@ ${normalizedQuestion}
 }`;
 }
 
+function mockAnalysis(payload) {
+  const reportData = JSON.parse(JSON.stringify(SAMPLE_REPORT_DATA));
+  const input = payload.input || {};
+  const displayName = input.nickname || translations.zh.unnamedObject;
+  const filledPosts = (input.posts || []).filter(Boolean).length;
+  const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
+
+  reportData.basicProfile.oneSentence = `${displayName}呈现出审美敏感、边界清晰、重视表达质量的公开社交形象。`;
+  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的公开线索，TA 的表达更偏克制和有选择地暴露自我。当前静态原型使用本地 mock 数据生成报告，未来可替换为安全 API 返回的结构化分析结果。`;
+  reportData.basicProfile.confidenceReason = `样例分析参考了${hasVisualClues ? "头像或社交截图、" : ""}个性签名和 ${filledPosts} 条社交文案；由于当前未接入真实模型 API，结果仅用于演示前端报告流程。`;
+  reportData.evidenceChain = [
+    {
+      conclusion: "表达方式偏克制且重视边界",
+      evidence: input.signature || "个性签名或简介可作为公开自我呈现线索。",
+      source: "个性签名"
+    },
+    {
+      conclusion: "沟通切入适合具体而低压",
+      evidence: (input.posts || []).find(Boolean) || "近期文案将作为未来 API 分析的核心文本材料。",
+      source: filledPosts ? "社交文案" : "社交线索"
+    },
+    {
+      conclusion: "视觉资料适合作为辅助线索",
+      evidence: hasVisualClues ? `已提供头像或 ${input.screenshotCount} 张社交截图。` : "未提供头像或社交截图，当前报告主要依据文本线索。",
+      source: "头像/社交截图"
+    }
+  ];
+
+  return normalizeReportData(reportData);
+}
+
+async function runAnalysis(payload) {
+  // TODO: Replace mockAnalysis with secure backend API call.
+  // Do not expose API keys in frontend code.
+  return mockAnalysis(payload);
+}
+
 function updateGeneratedState(prompt, recordDraft) {
   generatedPrompt = prompt;
   generatedRecordDraft = recordDraft;
@@ -789,15 +842,16 @@ function updateGeneratedState(prompt, recordDraft) {
   promptStatus.textContent = prompt ? t("promptStatusReady") : t("promptStatusEmpty");
 }
 
-function handleSubmit(event) {
+async function handleSubmit(event) {
   event.preventDefault();
-  const data = collectFormData();
+  const data = collectAnalysisInput();
   if (!hasMeaningfulInput(data)) {
     showToast("请至少填写一项公开线索");
     return;
   }
 
-  const prompt = buildPrompt(data);
+  const payload = buildAnalysisPayload(data);
+  const prompt = payload.debugPrompt;
   updateGeneratedState(prompt, {
     id: createId(),
     type: "prompt",
@@ -805,7 +859,18 @@ function handleSubmit(event) {
     prompt,
     createdAt: new Date().toISOString(),
   });
-  showToast("严格 JSON 分析 Prompt 已生成");
+
+  try {
+    const reportData = await runAnalysis(payload);
+    renderVisualReport(reportData);
+    saveAnalysisHistory(reportData, JSON.stringify(reportData, null, 2));
+    jsonError.textContent = "";
+    document.querySelector("#visual-report").scrollIntoView({ behavior: "smooth" });
+    showToast("AI 分析已完成，当前使用本地 mock 报告");
+  } catch (error) {
+    console.warn("分析流程失败。", error);
+    showToast("分析失败，请稍后重试");
+  }
 }
 
 function handleReset() {
@@ -931,25 +996,25 @@ async function copyText(text) {
 
 function saveCurrentPrompt() {
   if (!generatedRecordDraft || !generatedPrompt) {
-    showToast("请先生成 Prompt");
+    showToast("请先开始 AI 分析");
     return;
   }
   const record = { ...generatedRecordDraft, id: createId(), createdAt: new Date().toISOString() };
   saveHistory([record, ...getHistory()].slice(0, 40));
   expandedHistoryId = record.id;
   renderHistory();
-  showToast("Prompt 已保存到历史记录");
+  showToast("调试 Prompt 已保存到历史记录");
 }
 
 function parseReportJson() {
   const rawInput = jsonInput.value.trim();
-  if (!rawInput) throw new Error("请先粘贴 ChatGPT 返回的 JSON。");
+  if (!rawInput) throw new Error("请先导入报告 JSON 数据。");
   const rawJson = extractJsonCandidate(rawInput);
   try {
     return { data: JSON.parse(rawJson), rawJson };
   } catch (error) {
     console.warn("JSON 解析失败。", error);
-    throw new Error("JSON 格式仍无法解析。请检查是否缺少逗号、引号或括号；也可以点击“填入示例 JSON”对照格式。");
+    throw new Error("JSON 格式仍无法解析。请检查是否缺少逗号、引号或括号；也可以点击“生成示例报告”对照格式。");
   }
 }
 
@@ -961,7 +1026,7 @@ function extractJsonCandidate(rawInput) {
 
   const start = text.indexOf("{");
   if (start === -1) {
-    throw new Error("没有检测到 JSON 对象。请粘贴以 { 开头的 JSON，或直接点击“填入示例 JSON”查看格式。");
+    throw new Error("没有检测到 JSON 对象。请导入以 { 开头的 JSON，或直接点击“生成示例报告”查看格式。");
   }
 
   let depth = 0;
@@ -1272,25 +1337,32 @@ function saveReportRecord(data, rawJson) {
   renderHistory();
 }
 
+function saveAnalysisHistory(reportData, rawJson) {
+  saveReportRecord(reportData, rawJson);
+}
+
 function handleRenderReport() {
   try {
     jsonError.textContent = "";
     const { data, rawJson } = parseReportJson();
     const normalizedData = normalizeReportData(data);
     renderVisualReport(normalizedData);
-    saveReportRecord(normalizedData, rawJson);
-    showToast("可视化报告已生成并保存");
+    saveAnalysisHistory(normalizedData, rawJson);
+    showToast("报告数据已导入并保存");
   } catch (error) {
     jsonError.textContent = error.message;
-    showToast("JSON 解析失败");
+    showToast("报告数据导入失败");
   }
 }
 
 function fillExampleJson() {
-  jsonInput.value = JSON.stringify(SAMPLE_REPORT_DATA, null, 2);
+  const normalizedData = mockAnalysis(buildAnalysisPayload(collectAnalysisInput()));
+  const rawJson = JSON.stringify(normalizedData, null, 2);
+  jsonInput.value = rawJson;
   jsonError.textContent = "";
-  showToast("示例 JSON 已填入，可直接生成报告");
-  jsonInput.focus();
+  renderVisualReport(normalizedData);
+  saveAnalysisHistory(normalizedData, rawJson);
+  showToast("示例报告已生成并保存");
 }
 
 function clearJsonReport() {
