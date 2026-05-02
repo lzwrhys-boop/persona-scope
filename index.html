@@ -49,7 +49,7 @@
           <span data-i18n="heroTitleLine2">社交信号</span>
         </h1>
         <p class="hero-desc" data-i18n="heroDesc">
-          整理头像、签名与近期社交内容，生成结构化沟通画像，并沉淀为可视化分析报告。
+          基于公开社交线索，生成可解释、可复核的沟通画像与可视化分析报告。
         </p>
         <div class="hero-actions">
           <a class="button primary" href="#analyze" data-i18n="heroPrimary">开始分析</a>
@@ -113,10 +113,10 @@
           <div class="preview-section">
             <p class="preview-section-title" data-i18n="previewFrameworkTitle">分析框架</p>
             <div class="preview-framework">
-              <span data-i18n="previewFrameworkBigFive">五大人格模型（Big Five）</span>
-              <span data-i18n="previewFrameworkLanguage">语言心理线索</span>
+              <span data-i18n="previewFrameworkLanguage">语言线索分析</span>
               <span data-i18n="previewFrameworkPresentation">自我呈现理论</span>
-              <span data-i18n="previewFrameworkSocial">社交表达线索分析</span>
+              <span data-i18n="previewFrameworkBigFive">Big Five 倾向参考</span>
+              <span data-i18n="previewFrameworkAvatar">头像视觉线索</span>
             </div>
           </div>
 
@@ -156,7 +156,7 @@
         <article class="value-card glass-card">
           <span>01</span>
           <h3 data-i18n="valuePersonaTitle">外在人设</h3>
-          <p data-i18n="valuePersonaDesc">识别对方在社交平台上想呈现的形象，区分真实人格与公开表达之间的距离。</p>
+          <p data-i18n="valuePersonaDesc">识别对方在社交平台上想呈现的公开形象，区分自我呈现与完整人格之间的边界。</p>
         </article>
         <article class="value-card glass-card">
           <span>02</span>
@@ -179,20 +179,7 @@
       <div class="section-heading">
         <p class="eyebrow" data-i18n="analyzeEyebrow">START ANALYSIS</p>
         <h2 data-i18n="analyzeTitle">开始分析</h2>
-        <p data-i18n="analyzeDesc">上传或输入最近三条社交内容。你可以手动粘贴文案，也可以上传朋友圈、小红书、微博、LinkedIn 等社交媒体截图。图文结合会让分析更准确。</p>
-      </div>
-
-      <div class="analysis-tip glass-card">
-        <div>
-          <p class="eyebrow" data-i18n="betterInputEyebrow">BETTER INPUT</p>
-          <h3 data-i18n="betterInputTitle">为了获得更准确的画像，建议同时提供：</h3>
-        </div>
-        <ul>
-          <li data-i18n="betterInputAvatar">头像</li>
-          <li data-i18n="betterInputBio">个性签名</li>
-          <li data-i18n="betterInputPosts">最近三条文案</li>
-          <li data-i18n="betterInputScreenshots">朋友圈或社交媒体截图</li>
-        </ul>
+        <p data-i18n="analyzeDesc">上传或输入公开社交线索，系统将基于语言线索、自我呈现与视觉线索生成沟通画像。</p>
       </div>
 
       <div class="analysis-layout">
@@ -276,20 +263,24 @@
         <aside class="result-card glass-card" aria-live="polite">
           <div class="result-header">
             <div>
-              <p class="eyebrow" data-i18n="generatedPromptEyebrow">DEBUG MODE</p>
-              <h3 data-i18n="generatedPromptTitle">开发者调试 Prompt</h3>
-              <p id="promptStatus" data-i18n="promptStatusEmpty">填写左侧信息后开始分析；调试 Prompt 会在这里备用。</p>
+              <p class="eyebrow" data-i18n="analysisPreviewEyebrow">ANALYSIS PREVIEW</p>
+              <h3 data-i18n="analysisPreviewTitle">分析结果预览</h3>
+              <p id="promptStatus" data-i18n="promptStatusEmpty">填写左侧公开社交线索后，系统将在这里生成沟通画像摘要、核心维度与可视化结果。</p>
             </div>
           </div>
-          <div class="usage-note" data-i18n="promptUsageNote">
-            当前为静态原型，主流程会先生成本地 mock 报告；下方 Prompt 仅作为无 API 备用调试材料。
-          </div>
-          <pre id="promptOutput" data-i18n="promptOutputEmpty">开始分析后，系统会在这里生成一段开发者调试 Prompt。</pre>
-          <div class="result-actions">
-            <button class="button ghost" id="copyPromptBtn" type="button" disabled data-i18n="copyPromptBtn">复制调试 Prompt</button>
-            <p class="privacy-inline" data-i18n="privacyInline">当前网站不会读取或上传你的图片，所有图片仅在本地浏览器预览。</p>
-            <button class="button ghost" id="saveHistoryBtn" type="button" disabled data-i18n="saveHistoryBtn">保存到历史记录</button>
-          </div>
+          <div class="analysis-preview" id="analysisPreview"></div>
+          <details class="debug-prompt-panel">
+            <summary data-i18n="generatedPromptTitle">开发者调试 Prompt</summary>
+            <div class="usage-note" data-i18n="promptUsageNote">
+              当前为静态原型，主流程会先生成本地 mock 报告；下方 Prompt 仅作为无 API 备用调试材料。
+            </div>
+            <pre id="promptOutput" data-i18n="promptOutputEmpty">开始分析后，系统会在这里生成一段开发者调试 Prompt。</pre>
+            <div class="result-actions">
+              <button class="button ghost" id="copyPromptBtn" type="button" disabled data-i18n="copyPromptBtn">复制调试 Prompt</button>
+              <p class="privacy-inline" data-i18n="privacyInline">当前网站不会读取或上传你的图片，所有图片仅在本地浏览器预览。</p>
+              <button class="button ghost" id="saveHistoryBtn" type="button" disabled data-i18n="saveHistoryBtn">保存到历史记录</button>
+            </div>
+          </details>
         </aside>
       </div>
     </section>
@@ -358,8 +349,8 @@
         </article>
         <article class="report-card glass-card">
           <span class="card-index">03</span>
-          <h3 data-i18n="sampleCard3Title">性格倾向推测</h3>
-          <p data-i18n="sampleCard3Desc">从大五人格角度看，开放性可能偏中高，尽责性中等偏高，外向性不宜过度判断。该推测来自文案中的审美表达、计划感和有限自我暴露。</p>
+          <h3 data-i18n="sampleCard3Title">Big Five 倾向参考</h3>
+          <p data-i18n="sampleCard3Desc">从公开表达线索看，开放性倾向可能偏中高，尽责性倾向中等偏高，外向性不宜过度判断。该参考来自文案中的审美表达、计划感和有限自我暴露。</p>
         </article>
         <article class="report-card glass-card">
           <span class="card-index">04</span>
@@ -389,7 +380,7 @@
         <article class="report-card glass-card">
           <span class="card-index">09</span>
           <h3 data-i18n="sampleCard9Title">置信度</h3>
-          <p data-i18n="sampleCard9Desc">中。原因是线索覆盖头像、签名与三条文本，但仍然属于公开自我呈现，无法代表完整人格与真实关系状态。</p>
+          <p data-i18n="sampleCard9Desc">中。原因是线索覆盖头像、签名与三条文本，但仍然属于公开自我呈现，无法代表完整人格或关系判断。</p>
         </article>
         <article class="report-card glass-card">
           <span class="card-index">10</span>
@@ -409,23 +400,28 @@
       <div class="theory-grid">
         <article class="theory-card glass-card">
           <span>FRAME 01</span>
-          <h3 data-i18n="theoryBigFiveTitle">Big Five 大五人格</h3>
-          <p data-i18n="theoryBigFiveDesc">用于描述开放性、尽责性、外向性、宜人性、情绪稳定性等人格倾向。PersonaScope 只使用它作为沟通倾向参考，不把任何结果当作人格定论。</p>
+          <h3 data-i18n="theoryLanguageTitle">语言线索分析：从表达方式识别沟通风格</h3>
+          <p data-i18n="theoryLanguageDesc">通过情绪词、自我指代、关系词、行动词、判断词与表达抽象度，观察公开文本中呈现出的沟通风格、情绪显性度、自我暴露程度与关系导向。</p>
         </article>
         <article class="theory-card glass-card">
           <span>FRAME 02</span>
-          <h3 data-i18n="theoryLanguageTitle">语言心理学</h3>
-          <p data-i18n="theoryLanguageDesc">语言中的情绪词、自我指代、关系词、行动词，可以反映表达方式、关系需求、控制感和自我关注程度。结论必须回到具体文本证据。</p>
+          <h3 data-i18n="theorySocialTitle">自我呈现：识别 TA 想被如何看见</h3>
+          <p data-i18n="theorySocialDesc">社交媒体内容并不等同于完整人格，而是公开场域中的形象管理。系统会观察头像、签名、文案与配图中呈现出的展示策略、边界意识、选择性暴露与公开人设。</p>
         </article>
         <article class="theory-card glass-card">
           <span>FRAME 03</span>
-          <h3 data-i18n="theorySocialTitle">社交媒体自我呈现</h3>
-          <p data-i18n="theorySocialDesc">头像、签名和动态不是完整人格，而是一个人想让外界看到的形象。公开表达更适合分析“呈现策略”，而不是判断真实本质。</p>
+          <h3 data-i18n="theoryBigFiveTitle">Big Five：公开表达中的人格倾向参考</h3>
+          <p data-i18n="theoryBigFiveDesc">Big Five 仅作为公开表达中的倾向参考，用于辅助观察开放性、尽责性、外向性、宜人性与情绪稳定性相关线索。它不是正式人格测评，也不构成人格定论。</p>
         </article>
         <article class="theory-card glass-card">
           <span>FRAME 04</span>
           <h3 data-i18n="theoryAvatarTitle">头像视觉线索</h3>
-          <p data-i18n="theoryAvatarDesc">头像只作为辅助线索，例如风格、距离感、色彩和场景氛围，不能单独判断一个人，更不能推断敏感属性或重大风险。</p>
+          <p data-i18n="theoryAvatarDesc">头像仅用于观察视觉自我呈现，例如真人/非真人、距离感、色彩冷暖、精修程度、专业感与亲和感。头像不能单独用于判断人格、能力、人品或关系倾向。</p>
+        </article>
+        <article class="theory-card glass-card">
+          <span>FRAME 05</span>
+          <h3 data-i18n="theoryStrategyTitle">综合沟通策略：从分析到可执行建议</h3>
+          <p data-i18n="theoryStrategyDesc">系统会综合语言线索、自我呈现、人格倾向参考与视觉线索，输出更适合的开场方式、沟通节奏、相处雷区与互动建议。建议仅用于提升沟通理解，不用于操控他人。</p>
         </article>
       </div>
 
