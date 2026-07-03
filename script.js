@@ -444,6 +444,7 @@ const questionInput = document.querySelector("#questionInput");
 const promptOutput = document.querySelector("#promptOutput");
 const promptStatus = document.querySelector("#promptStatus");
 const analysisPreview = document.querySelector("#analysisPreview");
+const debugPromptPanel = document.querySelector(".debug-prompt-panel");
 const copyPromptBtn = document.querySelector("#copyPromptBtn");
 const saveHistoryBtn = document.querySelector("#saveHistoryBtn");
 const jsonInput = document.querySelector("#jsonInput");
@@ -464,6 +465,14 @@ const unicornScene = document.querySelector("#unicornScene");
 
 const UNICORN_PROJECT_ID = "Yj3EFGnjZ1bEOuWjo6Ad";
 const UNICORN_SDK_URL = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.11/dist/unicornStudio.umd.js";
+const MOCK_MODE = true;
+const API_ENDPOINT = "https://your-api-domain.com/api/analyze";
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_TOTAL_IMAGE_BYTES = 20 * 1024 * 1024;
+const MAX_SCREENSHOT_COUNT = 6;
+const MAX_HISTORY_RECORDS = 20;
+const MAX_HISTORY_RAW_JSON_LENGTH = 12000;
+const MAX_HISTORY_PROMPT_LENGTH = 12000;
 const SAMPLE_REPORT_DATA = {
   basicProfile: {
     oneSentence: "该对象在公开社交线索中呈现出表达克制、边界清晰、重视内容质量的沟通风格。",
@@ -533,6 +542,7 @@ const SAMPLE_REPORT_DATA = {
 };
 
 let avatarDataUrl = "";
+let avatarFileSize = 0;
 let socialScreenshots = [];
 let generatedPrompt = "";
 let generatedRecordDraft = null;
@@ -585,6 +595,7 @@ function applyLanguage() {
     languageToggle.setAttribute("aria-label", t("languageToggleAria"));
     languageToggle.setAttribute("aria-pressed", currentLanguage === "en" ? "true" : "false");
   }
+  updateDebugPromptVisibility();
   updateGeneratedState(generatedPrompt, generatedRecordDraft);
   renderScreenshotGrid();
   if (renderedReportData) {
@@ -696,7 +707,75 @@ function getHistory() {
 }
 
 function saveHistory(records) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+  try {
+    const compactRecords = records.map(compactHistoryRecord).slice(0, MAX_HISTORY_RECORDS);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(compactRecords));
+    return true;
+  } catch (error) {
+    console.warn("历史记录保存失败。", error);
+    showToast("历史记录空间不足，本次结果未保存");
+    return false;
+  }
+}
+
+function updateDebugPromptVisibility() {
+  if (!debugPromptPanel) return;
+  debugPromptPanel.hidden = !MOCK_MODE;
+}
+
+function compactHistoryRecord(record) {
+  if (!record || typeof record !== "object") return record;
+  if (record.type === "report") return compactReportRecord(record);
+  return compactPromptRecord(record);
+}
+
+function compactPromptRecord(record) {
+  const prompt = String(record.prompt || "");
+  return {
+    id: record.id,
+    type: "prompt",
+    createdAt: record.createdAt,
+    nickname: truncateText(record.nickname || "", 120),
+    signature: truncateText(record.signature || "", 240),
+    posts: Array.isArray(record.posts) ? record.posts.map((post) => truncateText(post || "", 240)) : [],
+    scenario: record.scenario,
+    question: truncateText(record.question || "", 240),
+    hasAvatar: Boolean(record.hasAvatar),
+    screenshotCount: Number(record.screenshotCount || 0),
+    prompt: prompt.length > MAX_HISTORY_PROMPT_LENGTH ? `${prompt.slice(0, MAX_HISTORY_PROMPT_LENGTH)}\n\n[内容过长，已截断]` : prompt,
+  };
+}
+
+function compactReportData(data) {
+  return {
+    basicProfile: data.basicProfile,
+    scores: data.scores,
+    bigFive: data.bigFive,
+    personaTags: normalizeStringArray(data.personaTags).slice(0, 12),
+    avatarVisualCues: normalizeStringArray(data.avatarVisualCues).slice(0, 8),
+    communicationAdvice: normalizeStringArray(data.communicationAdvice).slice(0, 8),
+    riskPoints: normalizeStringArray(data.riskPoints).slice(0, 8),
+    approachStyle: normalizeStringArray(data.approachStyle).slice(0, 8),
+    evidenceChain: normalizeEvidenceChain(data.evidenceChain).slice(0, 8),
+    disclaimer: data.disclaimer,
+  };
+}
+
+function compactReportRecord(record) {
+  const reportData = record.reportData ? compactReportData(record.reportData) : null;
+  const fallbackJson = reportData ? JSON.stringify(reportData, null, 2) : "";
+  const rawJson = String(record.rawJson || fallbackJson);
+  return {
+    id: record.id,
+    type: "report",
+    createdAt: record.createdAt,
+    oneSentence: truncateText(record.oneSentence || reportData?.basicProfile?.oneSentence || "", 180),
+    confidence: record.confidence || reportData?.basicProfile?.confidence,
+    scores: record.scores || reportData?.scores,
+    bigFive: record.bigFive || reportData?.bigFive,
+    rawJson: rawJson.length > MAX_HISTORY_RAW_JSON_LENGTH ? fallbackJson : rawJson,
+    reportData,
+  };
 }
 
 function escapeHtml(value) {
@@ -731,7 +810,101 @@ function getSelectedScenario() {
 }
 
 function isSupportedImage(file) {
-  return ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
+  if (!file) return false;
+  return ["jpg", "jpeg", "png", "webp"].includes(getFileExtension(file.name)) || ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
+}
+
+function getFileExtension(name) {
+  return String(name || "").split(".").pop().toLowerCase();
+}
+
+function getCurrentImageBytes() {
+  return avatarFileSize + socialScreenshots.reduce((total, item) => total + Number(item.size || 0), 0);
+}
+
+function formatMb(bytes) {
+  return `${(bytes / 1024 / 1024).toFixed(1)}MB`;
+}
+
+async function readImageSignature(file) {
+  const bytes = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+  const ascii = Array.from(bytes).map((byte) => String.fromCharCode(byte)).join("");
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 && bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a) return "png";
+  if (ascii.startsWith("RIFF") && ascii.slice(8, 12) === "WEBP") return "webp";
+  return "";
+}
+
+function isFileTypeConsistent(file, signature) {
+  const extension = getFileExtension(file.name);
+  const normalizedType = file.type === "image/jpg" ? "image/jpeg" : file.type;
+  const signatureTypes = {
+    jpeg: ["jpg", "jpeg", "image/jpeg"],
+    png: ["png", "image/png"],
+    webp: ["webp", "image/webp"],
+  };
+  const allowed = signatureTypes[signature] || [];
+  const extensionOk = !extension || allowed.includes(extension);
+  const mimeOk = !normalizedType || allowed.includes(normalizedType);
+  return extensionOk && mimeOk;
+}
+
+function validateImageBudget(file, replacingBytes = 0) {
+  if (!file) return "请选择图片文件";
+  if (!file.size) return "图片文件为空或已损坏";
+  if (file.size > MAX_IMAGE_BYTES) return `单张图片不能超过 ${formatMb(MAX_IMAGE_BYTES)}`;
+  const totalBytes = getCurrentImageBytes() - replacingBytes + file.size;
+  if (totalBytes > MAX_TOTAL_IMAGE_BYTES) return `图片总大小不能超过 ${formatMb(MAX_TOTAL_IMAGE_BYTES)}`;
+  return "";
+}
+
+function verifyImageDecodes(file) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    const cleanup = () => URL.revokeObjectURL(objectUrl);
+    image.onload = () => {
+      cleanup();
+      if (!image.naturalWidth || !image.naturalHeight) {
+        reject(new Error("图片无法识别尺寸"));
+        return;
+      }
+      resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    };
+    image.onerror = () => {
+      cleanup();
+      reject(new Error("图片解码失败"));
+    };
+    image.src = objectUrl;
+  });
+}
+
+async function validateImageFile(file, options = {}) {
+  const budgetError = validateImageBudget(file, options.replacingBytes || 0);
+  if (budgetError) return { ok: false, message: budgetError };
+  if (!isSupportedImage(file)) {
+    return { ok: false, message: "请选择 jpg、jpeg、png 或 webp 图片" };
+  }
+  try {
+    const signature = await readImageSignature(file);
+    if (!signature) return { ok: false, message: "图片格式无法识别，可能是损坏或伪装文件" };
+    if (!isFileTypeConsistent(file, signature)) return { ok: false, message: "图片扩展名、类型和内容不一致" };
+    await verifyImageDecodes(file);
+    return { ok: true };
+  } catch (error) {
+    console.warn("图片校验失败。", error);
+    return { ok: false, message: "图片读取失败，请换一张未损坏的图片" };
+  }
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(String(reader.result || "")));
+    reader.addEventListener("error", () => reject(new Error("图片读取失败")));
+    reader.addEventListener("abort", () => reject(new Error("图片读取已取消")));
+    reader.readAsDataURL(file);
+  });
 }
 
 function collectAnalysisInput() {
@@ -878,9 +1051,31 @@ function mockAnalysis(payload) {
 }
 
 async function runAnalysis(payload) {
-  // TODO: Replace mockAnalysis with secure backend API call.
-  // Do not expose API keys in frontend code.
-  return mockAnalysis(payload);
+  if (MOCK_MODE) return mockAnalysis(payload);
+
+  const response = await fetch(API_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      locale: payload.locale,
+      input: payload.input,
+      frameworks: payload.frameworks,
+      outputFormat: payload.outputFormat,
+    }),
+  });
+
+  let result = null;
+  try {
+    result = await response.json();
+  } catch (error) {
+    throw new Error("API 返回格式不是有效 JSON");
+  }
+
+  if (!response.ok || !result?.ok) {
+    throw new Error(result?.message || "分析 API 请求失败");
+  }
+
+  return normalizeReportData(result.data);
 }
 
 function updateGeneratedState(prompt, recordDraft) {
@@ -940,7 +1135,7 @@ async function handleSubmit(event) {
   }
 
   const payload = buildAnalysisPayload(data);
-  const prompt = payload.debugPrompt;
+  const prompt = MOCK_MODE ? payload.debugPrompt : "";
   updateGeneratedState(prompt, {
     id: createId(),
     type: "prompt",
@@ -953,9 +1148,10 @@ async function handleSubmit(event) {
     const reportData = await runAnalysis(payload);
     renderVisualReport(reportData);
     renderAnalysisPreview(reportData);
+    promptStatus.textContent = t("promptStatusReady");
     saveAnalysisHistory(reportData, JSON.stringify(reportData, null, 2));
     jsonError.textContent = "";
-    showToast("AI 分析已完成，当前使用本地 mock 报告");
+    showToast(MOCK_MODE ? "AI 分析已完成，当前使用本地 mock 报告" : "AI 分析已完成");
   } catch (error) {
     console.warn("分析流程失败。", error);
     showToast("分析失败，请稍后重试");
@@ -964,6 +1160,7 @@ async function handleSubmit(event) {
 
 function handleReset() {
   avatarDataUrl = "";
+  avatarFileSize = 0;
   socialScreenshots = [];
   avatarInput.value = "";
   screenshotInput.value = "";
@@ -978,30 +1175,36 @@ function handleReset() {
   showToast("当前内容已清空");
 }
 
-function setAvatarFile(file) {
+async function setAvatarFile(file) {
   if (!file) {
     avatarDataUrl = "";
+    avatarFileSize = 0;
     avatarPreview.innerHTML = "+";
     removeAvatarBtn.hidden = true;
     return;
   }
-  if (!isSupportedImage(file)) {
-    showToast("请选择 jpg、jpeg、png 或 webp 图片");
+  const validation = await validateImageFile(file, { replacingBytes: avatarFileSize });
+  if (!validation.ok) {
+    showToast(validation.message);
     avatarInput.value = "";
     return;
   }
-  const reader = new FileReader();
-  reader.addEventListener("load", () => {
-    avatarDataUrl = String(reader.result || "");
+  try {
+    avatarDataUrl = await readFileAsDataUrl(file);
+    avatarFileSize = file.size;
     avatarPreview.innerHTML = `<img src="${avatarDataUrl}" alt="头像预览">`;
     removeAvatarBtn.hidden = false;
     showToast("头像已本地预览");
-  });
-  reader.readAsDataURL(file);
+  } catch (error) {
+    console.warn("头像读取失败。", error);
+    avatarInput.value = "";
+    showToast("头像读取失败，请重新选择图片");
+  }
 }
 
 function removeAvatar() {
   avatarDataUrl = "";
+  avatarFileSize = 0;
   avatarInput.value = "";
   avatarPreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
@@ -1020,25 +1223,38 @@ function renderScreenshotGrid() {
     .join("");
 }
 
-function addScreenshotFiles(files) {
+async function addScreenshotFiles(files) {
   const incomingFiles = Array.from(files || []);
-  const availableSlots = 6 - socialScreenshots.length;
+  const availableSlots = MAX_SCREENSHOT_COUNT - socialScreenshots.length;
   if (!incomingFiles.length) return;
   if (!availableSlots) {
-    showToast("最多只能上传 6 张社交截图");
+    showToast(`最多只能上传 ${MAX_SCREENSHOT_COUNT} 张社交截图`);
     return;
   }
-  const supportedFiles = incomingFiles.filter(isSupportedImage).slice(0, availableSlots);
-  if (incomingFiles.some((file) => !isSupportedImage(file))) showToast("已跳过不支持的图片格式");
-  if (incomingFiles.length > availableSlots) showToast(`最多 6 张，已添加前 ${availableSlots} 张`);
-  supportedFiles.forEach((file) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      socialScreenshots.push({ id: createId(), name: file.name, dataUrl: String(reader.result || "") });
+  let addedCount = 0;
+  let skippedCount = 0;
+  const filesToProcess = incomingFiles.slice(0, availableSlots);
+  if (incomingFiles.length > availableSlots) showToast(`最多 ${MAX_SCREENSHOT_COUNT} 张，已处理前 ${availableSlots} 张`);
+
+  for (const file of filesToProcess) {
+    const validation = await validateImageFile(file);
+    if (!validation.ok) {
+      skippedCount += 1;
+      showToast(validation.message);
+      continue;
+    }
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      socialScreenshots.push({ id: createId(), name: file.name, size: file.size, dataUrl });
       renderScreenshotGrid();
-    });
-    reader.readAsDataURL(file);
-  });
+      addedCount += 1;
+    } catch (error) {
+      skippedCount += 1;
+      console.warn("截图读取失败。", error);
+      showToast("截图读取失败，请重新选择图片");
+    }
+  }
+  if (addedCount && skippedCount) showToast(`已添加 ${addedCount} 张，跳过 ${skippedCount} 张异常图片`);
   screenshotInput.value = "";
 }
 
@@ -1091,10 +1307,10 @@ function saveCurrentPrompt() {
     return;
   }
   const record = { ...generatedRecordDraft, id: createId(), createdAt: new Date().toISOString() };
-  saveHistory([record, ...getHistory()].slice(0, 40));
-  expandedHistoryId = record.id;
+  const saved = saveHistory([record, ...getHistory()].slice(0, MAX_HISTORY_RECORDS));
+  if (saved) expandedHistoryId = record.id;
   renderHistory();
-  showToast("调试 Prompt 已保存到历史记录");
+  if (saved) showToast("调试 Prompt 已保存到历史记录");
 }
 
 function parseReportJson() {
@@ -1416,6 +1632,7 @@ function renderVisualReport(data) {
 }
 
 function saveReportRecord(data, rawJson) {
+  const compactData = compactReportData(data);
   const record = {
     id: createId(),
     type: "report",
@@ -1425,14 +1642,15 @@ function saveReportRecord(data, rawJson) {
     scores: data.scores,
     bigFive: data.bigFive,
     rawJson,
-    reportData: data,
+    reportData: compactData,
   };
-  saveHistory([record, ...getHistory()].slice(0, 40));
+  const saved = saveHistory([record, ...getHistory()].slice(0, MAX_HISTORY_RECORDS));
   renderHistory();
+  return saved;
 }
 
 function saveAnalysisHistory(reportData, rawJson) {
-  saveReportRecord(reportData, rawJson);
+  return saveReportRecord(reportData, rawJson);
 }
 
 function handleRenderReport() {
@@ -1441,8 +1659,8 @@ function handleRenderReport() {
     const { data, rawJson } = parseReportJson();
     const normalizedData = normalizeReportData(data);
     renderVisualReport(normalizedData);
-    saveAnalysisHistory(normalizedData, rawJson);
-    showToast("报告数据已导入并保存");
+    const saved = saveAnalysisHistory(normalizedData, rawJson);
+    showToast(saved ? "报告数据已导入并保存" : "报告数据已导入，历史记录未保存");
   } catch (error) {
     jsonError.textContent = error.message;
     showToast("报告数据导入失败");
@@ -1455,8 +1673,8 @@ function fillExampleJson() {
   jsonInput.value = rawJson;
   jsonError.textContent = "";
   renderVisualReport(normalizedData);
-  saveAnalysisHistory(normalizedData, rawJson);
-  showToast("示例报告已生成并保存");
+  const saved = saveAnalysisHistory(normalizedData, rawJson);
+  showToast(saved ? "示例报告已生成并保存" : "示例报告已生成，历史记录未保存");
 }
 
 function clearJsonReport() {

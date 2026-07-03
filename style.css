@@ -2491,6 +2491,10 @@ pre {
 }
 
 @media (max-width: 760px) {
+  .ambient {
+    display: none;
+  }
+
   main,
   .site-header,
   .site-footer {
@@ -2613,7 +2617,8 @@ pre {
   }
 
   .hero-title span {
-    white-space: nowrap;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   :lang(en) .hero-title {
