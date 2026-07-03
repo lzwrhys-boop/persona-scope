@@ -134,6 +134,7 @@ function createMockReport(input) {
 
 app.post("/api/analyze", async (req, res) => {
   try {
+    console.log("POST /api/analyze received", new Date().toISOString());
     const input = normalizeInput(req.body);
     const safety = checkSensitiveRequest(input);
     if (!safety.ok) {
