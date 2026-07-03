@@ -465,8 +465,8 @@ const unicornScene = document.querySelector("#unicornScene");
 
 const UNICORN_PROJECT_ID = "Yj3EFGnjZ1bEOuWjo6Ad";
 const UNICORN_SDK_URL = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.11/dist/unicornStudio.umd.js";
-const MOCK_MODE = true;
-const API_ENDPOINT = "https://your-api-domain.com/api/analyze";
+const MOCK_MODE = false;
+const API_ENDPOINT = "https://persona-scope-api.onrender.com/api/analyze";
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_TOTAL_IMAGE_BYTES = 20 * 1024 * 1024;
 const MAX_SCREENSHOT_COUNT = 6;
