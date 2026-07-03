@@ -1,7 +1,10 @@
+require("dotenv").config();
+
+const cors = require("cors");
 const express = require("express");
 const { validateReport } = require("./schema");
 const { checkSensitiveRequest } = require("./safety");
-const { buildModelMessages } = require("./prompt");
+const { ModelClientError, callModel, shouldUseMockModel } = require("./modelClient");
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -12,14 +15,30 @@ const MAX_TEXT_LENGTHS = {
   post: 2000,
 };
 
+function getAllowedOrigins() {
+  return String(process.env.ALLOWED_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
+function isLocalOrigin(origin) {
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin);
+}
+
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (isLocalOrigin(origin) || getAllowedOrigins().includes(origin)) return callback(null, true);
+    return callback(null, false);
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+}));
 app.use(express.json({ limit: "1mb" }));
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", process.env.ALLOWED_ORIGIN || "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (req.method === "OPTIONS") return res.status(204).end();
-  return next();
+app.get("/health", (req, res) => {
+  res.json({ ok: true });
 });
 
 function safeText(value, maxLength) {
@@ -113,7 +132,7 @@ function createMockReport(input) {
   };
 }
 
-app.post("/api/analyze", (req, res) => {
+app.post("/api/analyze", async (req, res) => {
   try {
     const input = normalizeInput(req.body);
     const safety = checkSensitiveRequest(input);
@@ -125,22 +144,28 @@ app.post("/api/analyze", (req, res) => {
       });
     }
 
-    // Future hook: pass these messages to a model provider from the server only.
-    buildModelMessages(input);
-
-    const report = createMockReport(input);
+    const modelResult = await callModel(input);
+    const report = modelResult.useMock ? createMockReport(input) : modelResult.data;
     const validation = validateReport(report);
     if (!validation.ok) {
-      return res.status(500).json({
+      console.warn("Report schema validation failed:", validation.errors);
+      return res.status(502).json({
         ok: false,
         code: "INVALID_REPORT_SCHEMA",
-        message: "报告结构校验失败",
+        message: "模型返回的报告结构不完整，请稍后重试",
       });
     }
 
-    return res.json({ ok: true, data: report });
+    return res.json({ ok: true, data: report, meta: { mockModel: modelResult.useMock } });
   } catch (error) {
     console.warn("Analyze request failed:", error.message);
+    if (error instanceof ModelClientError) {
+      return res.status(502).json({
+        ok: false,
+        code: error.code,
+        message: error.message,
+      });
+    }
     return res.status(400).json({
       ok: false,
       code: "BAD_REQUEST",
@@ -154,5 +179,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`PersonaScope mock API listening on http://localhost:${PORT}`);
+  console.log(`PersonaScope API listening on port ${PORT}`);
 });

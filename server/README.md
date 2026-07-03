@@ -1,19 +1,21 @@
-# PersonaScope Mock API
+# PersonaScope Render Backend
 
-This directory is a future backend preparation layer for PersonaScope.
+This directory contains the Node/Express backend prepared for Render deployment.
 
-It does **not** run on GitHub Pages. GitHub Pages can only host the current static frontend files. Deploy this `server/` directory separately to a Node-capable platform such as Vercel, Render, Railway, Fly.io, or your own Node server.
+GitHub Pages cannot run this backend. Keep the static frontend on GitHub Pages, and deploy this `server/` directory as a separate Render Web Service.
 
-## What This Server Does
+## What It Does
 
-- Exposes `POST /api/analyze`
-- Validates basic input fields and length limits
+- `GET /health` returns `{ "ok": true }`
+- `POST /api/analyze` accepts PersonaScope input and returns a report
+- Uses mock report data when `MOCK_MODEL=true` or model environment variables are incomplete
+- Calls a real OpenAI-compatible model endpoint only when `MOCK_MODEL=false` and all model variables are configured
+- Keeps API keys only in server environment variables
+- Validates model output with `schema.js`
 - Blocks sensitive-attribute requests before analysis
-- Returns a mock report that matches `schema.js`
-- Does not call a real model provider yet
-- Does not contain or expose any API key
+- Returns friendly errors without stack traces
 
-## Local Development
+## Local Run
 
 ```bash
 cd server
@@ -21,9 +23,10 @@ npm install
 npm start
 ```
 
-The mock API will run at:
+Default local URLs:
 
 ```text
+http://localhost:3000/health
 http://localhost:3000/api/analyze
 ```
 
@@ -37,55 +40,109 @@ curl -X POST http://localhost:3000/api/analyze \
 
 ## Environment Variables
 
-Copy `.env.example` to your deployment platform's environment settings when real model access is added later.
+Do not commit real secrets. Configure these in Render:
 
 ```text
 MODEL_API_KEY=
 MODEL_BASE_URL=
 MODEL_NAME=
-ALLOWED_ORIGIN=
+MOCK_MODEL=true
+ALLOWED_ORIGIN=https://yourname.github.io
 PORT=3000
 ```
 
-Do not commit real secrets.
+Notes:
 
-## Connecting The Frontend Later
+- `MOCK_MODEL=true`: always returns the local mock report.
+- `MOCK_MODEL=false`: calls the real model only if `MODEL_API_KEY`, `MODEL_BASE_URL`, and `MODEL_NAME` are all present.
+- `MODEL_BASE_URL` should be an OpenAI-compatible base URL, for example `https://api.openai.com/v1`.
+- `ALLOWED_ORIGIN` should be your GitHub Pages origin, for example `https://yourname.github.io`.
+- For multiple origins, use commas: `https://yourname.github.io,http://localhost:8890`.
+- Render sets `PORT` automatically. You usually do not need to set it manually.
 
-The current GitHub Pages frontend remains static and uses local mock data by default.
+## Render Deployment
 
-In `script.js`:
+1. Push this project to GitHub.
+2. In Render, create a new **Web Service**.
+3. Select the repository.
+4. Set **Root Directory** to:
+
+```text
+server
+```
+
+5. Set **Build Command**:
+
+```bash
+npm install
+```
+
+6. Set **Start Command**:
+
+```bash
+npm start
+```
+
+7. Add environment variables:
+
+```text
+MOCK_MODEL=true
+ALLOWED_ORIGIN=https://yourname.github.io
+MODEL_API_KEY=
+MODEL_BASE_URL=
+MODEL_NAME=
+```
+
+8. Deploy.
+9. Verify:
+
+```text
+https://your-render-service.onrender.com/health
+```
+
+Expected:
+
+```json
+{ "ok": true }
+```
+
+## Connect GitHub Pages Frontend
+
+The static frontend is still safe for GitHub Pages because `script.js` defaults to mock mode:
 
 ```js
 const MOCK_MODE = true;
-const API_ENDPOINT = "https://your-api-domain.com/api/analyze";
 ```
 
-For GitHub Pages, keep:
-
-```js
-const MOCK_MODE = true;
-```
-
-After deploying this server to Vercel / Render / Railway, set:
+After the Render backend is deployed and healthy, switch the frontend to API mode:
 
 ```js
 const MOCK_MODE = false;
-const API_ENDPOINT = "https://your-real-api-domain.com/api/analyze";
+const API_ENDPOINT = "https://your-render-service.onrender.com/api/analyze";
 ```
 
-If the frontend and backend are on different domains, set `ALLOWED_ORIGIN` on the backend to your GitHub Pages domain, for example:
+Commit and redeploy GitHub Pages.
+
+For the current mock-only GitHub Pages version, keep:
+
+```js
+const MOCK_MODE = true;
+```
+
+## Real Model Enablement
+
+When you are ready to call a real model:
+
+1. Set Render environment variables:
 
 ```text
-ALLOWED_ORIGIN=https://yourname.github.io
+MOCK_MODEL=false
+MODEL_API_KEY=your-secret-key-in-render-only
+MODEL_BASE_URL=https://provider-compatible-base-url/v1
+MODEL_NAME=your-model-name
 ```
 
-## Future Real Model Integration
-
-When you add a model provider:
-
-- Keep API keys only in server environment variables
-- Build model messages in `prompt.js`
-- Keep user input as structured `user` data
-- Validate every model response with `validateReport(data)`
-- Run sensitive-content filtering before and after the model call
-- Never return raw provider errors, raw prompts, or internal stack traces to the frontend
+2. Do not put keys in frontend code.
+3. Do not commit `.env` with real secrets.
+4. Test `/api/analyze`.
+5. If the model returns invalid JSON, the API will return a friendly error instead of crashing.
