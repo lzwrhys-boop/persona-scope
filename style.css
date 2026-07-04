@@ -1404,6 +1404,22 @@ h3 {
   }
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes progress-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(260%);
+  }
+}
+
 .metric-list {
   position: relative;
   display: grid;
@@ -1623,12 +1639,14 @@ textarea:focus {
 }
 
 .upload-box:hover,
-.upload-box.drag-over {
+.upload-box.drag-over,
+.upload-box.active {
   transform: translateY(-1px);
-  border-color: rgba(95, 244, 255, 0.66);
+  border-color: rgba(95, 244, 255, 0.9);
   background:
-    linear-gradient(135deg, rgba(95, 244, 255, 0.1), rgba(169, 139, 255, 0.06)),
-    rgba(255, 255, 255, 0.052);
+    linear-gradient(135deg, rgba(95, 244, 255, 0.16), rgba(169, 139, 255, 0.08)),
+    rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 0 4px rgba(95, 244, 255, 0.08);
 }
 
 .upload-box input {
@@ -1659,6 +1677,13 @@ textarea:focus {
   display: block;
   margin-top: 4px;
   color: var(--muted);
+}
+
+.button:disabled,
+.button.is-loading {
+  cursor: wait;
+  opacity: 0.68;
+  transform: none;
 }
 
 .upload-icon {
@@ -1825,6 +1850,66 @@ textarea:focus {
   padding: 8px 12px;
   font-size: 12px;
   font-style: normal;
+}
+
+.analysis-loading {
+  min-height: 360px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 34px;
+  border: 1px solid rgba(95, 244, 255, 0.18);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 50% 26%, rgba(95, 244, 255, 0.11), transparent 36%),
+    rgba(5, 7, 13, 0.46);
+  text-align: center;
+}
+
+.analysis-loading h4 {
+  margin: 0;
+  color: var(--text);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.analysis-loading p {
+  max-width: 420px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.analysis-loading small {
+  color: var(--cyan);
+  font-weight: 800;
+}
+
+.loading-spinner {
+  width: 38px;
+  height: 38px;
+  border: 2px solid rgba(159, 181, 232, 0.18);
+  border-top-color: var(--cyan);
+  border-radius: 999px;
+  animation: spin 0.9s linear infinite;
+}
+
+.loading-progress {
+  width: min(100%, 300px);
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(159, 181, 232, 0.12);
+}
+
+.loading-progress span {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--violet));
+  animation: progress-slide 1.25s ease-in-out infinite;
 }
 
 .analysis-preview-result {
@@ -2108,10 +2193,19 @@ pre {
   box-shadow: 0 0 18px rgba(95, 244, 255, 0.28);
 }
 
+.radar-wrap {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  overflow: visible;
+}
+
 .radar-chart {
   display: block;
-  width: min(100%, 420px);
+  width: min(100%, 460px);
+  max-width: 100%;
   margin: 0 auto;
+  overflow: visible;
 }
 
 .radar-ring {
@@ -2127,8 +2221,7 @@ pre {
 
 .radar-axis text {
   fill: var(--muted-strong);
-  font-size: 10px;
-  text-anchor: middle;
+  font-size: 8.5px;
   dominant-baseline: middle;
 }
 
@@ -2137,6 +2230,17 @@ pre {
   stroke: var(--cyan);
   stroke-width: 2;
   filter: drop-shadow(0 0 10px rgba(95, 244, 255, 0.35));
+}
+
+.radar-progress-list {
+  display: none;
+  width: 100%;
+  gap: 12px;
+}
+
+.radar-progress-row {
+  display: grid;
+  gap: 7px;
 }
 
 .tag-card {
@@ -2786,6 +2890,16 @@ pre {
   }
 }
 
+@media (max-width: 560px) {
+  .radar-chart {
+    display: none;
+  }
+
+  .radar-progress-list {
+    display: grid;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .unicorn-background {
     display: none;
@@ -2809,7 +2923,9 @@ pre {
   .preview-signal-dot,
   .preview-signal-line,
   .preview-scan-line,
-  .preview-track span {
+  .preview-track span,
+  .loading-spinner,
+  .loading-progress span {
     animation: none;
   }
 

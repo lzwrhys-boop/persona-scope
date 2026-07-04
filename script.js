@@ -12,9 +12,9 @@ const translations = {
     navTheory: "理论依据",
     navHistory: "历史记录",
     heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
-    heroTitleLine1: "上传正脸照片，",
+    heroTitleLine1: "从一张照片开始，",
     heroTitleLine2: "生成沟通画像",
-    heroDesc: "基于表情、姿态、镜头状态与视觉呈现，提炼第一印象、Big Five 风格倾向和沟通建议。",
+    heroDesc: "基于画面中的公开呈现，提炼第一感觉、沟通倾向和开场建议。",
     heroPrimary: "上传照片开始分析",
     heroSecondary: "查看分析框架",
     previewKicker: "预览报告",
@@ -34,7 +34,7 @@ const translations = {
     previewFrameworkBigFive: "Big Five 倾向参考",
     previewFrameworkLanguage: "补充文本线索",
     previewFrameworkPresentation: "视觉呈现",
-    previewFrameworkAvatar: "正脸照片线索",
+    previewFrameworkAvatar: "画面呈现",
     previewFrameworkSocial: "沟通建议",
     previewFooter: "基于用户提供的视觉呈现与补充信息生成，仅供沟通参考。",
     valuePersonaTitle: "第一印象",
@@ -46,7 +46,7 @@ const translations = {
     workflowEyebrow: "HOW IT WORKS",
     workflowTitle: "三步生成沟通画像",
     workflowStep1Label: "步骤 1",
-    workflowStep1Title: "上传正脸照片",
+    workflowStep1Title: "上传照片",
     workflowStep2Label: "步骤 2",
     workflowStep2Title: "填写可选问题",
     workflowStep3Label: "步骤 3",
@@ -55,16 +55,16 @@ const translations = {
     workflowStep4Title: "查看沟通建议",
     homeCompliance: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。",
     analyzeEyebrow: "START ANALYSIS",
-    analyzeTitle: "开始分析",
-    analyzeDesc: "上传一张清晰正脸照片，也可以补充你想了解的问题。高级信息默认收起，按需填写即可。",
+    analyzeTitle: "从一张照片开始",
+    analyzeDesc: "基于画面中的公开呈现，生成一份沟通画像。",
     nicknameLabel: "分析对象昵称",
     optionalLabel: "可选",
     optionalQuestionLabel: "选填",
     nicknamePlaceholder: "例如：某位朋友 / 客户 A / 自我画像",
-    avatarLabel: "正脸照片",
+    avatarLabel: "照片",
     removeAvatar: "删除当前照片",
-    avatarUploadTitle: "上传一张清晰正脸照片",
-    avatarUploadDesc: "建议使用光线清晰、无遮挡、正脸或近似正脸照片",
+    avatarUploadTitle: "拖入照片，或点击选择",
+    avatarUploadDesc: "支持 JPG、PNG、WEBP，建议使用自然、清晰、无遮挡的人像照片",
     advancedSummary: "高级补充信息",
     signatureLabel: "个性签名",
     signaturePlaceholder: "输入公开可见的个性签名、简介或主页文案",
@@ -87,13 +87,20 @@ const translations = {
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
     generatePromptBtn: "生成沟通画像",
+    generatingBtn: "正在生成...",
     resetBtn: "清空当前内容",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
-    analysisPreviewTitle: "分析结果预览",
-    analysisWaitingTitle: "等待开始分析",
-    analysisWaitingCueLanguage: "语言线索分析",
-    analysisWaitingCuePresentation: "自我呈现识别",
-    analysisWaitingCueStrategy: "沟通策略生成",
+    analysisPreviewTitle: "你的沟通画像会出现在这里",
+    analysisWaitingTitle: "你的沟通画像会出现在这里",
+    analysisWaitingCueLanguage: "第一感觉",
+    analysisWaitingCuePresentation: "沟通倾向",
+    analysisWaitingCueStrategy: "开场建议",
+    loadingTitle: "正在生成你的沟通画像",
+    loadingDesc: "请稍等几秒，系统正在整理第一印象、沟通倾向与开场建议。",
+    loadingStage1: "正在读取输入",
+    loadingStage2: "正在整理视觉呈现线索",
+    loadingStage3: "正在生成沟通画像",
+    loadingStage4: "正在生成开场建议",
     analysisSummaryTitle: "沟通画像摘要",
     analysisDimensionsTitle: "核心维度",
     analysisTagsTitle: "关键标签",
@@ -101,7 +108,7 @@ const translations = {
     viewVisualReportBtn: "查看可视化报告",
     generatedPromptEyebrow: "DEVELOPER DEBUG",
     generatedPromptTitle: "开发者调试 Prompt",
-    promptStatusEmpty: "上传正脸照片并填写可选问题后，系统将在这里生成第一印象、沟通倾向和建议摘要。",
+    promptStatusEmpty: "分析完成后，你会看到第一感觉、沟通倾向、开场建议和需要避开的表达。",
     promptStatusReady: "分析已完成。你可以查看右侧摘要，或进入完整可视化报告。",
     promptUsageNote: "当前为静态原型，主流程会先生成本地 mock 报告；下方 Prompt 仅作为无 API 备用调试材料。",
     promptOutputEmpty: "开始分析后，系统会在这里生成一段开发者调试 Prompt。",
@@ -119,7 +126,7 @@ const translations = {
     clearJsonBtn: "清空内容",
     localDashboardEyebrow: "LOCAL DASHBOARD",
     localDashboardTitle: "API-ready 分析流程",
-    localDashboardStep1: "上传正脸照片，也可以填写高级补充信息。",
+    localDashboardStep1: "上传照片，也可以填写高级补充信息。",
     localDashboardStep2: "点击开始 AI 分析。",
     localDashboardStep3: "当前版本先使用本地 mock 数据生成报告。",
     localDashboardStep4: "未来可替换为安全 API 服务自动返回报告数据。",
@@ -173,14 +180,14 @@ const translations = {
     theoryEyebrow: "FRAMEWORK",
     theoryTitle: "理论依据",
     theoryDesc: "PersonaScope 采用视觉呈现沟通画像模型：照片视觉呈现 → Big Five 视觉呈现倾向 → 用户问题 → 沟通建议。",
-    theoryLanguageTitle: "语言线索分析：从表达方式识别沟通风格",
+    theoryLanguageTitle: "补充信息：让建议更贴近场景",
     theoryLanguageDesc: "通过情绪词、自我指代、关系词、行动词、判断词与表达抽象度，观察公开文本中呈现出的沟通风格、情绪显性度、自我暴露程度与关系导向。",
     theorySocialTitle: "自我呈现：识别 TA 想被如何看见",
     theorySocialDesc: "照片和补充信息只用于观察视觉呈现与沟通场景，帮助生成更低压、更具体的沟通建议。",
     theoryBigFiveTitle: "Big Five：视觉呈现倾向参考",
-    theoryBigFiveDesc: "Big Five 仅作为视觉呈现倾向框架，用于辅助整理开放、秩序、外放、亲和与稳定感相关的第一印象线索。",
-    theoryAvatarTitle: "正脸照片线索：第一印象与视觉距离感",
-    theoryAvatarDesc: "照片仅用于观察视觉呈现，例如镜头距离、表情状态、姿态、光线与清晰度；结论只能作为沟通参考。",
+    theoryBigFiveDesc: "Big Five 仅作为视觉呈现倾向框架，用于辅助整理画面可能带来的沟通感受。",
+    theoryAvatarTitle: "画面呈现",
+    theoryAvatarDesc: "照片仅用于整理画面中的公开呈现，结论只能作为沟通参考。",
     theoryStrategyTitle: "综合沟通策略：从分析到可执行建议",
     theoryStrategyDesc: "系统会综合视觉呈现和用户问题，输出更适合的开场方式、沟通节奏、表达避坑与互动建议。建议仅用于提升沟通理解，不用于操控他人。",
     principleTitle: "边界原则",
@@ -225,7 +232,7 @@ const translations = {
     navTheory: "Framework",
     navHistory: "History",
     heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
-    heroTitleLine1: "Upload a Face Photo,",
+    heroTitleLine1: "Start with One Photo,",
     heroTitleLine2: "Generate a Profile",
     heroDesc: "Extract first impressions, Big Five visual-presentation tendencies, and communication guidance from expression, posture, camera state, and visual presentation.",
     heroPrimary: "Upload Photo to Analyze",
@@ -247,7 +254,7 @@ const translations = {
     previewFrameworkBigFive: "Big Five Tendency Reference",
     previewFrameworkLanguage: "Supplemental Text",
     previewFrameworkPresentation: "Visual Presentation",
-    previewFrameworkAvatar: "Face Photo Cues",
+    previewFrameworkAvatar: "Image Presence",
     previewFrameworkSocial: "Communication Guidance",
     previewFooter: "Generated from user-provided visual presentation and optional context. For communication reference only.",
     valuePersonaTitle: "First Impression",
@@ -259,7 +266,7 @@ const translations = {
     workflowEyebrow: "HOW IT WORKS",
     workflowTitle: "Build a Communication Profile in 3 Steps",
     workflowStep1Label: "Step 1",
-    workflowStep1Title: "Upload Face Photo",
+    workflowStep1Title: "Upload Photo",
     workflowStep2Label: "Step 2",
     workflowStep2Title: "Add Optional Question",
     workflowStep3Label: "Step 3",
@@ -268,16 +275,16 @@ const translations = {
     workflowStep4Title: "View Guidance",
     homeCompliance: "PersonaScope generates communication profiles only from user-provided visual presentation and optional context. It supports first-impression and communication-style reference only.",
     analyzeEyebrow: "START ANALYSIS",
-    analyzeTitle: "Analyze",
-    analyzeDesc: "Upload one clear face photo and optionally add what you want to understand. Advanced details stay collapsed unless needed.",
+    analyzeTitle: "Start with one photo",
+    analyzeDesc: "Generate a communication profile from the public presentation in the image.",
     nicknameLabel: "Profile nickname",
     optionalLabel: "Optional",
     optionalQuestionLabel: "Optional",
     nicknamePlaceholder: "Example: a friend / client A / self profile",
-    avatarLabel: "Face Photo",
+    avatarLabel: "Photo",
     removeAvatar: "Remove photo",
-    avatarUploadTitle: "Upload one clear face photo",
-    avatarUploadDesc: "Use a clear, unobstructed, front-facing or near-front-facing photo.",
+    avatarUploadTitle: "Drop a photo, or click to choose",
+    avatarUploadDesc: "Supports JPG, PNG, and WEBP. Use a natural, clear portrait without heavy obstruction.",
     advancedSummary: "Advanced Details",
     signatureLabel: "Personal Bio",
     signaturePlaceholder: "Enter a public bio, signature, or profile intro",
@@ -300,13 +307,20 @@ const translations = {
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
     generatePromptBtn: "Generate Profile",
+    generatingBtn: "Generating...",
     resetBtn: "Clear Current Input",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
-    analysisPreviewTitle: "Analysis Preview",
-    analysisWaitingTitle: "Waiting for Analysis",
-    analysisWaitingCueLanguage: "Linguistic Cues",
-    analysisWaitingCuePresentation: "Self-Presentation",
-    analysisWaitingCueStrategy: "Communication Strategy",
+    analysisPreviewTitle: "Your communication profile will appear here",
+    analysisWaitingTitle: "Your communication profile will appear here",
+    analysisWaitingCueLanguage: "First feeling",
+    analysisWaitingCuePresentation: "Communication tendency",
+    analysisWaitingCueStrategy: "Opening advice",
+    loadingTitle: "Generating your communication profile",
+    loadingDesc: "Please wait a few seconds while the system organizes first impressions, communication tendencies, and opening advice.",
+    loadingStage1: "Reading input",
+    loadingStage2: "Organizing visual-presentation cues",
+    loadingStage3: "Generating communication profile",
+    loadingStage4: "Generating opening advice",
     analysisSummaryTitle: "Communication Profile Summary",
     analysisDimensionsTitle: "Key Dimensions",
     analysisTagsTitle: "Key Tags",
@@ -314,7 +328,7 @@ const translations = {
     viewVisualReportBtn: "View Visual Report",
     generatedPromptEyebrow: "DEVELOPER DEBUG",
     generatedPromptTitle: "Developer Debug Prompt",
-    promptStatusEmpty: "Upload a face photo and optional question to generate a first-impression and communication profile summary.",
+    promptStatusEmpty: "After analysis, you will see the first feeling, communication tendency, opening advice, and phrases to avoid.",
     promptStatusReady: "Analysis complete. You can review the summary here or open the full visual report.",
     promptUsageNote: "This static prototype currently generates a local mock report. The prompt below is only a fallback for developer debugging.",
     promptOutputEmpty: "After analysis starts, a developer debug prompt will appear here.",
@@ -332,7 +346,7 @@ const translations = {
     clearJsonBtn: "Clear Content",
     localDashboardEyebrow: "LOCAL DASHBOARD",
     localDashboardTitle: "API-ready Analysis Flow",
-    localDashboardStep1: "Upload avatar, bio, posts, and social screenshots.",
+    localDashboardStep1: "Upload a photo, with optional advanced details.",
     localDashboardStep2: "Click Start AI Analysis.",
     localDashboardStep3: "The current version generates a local mock report first.",
     localDashboardStep4: "A secure API service can replace the mock data later.",
@@ -431,9 +445,10 @@ const translations = {
 };
 
 const form = document.querySelector("#personaForm");
-const avatarInput = document.querySelector("#avatarInput");
-const avatarPreview = document.querySelector("#avatarPreview");
-const avatarDropZone = document.querySelector("#avatarDropZone");
+const submitButton = form.querySelector('button[type="submit"]');
+const faceImageInput = document.querySelector("#faceImageInput") || document.querySelector("#avatarInput");
+const facePreview = document.querySelector("#facePreview") || document.querySelector("#avatarPreview");
+const faceUploadZone = document.querySelector("#faceUploadZone") || document.querySelector("#avatarDropZone");
 const removeAvatarBtn = document.querySelector("#removeAvatarBtn");
 const screenshotInput = document.querySelector("#screenshotInput");
 const screenshotDropZone = document.querySelector("#screenshotDropZone");
@@ -536,7 +551,7 @@ const SAMPLE_REPORT_DATA = {
     },
     {
       conclusion: "视觉呈现更偏克制",
-      evidence: "当前样例只知道照片上传状态，不能描述具体表情、姿态或镜头细节。",
+      evidence: "当前样例只知道照片上传状态，不能描述具体画面细节。",
       source: "来自照片状态"
     }
   ],
@@ -554,6 +569,7 @@ let unicornSceneInstance = null;
 let unicornSdkPromise = null;
 let currentLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY) === "en" ? "en" : "zh";
 let renderedReportData = null;
+let loadingStageTimer = null;
 
 function t(key, replacements = {}) {
   const value = translations[currentLanguage]?.[key] ?? translations.zh[key] ?? key;
@@ -582,6 +598,45 @@ function getAnalysisWaitingHtml() {
       </div>
     </div>
   `;
+}
+
+function getAnalysisLoadingHtml(stageText = t("loadingStage1")) {
+  return `
+    <div class="analysis-loading">
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <h4>${t("loadingTitle")}</h4>
+      <p>${t("loadingDesc")}</p>
+      <div class="loading-progress" aria-hidden="true"><span></span></div>
+      <small id="loadingStageText">${escapeHtml(stageText)}</small>
+    </div>
+  `;
+}
+
+function setSubmitLoading(isLoading) {
+  if (!submitButton) return;
+  submitButton.disabled = isLoading;
+  submitButton.textContent = isLoading ? t("generatingBtn") : t("generatePromptBtn");
+  submitButton.classList.toggle("is-loading", isLoading);
+}
+
+function startAnalysisLoading() {
+  const stages = [t("loadingStage1"), t("loadingStage2"), t("loadingStage3"), t("loadingStage4")];
+  let stageIndex = 0;
+  window.clearInterval(loadingStageTimer);
+  setSubmitLoading(true);
+  promptStatus.textContent = t("loadingDesc");
+  analysisPreview.innerHTML = getAnalysisLoadingHtml(stages[stageIndex]);
+  loadingStageTimer = window.setInterval(() => {
+    stageIndex = Math.min(stageIndex + 1, stages.length - 1);
+    const stageNode = document.querySelector("#loadingStageText");
+    if (stageNode) stageNode.textContent = stages[stageIndex];
+  }, 1300);
+}
+
+function stopAnalysisLoading() {
+  window.clearInterval(loadingStageTimer);
+  loadingStageTimer = null;
+  setSubmitLoading(false);
 }
 
 function applyLanguage() {
@@ -946,13 +1001,13 @@ function buildPrompt(data) {
   const normalizedQuestion = data.question || "未提供，请根据分析场景自行给出最有价值的沟通建议。";
   const normalizedPosts = data.posts.map((post, index) => `${index + 1}. ${post || "未提供"}`).join("\n");
   const photoMaterial = data.hasAvatar
-    ? "【正脸照片】用户已上传照片。但当前前端只发送是否上传的状态，未把图片像素传给模型；如果没有额外视觉描述，不得编造表情、姿态、镜头状态或外观细节。"
-    : "【正脸照片】用户未上传照片，请不要基于照片进行推测。";
+    ? "【照片】用户已上传照片。但当前前端只发送是否上传的状态，未把图片像素传给模型；如果没有额外视觉描述，不得编造画面细节。"
+    : "【照片】用户未上传照片，请不要基于照片进行推测。";
   const screenshotMaterial = data.screenshotCount
     ? `【高级补充图片】用户已选择 ${data.screenshotCount} 张补充图片。但当前前端不会把图片内容发送给模型；除非用户在文本中描述，否则不要分析图片细节。`
     : "【高级补充图片】用户未提供补充图片。";
 
-  return `你是一名专业、谨慎、重证据的中文沟通画像分析助手。请基于正脸照片的视觉呈现描述与用户补充问题，为「${displayName}」生成沟通画像。
+  return `你是一名专业、谨慎、重证据的中文沟通画像分析助手。请基于照片中的公开呈现描述与用户补充问题，为「${displayName}」生成沟通画像。
 
 重要：最终只输出严格 JSON。不要输出 Markdown，不要输出解释文字，不要使用代码块包裹 JSON。
 
@@ -973,10 +1028,10 @@ ${normalizedPosts}
 ${normalizedQuestion}
 
 分析要求：
-1. 分析任务是：基于正脸照片的视觉呈现描述与用户补充问题，生成沟通画像。
+1. 分析任务是：基于照片中的公开呈现描述与用户补充问题，生成沟通画像。
 2. Big Five 只能作为“视觉呈现倾向”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
 3. 所有结论都必须使用“可能、倾向、从照片呈现看、从补充信息看”等克制措辞。
-4. 如果只知道用户上传了照片，但没有获得照片内容，请明确降低置信度，主要基于用户问题和补充文字给出保守建议，不要假装看到了表情、姿态或镜头状态。
+4. 如果只知道用户上传了照片，但没有获得照片内容，请明确降低置信度，主要基于用户问题和补充文字给出保守建议，不要假装看到了具体画面细节。
 5. 结果只聚焦：一句话第一印象、Big Five 视觉呈现倾向、怎么开口、哪些话别说、为什么这么判断。
 6. 所有分数必须是 0-100 的倾向分数。
 7. 每个关键结论必须回到用户提供的照片状态、补充问题、签名或补充文字。
@@ -1014,7 +1069,7 @@ ${normalizedQuestion}
     {
       "conclusion": "",
       "evidence": "",
-      "source": "正脸照片状态/用户问题/高级补充文本/补充图片状态"
+      "source": "照片状态/用户问题/高级补充文本/补充图片状态"
     }
   ],
   "disclaimer": "${DISCLAIMER}"
@@ -1029,7 +1084,7 @@ function mockAnalysis(payload) {
   const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
 
   reportData.basicProfile.oneSentence = `${displayName}从当前资料看，可能给人一种清爽、有边界、适合低压开场的第一印象。`;
-  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的视觉呈现状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前前端 mock 不读取照片内容，因此不会描述具体表情、姿态或镜头细节。`;
+  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的视觉呈现状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前前端 mock 不读取照片内容，因此不会描述具体画面细节。`;
   reportData.basicProfile.confidenceReason = `样例分析参考了${hasVisualClues ? "照片/补充图片上传状态、" : ""}可选问题和 ${filledPosts} 条高级补充文字；由于 mock 模式不读取图片内容，结论仅用于演示新版流程。`;
   reportData.evidenceChain = [
     {
@@ -1040,7 +1095,7 @@ function mockAnalysis(payload) {
     {
       conclusion: "Big Five 只能作为视觉呈现倾向参考",
       evidence: "当前链路没有把照片内容传给模型，不能把上传状态当作具体视觉证据。",
-      source: "正脸照片状态"
+      source: "照片状态"
     },
     {
       conclusion: "补充文字能帮助建议更贴近场景",
@@ -1130,9 +1185,10 @@ function renderAnalysisPreview(data) {
 
 async function handleSubmit(event) {
   event.preventDefault();
+  if (submitButton?.disabled) return;
   const data = collectAnalysisInput();
   if (!hasMeaningfulInput(data)) {
-    showToast("请至少填写一项公开线索");
+    showToast("请先上传照片，或填写一个想了解的问题");
     return;
   }
 
@@ -1146,8 +1202,10 @@ async function handleSubmit(event) {
     createdAt: new Date().toISOString(),
   });
 
+  startAnalysisLoading();
   try {
     const reportData = await runAnalysis(payload);
+    stopAnalysisLoading();
     renderVisualReport(reportData);
     renderAnalysisPreview(reportData);
     promptStatus.textContent = t("promptStatusReady");
@@ -1156,17 +1214,21 @@ async function handleSubmit(event) {
     showToast(MOCK_MODE ? "AI 分析已完成，当前使用本地 mock 报告" : "AI 分析已完成");
   } catch (error) {
     console.warn("分析流程失败。", error);
-    showToast("分析失败，请稍后重试");
+    stopAnalysisLoading();
+    analysisPreview.innerHTML = getAnalysisWaitingHtml();
+    promptStatus.textContent = t("promptStatusEmpty");
+    showToast(error?.message || "分析失败，请稍后重试");
   }
 }
 
 function handleReset() {
+  stopAnalysisLoading();
   avatarDataUrl = "";
   avatarFileSize = 0;
   socialScreenshots = [];
-  avatarInput.value = "";
+  faceImageInput.value = "";
   screenshotInput.value = "";
-  avatarPreview.innerHTML = "+";
+  facePreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
   renderScreenshotGrid();
   const defaultScenario = document.querySelector('input[name="scenario"][value="恋爱了解"]');
@@ -1177,29 +1239,29 @@ function handleReset() {
   showToast("当前内容已清空");
 }
 
-async function setAvatarFile(file) {
+async function handleFacePhotoFile(file) {
   if (!file) {
     avatarDataUrl = "";
     avatarFileSize = 0;
-    avatarPreview.innerHTML = "+";
+    facePreview.innerHTML = "+";
     removeAvatarBtn.hidden = true;
     return;
   }
   const validation = await validateImageFile(file, { replacingBytes: avatarFileSize });
   if (!validation.ok) {
     showToast(validation.message);
-    avatarInput.value = "";
+    faceImageInput.value = "";
     return;
   }
   try {
     avatarDataUrl = await readFileAsDataUrl(file);
     avatarFileSize = file.size;
-    avatarPreview.innerHTML = `<img src="${avatarDataUrl}" alt="照片预览">`;
+    facePreview.innerHTML = `<img src="${avatarDataUrl}" alt="照片预览">`;
     removeAvatarBtn.hidden = false;
     showToast("照片已本地预览");
   } catch (error) {
     console.warn("照片读取失败。", error);
-    avatarInput.value = "";
+    faceImageInput.value = "";
     showToast("照片读取失败，请重新选择图片");
   }
 }
@@ -1207,8 +1269,8 @@ async function setAvatarFile(file) {
 function removeAvatar() {
   avatarDataUrl = "";
   avatarFileSize = 0;
-  avatarInput.value = "";
-  avatarPreview.innerHTML = "+";
+  faceImageInput.value = "";
+  facePreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
   showToast("照片已删除");
 }
@@ -1261,19 +1323,30 @@ async function addScreenshotFiles(files) {
 }
 
 function bindDropZone(dropZone, onFiles) {
+  if (!dropZone) return;
+  const stopBrowserFileOpen = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   ["dragenter", "dragover"].forEach((eventName) => {
     dropZone.addEventListener(eventName, (event) => {
-      event.preventDefault();
+      stopBrowserFileOpen(event);
       dropZone.classList.add("drag-over");
+      dropZone.classList.add("active");
     });
   });
   ["dragleave", "drop"].forEach((eventName) => {
     dropZone.addEventListener(eventName, (event) => {
-      event.preventDefault();
+      stopBrowserFileOpen(event);
       dropZone.classList.remove("drag-over");
+      dropZone.classList.remove("active");
     });
   });
-  dropZone.addEventListener("drop", (event) => onFiles(event.dataTransfer.files));
+  dropZone.addEventListener("drop", (event) => {
+    stopBrowserFileOpen(event);
+    onFiles(event.dataTransfer && event.dataTransfer.files);
+  });
 }
 
 async function copyText(text) {
@@ -1374,10 +1447,10 @@ function normalizeReportData(data) {
       confidence: coerceText(getFirstValue(basicProfile, ["confidence", "confidenceLevel", "confidence_level", "置信度"]) || getFirstValue(data, ["confidence", "置信度"]), ["level", "value", "text"]) || "中",
       confidenceReason: coerceText(getFirstValue(basicProfile, ["confidenceReason", "confidence_reason", "reason", "confidenceExplanation", "置信度说明", "置信度原因"]) || getFirstValue(data, ["confidenceReason", "confidence_reason", "置信度说明", "置信度原因"]), ["reason", "content", "text", "value"]) || "未提供置信度说明",
     },
-    scores: normalizeScores(getFirstValue(data, ["scores", "score", "metrics", "profileScores", "linguisticCues", "communicationStyle", "综合评分", "画像分数", "语言线索分析", "沟通风格维度"]), ["表达温度", "边界清晰度", "自我暴露程度", "沟通开放度", "关系导向"]),
+    scores: normalizeScores(getFirstValue(data, ["scores", "score", "metrics", "profileScores", "linguisticCues", "communicationStyle", "综合评分", "画像分数", "补充信息", "沟通风格维度"]), ["表达温度", "边界清晰度", "自我暴露程度", "沟通开放度", "关系导向"]),
     bigFive: normalizeScores(getFirstValue(data, ["bigFive", "big_five", "big5", "personality", "personalityScores", "bigFiveTendencyReference", "大五人格", "人格倾向", "Big Five 倾向参考"]), ["开放性倾向", "尽责性倾向", "外向性倾向", "宜人性倾向", "情绪稳定性倾向"]),
     personaTags: normalizeStringArray(getFirstValue(data, ["personaTags", "tags", "persona_tags", "labels", "人设标签", "标签"]), ["tag", "name", "label", "value", "title", "text", "标签"]),
-    avatarVisualCues: normalizeStringArray(getFirstValue(data, ["avatarVisualCues", "avatar_visual_cues", "visualCues", "avatarCues", "正脸照片线索", "视觉线索"]), ["cue", "content", "text", "value", "title", "线索"]),
+    avatarVisualCues: normalizeStringArray(getFirstValue(data, ["avatarVisualCues", "avatar_visual_cues", "visualCues", "avatarCues", "画面呈现", "视觉线索"]), ["cue", "content", "text", "value", "title", "线索"]),
     communicationAdvice: normalizeStringArray(getFirstValue(data, ["communicationAdvice", "advice", "communication_advice", "suggestions", "沟通建议", "建议"]), ["advice", "content", "text", "value", "title", "建议"]),
     riskPoints: normalizeStringArray(getFirstValue(data, ["riskPoints", "risks", "risk_points", "redFlags", "相处雷区", "风险点", "雷区"]), ["risk", "point", "content", "text", "value", "title", "风险", "雷区"]),
     approachStyle: normalizeStringArray(getFirstValue(data, ["approachStyle", "approach", "approach_style", "approaches", "接近方式", "适合接近方式"]), ["style", "content", "text", "value", "title", "方式"]),
@@ -1528,9 +1601,14 @@ function renderBarChart(scores) {
 }
 
 function renderRadarChart(bigFive) {
-  const entries = Object.entries(bigFive);
-  const center = 120;
-  const maxRadius = 86;
+  const shortLabel = (label) => {
+    const normalized = String(label).replace(/倾向/g, "").replace(/情绪稳定性/g, "稳定性");
+    return normalized || label;
+  };
+  const entries = Object.entries(bigFive).map(([label, value]) => [shortLabel(label), value]);
+  const center = 150;
+  const maxRadius = 82;
+  const labelRadius = 124;
   const points = entries.map(([, value], index) => {
     const angle = -Math.PI / 2 + (Math.PI * 2 * index) / entries.length;
     const radius = (value / 100) * maxRadius;
@@ -1540,9 +1618,10 @@ function renderRadarChart(bigFive) {
     const angle = -Math.PI / 2 + (Math.PI * 2 * index) / entries.length;
     const x = center + Math.cos(angle) * maxRadius;
     const y = center + Math.sin(angle) * maxRadius;
-    const tx = center + Math.cos(angle) * (maxRadius + 24);
-    const ty = center + Math.sin(angle) * (maxRadius + 24);
-    return `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" /><text x="${tx}" y="${ty}">${escapeHtml(label)} ${value}</text>`;
+    const tx = center + Math.cos(angle) * labelRadius;
+    const ty = center + Math.sin(angle) * labelRadius;
+    const anchor = Math.cos(angle) > 0.35 ? "start" : Math.cos(angle) < -0.35 ? "end" : "middle";
+    return `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" /><text x="${tx}" y="${ty}" text-anchor="${anchor}">${escapeHtml(label)} ${value}</text>`;
   }).join("");
   const rings = [0.25, 0.5, 0.75, 1].map((ratio) => {
     const ringPoints = entries.map(([,], index) => {
@@ -1552,7 +1631,18 @@ function renderRadarChart(bigFive) {
     }).join(" ");
     return `<polygon points="${ringPoints}" class="radar-ring" />`;
   }).join("");
-  return `<svg class="radar-chart" viewBox="0 0 240 240" role="img" aria-label="${t("chartRadarTitle")}">${rings}<g class="radar-axis">${axes}</g><polygon class="radar-area" points="${points}" /></svg>`;
+  const progressRows = entries.map(([label, value]) => `
+    <div class="radar-progress-row">
+      <div class="bar-meta"><span>${escapeHtml(label)}</span><strong>${value}</strong></div>
+      <div class="bar-track"><span style="width: ${value}%"></span></div>
+    </div>
+  `).join("");
+  return `
+    <div class="radar-wrap">
+      <svg class="radar-chart" viewBox="0 0 300 300" role="img" aria-label="${t("chartRadarTitle")}">${rings}<g class="radar-axis">${axes}</g><polygon class="radar-area" points="${points}" /></svg>
+      <div class="radar-progress-list">${progressRows}</div>
+    </div>
+  `;
 }
 
 function renderListCards(title, items, emptyText) {
@@ -1847,7 +1937,7 @@ function alignInitialHash() {
 
 form.addEventListener("submit", handleSubmit);
 form.addEventListener("reset", () => setTimeout(handleReset, 0));
-avatarInput.addEventListener("change", () => setAvatarFile(avatarInput.files && avatarInput.files[0]));
+faceImageInput.addEventListener("change", () => handleFacePhotoFile(faceImageInput.files && faceImageInput.files[0]));
 screenshotInput.addEventListener("change", () => addScreenshotFiles(screenshotInput.files));
 removeAvatarBtn.addEventListener("click", removeAvatar);
 screenshotGrid.addEventListener("click", (event) => {
@@ -1857,7 +1947,7 @@ screenshotGrid.addEventListener("click", (event) => {
   renderScreenshotGrid();
   showToast("截图已删除");
 });
-bindDropZone(avatarDropZone, (files) => setAvatarFile(files && files[0]));
+bindDropZone(faceUploadZone, (files) => handleFacePhotoFile(files && files[0]));
 bindDropZone(screenshotDropZone, addScreenshotFiles);
 copyPromptBtn.addEventListener("click", () => copyText(generatedPrompt));
 saveHistoryBtn.addEventListener("click", saveCurrentPrompt);

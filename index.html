@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PersonaScope 是一个基于正脸照片视觉呈现的沟通画像生成器。">
-  <title>PersonaScope | 正脸照片沟通画像生成器</title>
+  <meta name="description" content="PersonaScope 是一个基于画面公开呈现的沟通画像生成器。">
+  <title>PersonaScope | 沟通画像生成器</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -45,11 +45,11 @@
       <div class="hero-copy">
         <p class="eyebrow" data-i18n="heroEyebrow">FACE PHOTO · COMMUNICATION PROFILE</p>
         <h1 class="hero-title">
-          <span data-i18n="heroTitleLine1">上传正脸照片，</span>
+          <span data-i18n="heroTitleLine1">从一张照片开始，</span>
           <span data-i18n="heroTitleLine2">生成沟通画像</span>
         </h1>
         <p class="hero-desc" data-i18n="heroDesc">
-          基于表情、姿态、镜头状态与视觉呈现，提炼第一印象、Big Five 风格倾向和沟通建议。
+          基于画面中的公开呈现，提炼第一感觉、沟通倾向和开场建议。
         </p>
         <div class="hero-actions">
           <a class="button primary" href="#analyze" data-i18n="heroPrimary">上传照片开始分析</a>
@@ -116,7 +116,7 @@
               <span data-i18n="previewFrameworkLanguage">补充文本线索</span>
               <span data-i18n="previewFrameworkPresentation">视觉呈现</span>
               <span data-i18n="previewFrameworkBigFive">Big Five 倾向参考</span>
-              <span data-i18n="previewFrameworkAvatar">正脸照片线索</span>
+              <span data-i18n="previewFrameworkAvatar">画面呈现</span>
             </div>
           </div>
 
@@ -135,7 +135,7 @@
         <div class="workflow-steps">
           <div>
             <span data-i18n="workflowStep1Label">步骤 1</span>
-            <strong data-i18n="workflowStep1Title">上传正脸照片</strong>
+            <strong data-i18n="workflowStep1Title">上传照片</strong>
           </div>
           <div>
             <span data-i18n="workflowStep2Label">步骤 2</span>
@@ -178,23 +178,23 @@
     <section class="section-panel" id="analyze">
       <div class="section-heading">
         <p class="eyebrow" data-i18n="analyzeEyebrow">START ANALYSIS</p>
-        <h2 data-i18n="analyzeTitle">开始分析</h2>
-        <p data-i18n="analyzeDesc">上传一张清晰正脸照片，也可以补充你想了解的问题。高级信息默认收起，按需填写即可。</p>
+        <h2 data-i18n="analyzeTitle">从一张照片开始</h2>
+        <p data-i18n="analyzeDesc">基于画面中的公开呈现，生成一份沟通画像。</p>
       </div>
 
       <div class="analysis-layout">
         <form class="input-card glass-card" id="personaForm">
           <div class="upload-field">
             <div class="field-title">
-              <span data-i18n="avatarLabel">正脸照片</span>
+              <span data-i18n="avatarLabel">照片</span>
               <button class="text-button" id="removeAvatarBtn" type="button" hidden data-i18n="removeAvatar">删除当前照片</button>
             </div>
-            <label class="upload-box avatar-upload" id="avatarDropZone" for="avatarInput">
-              <input id="avatarInput" name="avatar" type="file" accept="image/jpeg,image/jpg,image/png,image/webp">
-              <span class="upload-preview avatar-preview" id="avatarPreview">+</span>
+            <label class="upload-box avatar-upload" id="faceUploadZone" for="faceImageInput">
+              <input id="faceImageInput" name="facePhoto" type="file" accept="image/jpeg,image/jpg,image/png,image/webp">
+              <span class="upload-preview avatar-preview" id="facePreview">+</span>
               <span>
-                <strong data-i18n="avatarUploadTitle">上传一张清晰正脸照片</strong>
-                <small data-i18n="avatarUploadDesc">建议使用光线清晰、无遮挡、正脸或近似正脸照片</small>
+                <strong data-i18n="avatarUploadTitle">拖入照片，或点击选择</strong>
+                <small data-i18n="avatarUploadDesc">支持 JPG、PNG、WEBP，建议使用自然、清晰、无遮挡的人像照片</small>
               </span>
             </label>
           </div>
@@ -268,8 +268,8 @@
           <div class="result-header">
             <div>
               <p class="eyebrow" data-i18n="analysisPreviewEyebrow">ANALYSIS PREVIEW</p>
-              <h3 data-i18n="analysisPreviewTitle">分析结果预览</h3>
-              <p id="promptStatus" data-i18n="promptStatusEmpty">上传正脸照片并填写可选问题后，系统将在这里生成第一印象、沟通倾向和建议摘要。</p>
+              <h3 data-i18n="analysisPreviewTitle">你的沟通画像会出现在这里</h3>
+              <p id="promptStatus" data-i18n="promptStatusEmpty">分析完成后，你会看到第一感觉、沟通倾向、开场建议和需要避开的表达。</p>
             </div>
           </div>
           <div class="analysis-preview" id="analysisPreview"></div>
@@ -315,7 +315,7 @@
           <p class="eyebrow" data-i18n="localDashboardEyebrow">LOCAL DASHBOARD</p>
           <h3 data-i18n="localDashboardTitle">API-ready 分析流程</h3>
           <ol>
-            <li data-i18n="localDashboardStep1">上传正脸照片，也可以填写高级补充信息。</li>
+            <li data-i18n="localDashboardStep1">上传照片，也可以填写高级补充信息。</li>
             <li data-i18n="localDashboardStep2">点击开始 AI 分析。</li>
             <li data-i18n="localDashboardStep3">当前版本先使用本地 mock 数据生成报告。</li>
             <li data-i18n="localDashboardStep4">未来可替换为安全 API 服务自动返回报告数据。</li>
@@ -404,7 +404,7 @@
       <div class="theory-grid">
         <article class="theory-card glass-card">
           <span>FRAME 01</span>
-          <h3 data-i18n="theoryLanguageTitle">语言线索分析：从表达方式识别沟通风格</h3>
+          <h3 data-i18n="theoryLanguageTitle">补充信息：让建议更贴近场景</h3>
           <p data-i18n="theoryLanguageDesc">通过情绪词、自我指代、关系词、行动词、判断词与表达抽象度，观察公开文本中呈现出的沟通风格、情绪显性度、自我暴露程度与关系导向。</p>
         </article>
         <article class="theory-card glass-card">
@@ -415,12 +415,12 @@
         <article class="theory-card glass-card">
           <span>FRAME 03</span>
           <h3 data-i18n="theoryBigFiveTitle">Big Five：公开表达中的人格倾向参考</h3>
-          <p data-i18n="theoryBigFiveDesc">Big Five 仅作为视觉呈现倾向框架，用于辅助整理开放、秩序、外放、亲和与稳定感相关的第一印象线索。</p>
+          <p data-i18n="theoryBigFiveDesc">Big Five 仅作为视觉呈现倾向框架，用于辅助整理画面可能带来的沟通感受。</p>
         </article>
         <article class="theory-card glass-card">
           <span>FRAME 04</span>
-          <h3 data-i18n="theoryAvatarTitle">正脸照片线索</h3>
-          <p data-i18n="theoryAvatarDesc">照片仅用于观察视觉呈现，例如镜头距离、表情状态、姿态、光线与清晰度；结论只能作为沟通参考。</p>
+          <h3 data-i18n="theoryAvatarTitle">画面呈现</h3>
+          <p data-i18n="theoryAvatarDesc">照片仅用于整理画面中的公开呈现，结论只能作为沟通参考。</p>
         </article>
         <article class="theory-card glass-card">
           <span>FRAME 05</span>
