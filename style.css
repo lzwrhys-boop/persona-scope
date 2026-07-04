@@ -280,13 +280,36 @@ main,
     linear-gradient(135deg, rgba(3, 5, 10, 0.94), rgba(7, 16, 31, 0.78) 48%, rgba(3, 5, 11, 0.94));
 }
 
+.global-signal-bg::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(95, 244, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(95, 244, 255, 0.045) 1px, transparent 1px),
+    radial-gradient(circle at 22% 20%, rgba(95, 244, 255, 0.18), transparent 24rem),
+    radial-gradient(circle at 78% 18%, rgba(169, 139, 255, 0.14), transparent 26rem),
+    radial-gradient(circle at 54% 78%, rgba(120, 255, 214, 0.07), transparent 30rem);
+  background-size:
+    72px 72px,
+    72px 72px,
+    auto,
+    auto,
+    auto;
+  opacity: 0.72;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.74) 58%, rgba(0, 0, 0, 0.42));
+}
+
 .global-signal-bg::after {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   content: "";
   pointer-events: none;
   background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 7px),
     radial-gradient(ellipse at 50% 26%, transparent 0%, rgba(5, 7, 13, 0.3) 58%, rgba(5, 7, 13, 0.78) 100%),
     linear-gradient(90deg, rgba(5, 7, 13, 0.62) 0%, rgba(5, 7, 13, 0.06) 42%, rgba(5, 7, 13, 0.06) 60%, rgba(5, 7, 13, 0.5) 100%),
     linear-gradient(180deg, rgba(5, 7, 13, 0.42) 0%, rgba(5, 7, 13, 0) 26%, rgba(5, 7, 13, 0) 64%, rgba(5, 7, 13, 0.6) 100%);
@@ -294,7 +317,7 @@ main,
 
 .unicorn-scene {
   position: relative;
-  z-index: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   opacity: 0.24;
@@ -2728,7 +2751,7 @@ pre {
     border-radius: 28px;
   }
 
-  .unicorn-background {
+  .unicorn-scene {
     display: none;
   }
 
@@ -2901,7 +2924,7 @@ pre {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .unicorn-background {
+  .unicorn-scene {
     display: none;
   }
 
