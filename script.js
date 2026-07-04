@@ -1,6 +1,6 @@
 const STORAGE_KEY = "personascope.history.v3";
 const LANGUAGE_STORAGE_KEY = "personascope.language";
-const DISCLAIMER = "PersonaScope 仅基于用户提供的公开社交线索生成沟通画像，用于辅助理解表达风格与互动方式，不构成医学诊断、人格定论、关系判断或重大决策依据。";
+const DISCLAIMER = "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象和沟通风格倾向，仅供沟通参考。";
 const translations = {
   zh: {
     languageToggleAria: "切换为英文",
@@ -11,15 +11,15 @@ const translations = {
     navSample: "示例报告",
     navTheory: "理论依据",
     navHistory: "历史记录",
-    heroEyebrow: "SOCIAL SIGNALS · COMMUNICATION PROFILE",
-    heroTitleLine1: "看懂一个人的",
-    heroTitleLine2: "社交信号",
-    heroDesc: "基于公开社交线索，生成可解释、可复核的沟通画像与可视化分析报告。",
-    heroPrimary: "开始分析",
-    heroSecondary: "查看示例报告",
+    heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
+    heroTitleLine1: "上传正脸照片，",
+    heroTitleLine2: "生成沟通画像",
+    heroDesc: "基于表情、姿态、镜头状态与视觉呈现，提炼第一印象、Big Five 风格倾向和沟通建议。",
+    heroPrimary: "上传照片开始分析",
+    heroSecondary: "查看分析框架",
     previewKicker: "预览报告",
     previewTitle: "沟通画像预览",
-    previewSummary: "公开表达中呈现出较强的边界意识、选择性暴露与理性沟通倾向。整体更偏向克制型表达风格，在建立信任时重视内容质量与表达分寸。",
+    previewSummary: "从视觉呈现和补充问题看，报告会提炼可能给人的第一印象、沟通风格倾向与更自然的开场方式。",
     previewTraitsTitle: "核心特征",
     previewTagBoundary: "边界意识",
     previewTagExpression: "表达克制",
@@ -32,39 +32,40 @@ const translations = {
     previewMetricPresentation: "自我呈现强度",
     previewFrameworkTitle: "分析框架",
     previewFrameworkBigFive: "Big Five 倾向参考",
-    previewFrameworkLanguage: "语言线索分析",
-    previewFrameworkPresentation: "自我呈现理论",
-    previewFrameworkAvatar: "头像视觉线索",
-    previewFrameworkSocial: "综合沟通策略",
-    previewFooter: "基于用户提供的公开线索生成，仅作为沟通风格参考，不构成诊断或人格定论。",
-    valuePersonaTitle: "外在人设",
-    valuePersonaDesc: "识别对方在社交平台上想呈现的公开形象，区分自我呈现与完整人格之间的边界。",
+    previewFrameworkLanguage: "补充文本线索",
+    previewFrameworkPresentation: "视觉呈现",
+    previewFrameworkAvatar: "正脸照片线索",
+    previewFrameworkSocial: "沟通建议",
+    previewFooter: "基于用户提供的视觉呈现与补充信息生成，仅供沟通参考。",
+    valuePersonaTitle: "第一印象",
+    valuePersonaDesc: "从照片中的视觉呈现整理可能给人的感觉，并保持结论克制、可复核。",
     valuePreferenceTitle: "沟通偏好",
     valuePreferenceDesc: "基于公开线索推测更适合直接沟通、情绪铺垫还是价值共鸣，让开场方式更自然。",
-    valueRiskTitle: "相处雷区",
+    valueRiskTitle: "表达避坑",
     valueRiskDesc: "提示容易引发防御、反感或误解的表达方式，减少沟通中的无效试探。",
     workflowEyebrow: "HOW IT WORKS",
-    workflowTitle: "四步生成沟通画像",
+    workflowTitle: "三步生成沟通画像",
     workflowStep1Label: "步骤 1",
-    workflowStep1Title: "上传社交线索",
+    workflowStep1Title: "上传正脸照片",
     workflowStep2Label: "步骤 2",
-    workflowStep2Title: "选择分析框架",
+    workflowStep2Title: "填写可选问题",
     workflowStep3Label: "步骤 3",
     workflowStep3Title: "AI 生成画像",
     workflowStep4Label: "步骤 4",
-    workflowStep4Title: "查看可视化报告",
-    homeCompliance: "PersonaScope 仅基于用户提供的公开社交线索生成沟通画像，用于辅助理解表达风格与互动方式，不构成医学诊断、人格定论、关系判断或重大决策依据。",
+    workflowStep4Title: "查看沟通建议",
+    homeCompliance: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。",
     analyzeEyebrow: "START ANALYSIS",
     analyzeTitle: "开始分析",
-    analyzeDesc: "上传或输入公开社交线索，系统将基于语言线索、自我呈现与视觉线索生成沟通画像。",
+    analyzeDesc: "上传一张清晰正脸照片，也可以补充你想了解的问题。高级信息默认收起，按需填写即可。",
     nicknameLabel: "分析对象昵称",
     optionalLabel: "可选",
     optionalQuestionLabel: "选填",
     nicknamePlaceholder: "例如：某位朋友 / 客户 A / 自我画像",
-    avatarLabel: "头像视觉线索",
-    removeAvatar: "删除当前头像",
-    avatarUploadTitle: "点击或拖拽上传头像",
-    avatarUploadDesc: "支持 jpg、jpeg、png、webp；仅作视觉自我呈现辅助线索，本地预览",
+    avatarLabel: "正脸照片",
+    removeAvatar: "删除当前照片",
+    avatarUploadTitle: "上传一张清晰正脸照片",
+    avatarUploadDesc: "建议使用光线清晰、无遮挡、正脸或近似正脸照片",
+    advancedSummary: "高级补充信息",
     signatureLabel: "个性签名",
     signaturePlaceholder: "输入公开可见的个性签名、简介或主页文案",
     post1Label: "社交文案 1",
@@ -83,9 +84,9 @@ const translations = {
     scenarioWork: "同事协作",
     scenarioFriend: "朋友相处",
     scenarioSelf: "自我画像",
-    questionLabel: "我最想知道的问题",
-    questionPlaceholder: "例如：我该如何自然地开启话题？合作时需要注意什么？",
-    generatePromptBtn: "开始 AI 分析",
+    questionLabel: "你想了解什么？",
+    questionPlaceholder: "比如“我该怎么自然开场？”",
+    generatePromptBtn: "生成沟通画像",
     resetBtn: "清空当前内容",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
     analysisPreviewTitle: "分析结果预览",
@@ -100,16 +101,16 @@ const translations = {
     viewVisualReportBtn: "查看可视化报告",
     generatedPromptEyebrow: "DEVELOPER DEBUG",
     generatedPromptTitle: "开发者调试 Prompt",
-    promptStatusEmpty: "填写左侧公开社交线索后，系统将在这里生成沟通画像摘要、核心维度与可视化结果。",
+    promptStatusEmpty: "上传正脸照片并填写可选问题后，系统将在这里生成第一印象、沟通倾向和建议摘要。",
     promptStatusReady: "分析已完成。你可以查看右侧摘要，或进入完整可视化报告。",
     promptUsageNote: "当前为静态原型，主流程会先生成本地 mock 报告；下方 Prompt 仅作为无 API 备用调试材料。",
     promptOutputEmpty: "开始分析后，系统会在这里生成一段开发者调试 Prompt。",
     copyPromptBtn: "复制调试 Prompt",
-    privacyInline: "当前网站不会读取或上传你的图片，所有图片仅在本地浏览器预览。",
+    privacyInline: "当前前端会把分析请求发送到后端；照片文件本身仍仅用于本地预览，后端暂不读取图片内容。",
     saveHistoryBtn: "保存到历史记录",
     visualEyebrow: "VISUAL REPORT",
-    visualTitle: "可视化报告",
-    visualDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。",
+    visualTitle: "沟通画像",
+    visualDesc: "分析完成后，系统将在这里展示第一印象、Big Five 视觉呈现倾向和沟通建议。",
     jsonPasteLabel: "手动导入报告数据",
     jsonHelper: "开发者调试模式：可导入结构化报告 JSON，系统会尽量自动识别兼容字段。",
     jsonPlaceholder: "可导入完整报告 JSON，例如包含 basicProfile、scores、bigFive、personaTags、avatarVisualCues、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。",
@@ -118,7 +119,7 @@ const translations = {
     clearJsonBtn: "清空内容",
     localDashboardEyebrow: "LOCAL DASHBOARD",
     localDashboardTitle: "API-ready 分析流程",
-    localDashboardStep1: "上传头像、签名、文案与社交截图。",
+    localDashboardStep1: "上传正脸照片，也可以填写高级补充信息。",
     localDashboardStep2: "点击开始 AI 分析。",
     localDashboardStep3: "当前版本先使用本地 mock 数据生成报告。",
     localDashboardStep4: "未来可替换为安全 API 服务自动返回报告数据。",
@@ -127,17 +128,17 @@ const translations = {
     waitingJsonTitle: "等待生成可视化报告",
     waitingJsonDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。也可以使用开发者调试模式手动导入报告数据。",
     chartBarTitle: "沟通风格维度图",
-    chartRadarTitle: "Big Five 倾向参考雷达图",
-    tagCloudTitle: "自我呈现标签云",
-    avatarVisualCuesTitle: "头像视觉线索",
-    communicationAdviceTitle: "综合沟通建议",
-    riskPointsTitle: "相处雷区",
-    approachStyleTitle: "适合接近方式与沟通节奏",
-    evidenceChainTitle: "证据链",
+    chartRadarTitle: "Big Five 视觉呈现倾向",
+    tagCloudTitle: "沟通标签",
+    avatarVisualCuesTitle: "视觉呈现线索",
+    communicationAdviceTitle: "怎么开口",
+    riskPointsTitle: "哪些话别说",
+    approachStyleTitle: "开场节奏",
+    evidenceChainTitle: "为什么这么判断",
     confidenceLabel: "置信度",
     disclaimerTitle: "免责声明",
     emptyTags: "暂无标签",
-    emptyVisualCues: "暂无头像视觉线索",
+    emptyVisualCues: "暂无视觉呈现线索",
     emptyAdvice: "暂无沟通建议",
     emptyRisks: "暂无相处雷区",
     emptyApproach: "暂无接近方式",
@@ -147,43 +148,43 @@ const translations = {
     emptyConclusion: "未提供结论",
     emptyEvidence: "未提供证据",
     sampleEyebrow: "SAMPLE REPORT",
-    sampleTitle: "《PersonaScope 示例报告：公开社交线索沟通画像》",
+    sampleTitle: "《PersonaScope 示例报告：视觉呈现沟通画像》",
     sampleDesc: "以下样例展示报告的结构与表达方式。当前静态原型会使用本地示例数据模拟分析结果。",
     sampleCard1Title: "一句话画像",
     sampleCard1Desc: "该对象更像是一个重视表达质感、强调自我节奏，同时希望被理解为独立而有审美判断的人。沟通时适合先建立共同语境，再进入具体话题。",
-    sampleCard2Title: "外在人设判断",
-    sampleCard2Desc: "头像与签名共同传递出“克制、清醒、有边界”的公开形象。对方可能不希望被过度热情地靠近，更愿意通过内容质量建立信任。",
+    sampleCard2Title: "视觉呈现",
+    sampleCard2Desc: "照片和补充信息可能共同传递出清爽、有边界、低压沟通更容易被接受的第一印象。",
     sampleCard3Title: "Big Five 倾向参考",
     sampleCard3Desc: "从公开表达线索看，开放性倾向可能偏中高，尽责性倾向中等偏高，外向性不宜过度判断。该参考来自文案中的审美表达、计划感和有限自我暴露。",
     sampleCard4Title: "情绪表达方式",
     sampleCard4Desc: "情绪表达偏间接，常通过隐喻、自嘲或场景描述释放压力。与其直接追问“你怎么了”，不如用低压方式邀请对方补充。",
     sampleCard5Title: "沟通偏好",
     sampleCard5Desc: "更适合具体、真诚、可选择的沟通方式。对方可能更容易回应有观察、有边界、有信息量的开场，而不是泛泛寒暄。",
-    sampleCard6Title: "相处雷区",
-    sampleCard6Desc: "避免过快推进关系、连续追问隐私、用标签概括对方，或把公开动态当作对方完整人格、能力或关系意愿的证据。",
+    sampleCard6Title: "哪些话别说",
+    sampleCard6Desc: "避免过快推进关系、连续追问隐私、用标签概括对方，或把单次视觉呈现当作重大判断依据。",
     sampleCard7Title: "适合的接近方式",
     sampleCard7Desc: "可以从对方公开表达中的具体主题切入：“你最近提到的那个观点挺有意思，我很好奇你为什么会这样看。”",
     sampleCard8Title: "证据链",
-    sampleCard8Desc: "证据来自头像风格、个性签名中的边界表达、第 1 条文案的目标感、第 2 条文案的情绪隐喻，以及第 3 条文案的自我调侃。",
+    sampleCard8Desc: "证据来自照片状态、用户问题、高级补充文本，以及这些信息共同形成的沟通场景。",
     sampleCard9Title: "置信度",
-    sampleCard9Desc: "中。原因是线索覆盖头像、签名与三条文本，但仍然属于公开自我呈现，无法代表完整人格或关系判断。",
+    sampleCard9Desc: "中。原因是线索来自视觉呈现和补充信息，适合作为沟通参考，但不能替代真实互动。",
     sampleCard10Title: "使用提醒",
     sampleCard10Desc: "报告只用于辅助理解表达风格和改善沟通，不应作为诊断、筛选、控制、关系判断或重大决策依据。真实互动仍需要持续验证。",
     theoryEyebrow: "FRAMEWORK",
     theoryTitle: "理论依据",
-    theoryDesc: "PersonaScope 采用公开社交线索沟通画像模型：语言线索分析 → 自我呈现理论 → Big Five 倾向参考 → 头像视觉线索 → 综合沟通策略。",
+    theoryDesc: "PersonaScope 采用视觉呈现沟通画像模型：照片视觉呈现 → Big Five 视觉呈现倾向 → 用户问题 → 沟通建议。",
     theoryLanguageTitle: "语言线索分析：从表达方式识别沟通风格",
     theoryLanguageDesc: "通过情绪词、自我指代、关系词、行动词、判断词与表达抽象度，观察公开文本中呈现出的沟通风格、情绪显性度、自我暴露程度与关系导向。",
     theorySocialTitle: "自我呈现：识别 TA 想被如何看见",
-    theorySocialDesc: "社交媒体内容并不等同于完整人格，而是公开场域中的形象管理。系统会观察头像、签名、文案与配图中呈现出的展示策略、边界意识、选择性暴露与公开人设。",
-    theoryBigFiveTitle: "Big Five：公开表达中的人格倾向参考",
-    theoryBigFiveDesc: "Big Five 仅作为公开表达中的倾向参考，用于辅助观察开放性、尽责性、外向性、宜人性与情绪稳定性相关线索。它不是正式人格测评，也不构成人格定论。",
-    theoryAvatarTitle: "头像视觉线索：公开形象与视觉距离感",
-    theoryAvatarDesc: "头像仅用于观察视觉自我呈现，例如真人/非真人、距离感、色彩冷暖、精修程度、专业感与亲和感。头像不能单独用于判断人格、能力、人品或关系倾向。",
+    theorySocialDesc: "照片和补充信息只用于观察视觉呈现与沟通场景，帮助生成更低压、更具体的沟通建议。",
+    theoryBigFiveTitle: "Big Five：视觉呈现倾向参考",
+    theoryBigFiveDesc: "Big Five 仅作为视觉呈现倾向框架，用于辅助整理开放、秩序、外放、亲和与稳定感相关的第一印象线索。",
+    theoryAvatarTitle: "正脸照片线索：第一印象与视觉距离感",
+    theoryAvatarDesc: "照片仅用于观察视觉呈现，例如镜头距离、表情状态、姿态、光线与清晰度；结论只能作为沟通参考。",
     theoryStrategyTitle: "综合沟通策略：从分析到可执行建议",
-    theoryStrategyDesc: "系统会综合语言线索、自我呈现、人格倾向参考与视觉线索，输出更适合的开场方式、沟通节奏、相处雷区与互动建议。建议仅用于提升沟通理解，不用于操控他人。",
+    theoryStrategyDesc: "系统会综合视觉呈现和用户问题，输出更适合的开场方式、沟通节奏、表达避坑与互动建议。建议仅用于提升沟通理解，不用于操控他人。",
     principleTitle: "边界原则",
-    principleDesc: "PersonaScope 仅基于用户提供的公开社交线索生成沟通画像，用于辅助理解表达风格与互动方式，不构成医学诊断、人格定论、关系判断或重大决策依据。",
+    principleDesc: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。",
     historyEyebrow: "LOCAL HISTORY",
     historyTitle: "历史记录",
     historyDesc: "最近生成并手动保存的记录会保存在当前浏览器 localStorage 中。",
@@ -199,7 +200,7 @@ const translations = {
     unsetScenario: "未设置场景",
     emptyField: "未填写",
     postSummary: "文案摘要",
-    uploadedAvatar: "已上传头像",
+    uploadedAvatar: "已上传照片",
     yes: "是",
     no: "否",
     screenshotMeta: "社交截图",
@@ -212,7 +213,7 @@ const translations = {
     copyJson: "复制 JSON",
     totalScore: "综合分",
     bigFiveLabel: "Big Five 倾向参考",
-    footerCompliance: "PersonaScope 仅基于用户提供的公开社交线索生成沟通画像，用于辅助理解表达风格与互动方式，不构成医学诊断、人格定论、关系判断或重大决策依据。"
+    footerCompliance: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。"
   },
   en: {
     languageToggleAria: "Switch to Chinese",
@@ -223,15 +224,15 @@ const translations = {
     navSample: "Sample Report",
     navTheory: "Framework",
     navHistory: "History",
-    heroEyebrow: "SOCIAL SIGNALS · COMMUNICATION PROFILE",
-    heroTitleLine1: "Decode a Person’s",
-    heroTitleLine2: "Social Signals",
-    heroDesc: "Generate an explainable communication profile and visual report from public social signals.",
-    heroPrimary: "Start Analysis",
-    heroSecondary: "View Sample Report",
+    heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
+    heroTitleLine1: "Upload a Face Photo,",
+    heroTitleLine2: "Generate a Profile",
+    heroDesc: "Extract first impressions, Big Five visual-presentation tendencies, and communication guidance from expression, posture, camera state, and visual presentation.",
+    heroPrimary: "Upload Photo to Analyze",
+    heroSecondary: "View Framework",
     previewKicker: "PREVIEW REPORT",
     previewTitle: "Communication Profile Preview",
-    previewSummary: "Public expressions suggest strong boundary awareness, selective disclosure, and rational communication tendencies, with trust built through quality and restraint.",
+    previewSummary: "Based on visual presentation and optional context, the report highlights possible first impressions, communication-style tendencies, and natural ways to start.",
     previewTraitsTitle: "Key Traits",
     previewTagBoundary: "Boundary-Aware",
     previewTagExpression: "Controlled Expression",
@@ -244,39 +245,40 @@ const translations = {
     previewMetricPresentation: "Self-Presentation Strength",
     previewFrameworkTitle: "Analysis Framework",
     previewFrameworkBigFive: "Big Five Tendency Reference",
-    previewFrameworkLanguage: "Linguistic Cues",
-    previewFrameworkPresentation: "Self-Presentation",
-    previewFrameworkAvatar: "Avatar Visual Cues",
-    previewFrameworkSocial: "Communication Strategy",
-    previewFooter: "Generated from user-provided public signals only. Not diagnosis or definitive personality judgment.",
-    valuePersonaTitle: "Public Persona",
-    valuePersonaDesc: "Identify the image someone presents in public social spaces while keeping clear boundaries between presentation and the whole person.",
+    previewFrameworkLanguage: "Supplemental Text",
+    previewFrameworkPresentation: "Visual Presentation",
+    previewFrameworkAvatar: "Face Photo Cues",
+    previewFrameworkSocial: "Communication Guidance",
+    previewFooter: "Generated from user-provided visual presentation and optional context. For communication reference only.",
+    valuePersonaTitle: "First Impression",
+    valuePersonaDesc: "Summarize the possible impression created by the photo's visual presentation while keeping every conclusion cautious and reviewable.",
     valuePreferenceTitle: "Communication Preference",
     valuePreferenceDesc: "Use public clues to estimate whether direct context, emotional pacing, or shared values will make the opening feel more natural.",
-    valueRiskTitle: "Interaction Risks",
+    valueRiskTitle: "Phrases to Avoid",
     valueRiskDesc: "Spot expressions that may trigger defensiveness, discomfort, or misunderstanding before the conversation drifts.",
     workflowEyebrow: "HOW IT WORKS",
-    workflowTitle: "Build a Communication Profile in 4 Steps",
+    workflowTitle: "Build a Communication Profile in 3 Steps",
     workflowStep1Label: "Step 1",
-    workflowStep1Title: "Upload Social Signals",
+    workflowStep1Title: "Upload Face Photo",
     workflowStep2Label: "Step 2",
-    workflowStep2Title: "Select Frameworks",
+    workflowStep2Title: "Add Optional Question",
     workflowStep3Label: "Step 3",
     workflowStep3Title: "Generate Profile",
     workflowStep4Label: "Step 4",
-    workflowStep4Title: "View Visual Report",
-    homeCompliance: "PersonaScope generates communication profiles only from user-provided public social signals. It supports understanding expression style and interaction patterns, and does not constitute medical diagnosis, definitive personality judgment, relationship judgment, or a basis for major decisions.",
+    workflowStep4Title: "View Guidance",
+    homeCompliance: "PersonaScope generates communication profiles only from user-provided visual presentation and optional context. It supports first-impression and communication-style reference only.",
     analyzeEyebrow: "START ANALYSIS",
     analyzeTitle: "Analyze",
-    analyzeDesc: "Upload or enter public social signals. PersonaScope will generate a communication profile based on linguistic cues, self-presentation, and visual cues.",
+    analyzeDesc: "Upload one clear face photo and optionally add what you want to understand. Advanced details stay collapsed unless needed.",
     nicknameLabel: "Profile nickname",
     optionalLabel: "Optional",
     optionalQuestionLabel: "Optional",
     nicknamePlaceholder: "Example: a friend / client A / self profile",
-    avatarLabel: "Avatar Visual Cues",
-    removeAvatar: "Remove avatar",
-    avatarUploadTitle: "Click or drag to upload avatar",
-    avatarUploadDesc: "Supports jpg, jpeg, png, webp. Used only as visual self-presentation cues and previewed locally.",
+    avatarLabel: "Face Photo",
+    removeAvatar: "Remove photo",
+    avatarUploadTitle: "Upload one clear face photo",
+    avatarUploadDesc: "Use a clear, unobstructed, front-facing or near-front-facing photo.",
+    advancedSummary: "Advanced Details",
     signatureLabel: "Personal Bio",
     signaturePlaceholder: "Enter a public bio, signature, or profile intro",
     post1Label: "Social Post 1",
@@ -295,9 +297,9 @@ const translations = {
     scenarioWork: "Work Collaboration",
     scenarioFriend: "Friendship",
     scenarioSelf: "Self Profile",
-    questionLabel: "Main question",
-    questionPlaceholder: "Example: How can I start a conversation naturally? What should I watch for when working together?",
-    generatePromptBtn: "Start AI Analysis",
+    questionLabel: "What do you want to understand?",
+    questionPlaceholder: "For example: “How can I start naturally?”",
+    generatePromptBtn: "Generate Profile",
     resetBtn: "Clear Current Input",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
     analysisPreviewTitle: "Analysis Preview",
@@ -312,16 +314,16 @@ const translations = {
     viewVisualReportBtn: "View Visual Report",
     generatedPromptEyebrow: "DEVELOPER DEBUG",
     generatedPromptTitle: "Developer Debug Prompt",
-    promptStatusEmpty: "After you provide public social signals on the left, PersonaScope will generate a communication profile summary, key dimensions, and visual results here.",
+    promptStatusEmpty: "Upload a face photo and optional question to generate a first-impression and communication profile summary.",
     promptStatusReady: "Analysis complete. You can review the summary here or open the full visual report.",
     promptUsageNote: "This static prototype currently generates a local mock report. The prompt below is only a fallback for developer debugging.",
     promptOutputEmpty: "After analysis starts, a developer debug prompt will appear here.",
     copyPromptBtn: "Copy Debug Prompt",
-    privacyInline: "This site does not read or upload your images. Image previews stay in your browser.",
+    privacyInline: "The frontend sends analysis requests to the backend. Photo files are still local previews only; the backend does not read image content yet.",
     saveHistoryBtn: "Save to History",
     visualEyebrow: "VISUAL REPORT",
-    visualTitle: "Visual Report",
-    visualDesc: "Once analysis is complete, the system will generate a visual communication profile report here.",
+    visualTitle: "Communication Profile",
+    visualDesc: "Once analysis is complete, this area shows the first impression, Big Five visual-presentation tendencies, and communication guidance.",
     jsonPasteLabel: "Import Report Data Manually",
     jsonHelper: "Developer debug mode: import structured report JSON and the system will try to recognize compatible fields.",
     jsonPlaceholder: "Import complete report JSON, such as fields including basicProfile, scores, bigFive, personaTags, avatarVisualCues, communicationAdvice, riskPoints, approachStyle, evidenceChain, and disclaimer.",
@@ -339,17 +341,17 @@ const translations = {
     waitingJsonTitle: "Waiting for Visual Report",
     waitingJsonDesc: "Once analysis is complete, the system will generate a visual communication profile report here. Developer debug mode can also import report data manually.",
     chartBarTitle: "Communication Style Dimensions",
-    chartRadarTitle: "Big Five Tendency Reference Radar",
-    tagCloudTitle: "Self-Presentation Tag Cloud",
-    avatarVisualCuesTitle: "Avatar Visual Cues",
-    communicationAdviceTitle: "Integrated Communication Guidance",
-    riskPointsTitle: "Interaction Risks",
-    approachStyleTitle: "Suitable Opening and Communication Rhythm",
-    evidenceChainTitle: "Evidence Chain",
+    chartRadarTitle: "Big Five Visual-Presentation Tendencies",
+    tagCloudTitle: "Communication Tags",
+    avatarVisualCuesTitle: "Visual Presentation Cues",
+    communicationAdviceTitle: "How to Start",
+    riskPointsTitle: "What Not to Say",
+    approachStyleTitle: "Opening Rhythm",
+    evidenceChainTitle: "Why This Reading",
     confidenceLabel: "Confidence",
     disclaimerTitle: "Disclaimer",
     emptyTags: "No tags yet",
-    emptyVisualCues: "No avatar visual cues yet",
+    emptyVisualCues: "No visual presentation cues yet",
     emptyAdvice: "No communication advice yet",
     emptyRisks: "No interaction risks yet",
     emptyApproach: "No approach style yet",
@@ -475,10 +477,10 @@ const MAX_HISTORY_RAW_JSON_LENGTH = 12000;
 const MAX_HISTORY_PROMPT_LENGTH = 12000;
 const SAMPLE_REPORT_DATA = {
   basicProfile: {
-    oneSentence: "该对象在公开社交线索中呈现出表达克制、边界清晰、重视内容质量的沟通风格。",
-    personaSummary: "TA 的公开表达更偏克制和有选择地暴露自我，常通过具体场景、审美判断和轻微自嘲建立公开形象。沟通时适合先从共同语境和具体内容切入，再逐步深入。",
+    oneSentence: "从当前资料看，可能给人一种清爽、有边界、适合低压开场的第一印象。",
+    personaSummary: "当前样例把视觉呈现状态和补充信息转化为沟通建议。由于样例不读取照片内容，具体表达会保持保守，并优先给出可直接使用的开场方向。",
     confidence: "中",
-    confidenceReason: "样例包含头像视觉线索、个性签名和三条社交文案，但仍只代表公开自我呈现，不能等同于完整人格或关系判断。"
+    confidenceReason: "样例包含照片上传状态、用户问题和高级补充文字；照片内容未被读取时，置信度应保持中低。"
   },
   scores: {
     "表达温度": 78,
@@ -507,7 +509,7 @@ const SAMPLE_REPORT_DATA = {
     "建议话术方向：给对方保留选择空间，例如用“如果你愿意的话”降低压力。"
   ],
   riskPoints: [
-    "相处雷区：不要把公开动态直接等同于完整人格或关系意愿。",
+    "哪些话别说：不要把单张照片或一次表达直接当作重大判断依据。",
     "避免过快推进亲密感，或用标签化语言概括对方。",
     "不要围绕隐私、收入、健康、政治宗教等敏感属性做推断。"
   ],
@@ -534,8 +536,8 @@ const SAMPLE_REPORT_DATA = {
     },
     {
       conclusion: "视觉呈现更偏克制",
-      evidence: "头像风格与截图排版显示出较强的筛选感和视觉距离。",
-      source: "来自头像视觉/来自截图"
+      evidence: "当前样例只知道照片上传状态，不能描述具体表情、姿态或镜头细节。",
+      source: "来自照片状态"
     }
   ],
   disclaimer: DISCLAIMER
@@ -929,56 +931,56 @@ function hasMeaningfulInput(data) {
 
 function buildAnalysisPayload(input) {
   return {
-    version: "personascope.api-ready.v1",
+    version: "personascope.face-photo.v1",
     locale: currentLanguage,
     input,
-    frameworks: ["linguisticCues", "selfPresentation", "bigFiveTendencyReference", "avatarVisualCues", "communicationStrategy"],
+    frameworks: ["visualPresentation", "bigFiveVisualTendency", "communicationStrategy"],
     outputFormat: "visualReportJson",
     debugPrompt: buildPrompt(input),
   };
 }
 
 function buildPrompt(data) {
-  const displayName = data.nickname || "未命名对象";
+  const displayName = data.nickname || "这张照片";
   const normalizedSignature = data.signature || "未提供";
   const normalizedQuestion = data.question || "未提供，请根据分析场景自行给出最有价值的沟通建议。";
   const normalizedPosts = data.posts.map((post, index) => `${index + 1}. ${post || "未提供"}`).join("\n");
-  const avatarMaterial = data.hasAvatar
-    ? "【头像资料】用户已上传头像，请结合头像中的视觉自我呈现方式进行辅助分析，但不得仅凭长相做绝对判断。"
-    : "【头像资料】用户未上传头像，请不要基于头像进行推测。";
+  const photoMaterial = data.hasAvatar
+    ? "【正脸照片】用户已上传照片。但当前前端只发送是否上传的状态，未把图片像素传给模型；如果没有额外视觉描述，不得编造表情、姿态、镜头状态或外观细节。"
+    : "【正脸照片】用户未上传照片，请不要基于照片进行推测。";
   const screenshotMaterial = data.screenshotCount
-    ? `【社交截图资料】用户已上传 ${data.screenshotCount} 张朋友圈/社交媒体截图，请结合截图中的文字、图片内容、排版风格、发布时间、表达情绪和自我呈现方式进行综合分析。`
-    : "【社交截图资料】用户未上传社交截图，请主要基于签名与手动输入文案分析。";
+    ? `【高级补充图片】用户已选择 ${data.screenshotCount} 张补充图片。但当前前端不会把图片内容发送给模型；除非用户在文本中描述，否则不要分析图片细节。`
+    : "【高级补充图片】用户未提供补充图片。";
 
-  return `你是一名专业、谨慎、非诊断取向的中文沟通画像分析助手。请基于公开社交线索，为「${displayName}」生成概率化沟通画像。
+  return `你是一名专业、谨慎、重证据的中文沟通画像分析助手。请基于正脸照片的视觉呈现描述与用户补充问题，为「${displayName}」生成沟通画像。
 
 重要：最终只输出严格 JSON。不要输出 Markdown，不要输出解释文字，不要使用代码块包裹 JSON。
 
 用户输入资料：
 - 分析对象昵称：${displayName}
 - 分析场景：${data.scenario}
-- ${avatarMaterial}
+- ${photoMaterial}
 - ${screenshotMaterial}
-- 调试说明：本 Prompt 仅作为开发者调试或无 API 备用方案。当前静态原型不会上传图片，也不做 OCR。
+- 调试说明：本 Prompt 仅作为开发者调试或备用方案。当前链路没有把照片像素发送给模型，也不做 OCR 或图像识别。
 
-个性签名：
+高级补充文本：
 ${normalizedSignature}
 
-最近三条社交文案 / 截图关键文字：
+更多补充文字：
 ${normalizedPosts}
 
-用户最想知道的问题：
+用户想了解的问题：
 ${normalizedQuestion}
 
 分析要求：
-1. 优先使用语言线索分析表达方式、情绪显性度、自我暴露程度、关系导向与行动导向。
-2. 使用自我呈现理论分析公开场域中的展示策略、边界意识、选择性暴露与公开人设。
-3. Big Five 仅作为公开表达中的倾向参考，不得写成正式人格测评或人格定论。
-4. 头像视觉线索只能作为辅助，用于观察视觉距离感、亲和感、专业感、审美控制感和公开形象稳定性。
-5. 综合输出适合开场方式、沟通节奏、相处雷区、互动建议和置信度说明。
-6. 所有分数必须是 0-100 的概率化倾向分数，不是诊断结果。
-7. 每个关键结论必须回到用户提供的头像、签名、社交文案或截图等公开线索。
-8. 禁止判断政治、宗教、健康、性取向、犯罪倾向、收入水平、是否忠诚、是否适合录用、能力、人品等敏感或重大属性。
+1. 分析任务是：基于正脸照片的视觉呈现描述与用户补充问题，生成沟通画像。
+2. Big Five 只能作为“视觉呈现倾向”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
+3. 所有结论都必须使用“可能、倾向、从照片呈现看、从补充信息看”等克制措辞。
+4. 如果只知道用户上传了照片，但没有获得照片内容，请明确降低置信度，主要基于用户问题和补充文字给出保守建议，不要假装看到了表情、姿态或镜头状态。
+5. 结果只聚焦：一句话第一印象、Big Five 视觉呈现倾向、怎么开口、哪些话别说、为什么这么判断。
+6. 所有分数必须是 0-100 的倾向分数。
+7. 每个关键结论必须回到用户提供的照片状态、补充问题、签名或补充文字。
+8. 不得判断政治、宗教、健康、性取向、犯罪倾向、收入水平、招聘录用、能力高低或道德品质。
 9. 不得输出操控、PUA、歧视、筛选或伤害他人的建议。
 
 请严格输出以下 JSON 结构，字段名必须保持一致：
@@ -1012,7 +1014,7 @@ ${normalizedQuestion}
     {
       "conclusion": "",
       "evidence": "",
-      "source": "头像/个性签名/第1条文案/第2条文案/第3条文案/社交截图"
+      "source": "正脸照片状态/用户问题/高级补充文本/补充图片状态"
     }
   ],
   "disclaimer": "${DISCLAIMER}"
@@ -1026,24 +1028,24 @@ function mockAnalysis(payload) {
   const filledPosts = (input.posts || []).filter(Boolean).length;
   const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
 
-  reportData.basicProfile.oneSentence = `${displayName}呈现出审美敏感、边界清晰、重视表达质量的公开社交形象。`;
-  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的公开线索，TA 的表达更偏克制和有选择地暴露自我。当前静态原型使用本地 mock 数据生成报告，未来可替换为安全 API 返回的结构化分析结果。`;
-  reportData.basicProfile.confidenceReason = `样例分析参考了${hasVisualClues ? "头像或社交截图、" : ""}个性签名和 ${filledPosts} 条社交文案；由于当前未接入真实模型 API，结果仅用于演示前端报告流程。`;
+  reportData.basicProfile.oneSentence = `${displayName}从当前资料看，可能给人一种清爽、有边界、适合低压开场的第一印象。`;
+  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的视觉呈现状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前前端 mock 不读取照片内容，因此不会描述具体表情、姿态或镜头细节。`;
+  reportData.basicProfile.confidenceReason = `样例分析参考了${hasVisualClues ? "照片/补充图片上传状态、" : ""}可选问题和 ${filledPosts} 条高级补充文字；由于 mock 模式不读取图片内容，结论仅用于演示新版流程。`;
   reportData.evidenceChain = [
     {
-      conclusion: "表达方式偏克制且重视边界",
-      evidence: input.signature || "个性签名或简介可作为公开自我呈现线索。",
-      source: "个性签名"
+      conclusion: "当前更适合用低压、具体的方式开场",
+      evidence: input.question || "用户没有填写具体问题，因此先给出通用的低压开场建议。",
+      source: "用户问题"
     },
     {
-      conclusion: "沟通切入适合具体而低压",
-      evidence: (input.posts || []).find(Boolean) || "近期文案将作为未来 API 分析的核心文本材料。",
-      source: filledPosts ? "社交文案" : "社交线索"
+      conclusion: "Big Five 只能作为视觉呈现倾向参考",
+      evidence: "当前链路没有把照片内容传给模型，不能把上传状态当作具体视觉证据。",
+      source: "正脸照片状态"
     },
     {
-      conclusion: "视觉资料适合作为辅助线索",
-      evidence: hasVisualClues ? `已提供头像或 ${input.screenshotCount} 张社交截图。` : "未提供头像或社交截图，当前报告主要依据文本线索。",
-      source: "来自头像视觉/来自截图"
+      conclusion: "补充文字能帮助建议更贴近场景",
+      evidence: (input.posts || []).find(Boolean) || input.signature || "未填写高级补充信息，建议会更保守。",
+      source: filledPosts || input.signature ? "高级补充文本" : "输入完整度"
     }
   ];
 
@@ -1192,13 +1194,13 @@ async function setAvatarFile(file) {
   try {
     avatarDataUrl = await readFileAsDataUrl(file);
     avatarFileSize = file.size;
-    avatarPreview.innerHTML = `<img src="${avatarDataUrl}" alt="头像预览">`;
+    avatarPreview.innerHTML = `<img src="${avatarDataUrl}" alt="照片预览">`;
     removeAvatarBtn.hidden = false;
-    showToast("头像已本地预览");
+    showToast("照片已本地预览");
   } catch (error) {
-    console.warn("头像读取失败。", error);
+    console.warn("照片读取失败。", error);
     avatarInput.value = "";
-    showToast("头像读取失败，请重新选择图片");
+    showToast("照片读取失败，请重新选择图片");
   }
 }
 
@@ -1208,7 +1210,7 @@ function removeAvatar() {
   avatarInput.value = "";
   avatarPreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
-  showToast("头像已删除");
+  showToast("照片已删除");
 }
 
 function renderScreenshotGrid() {
@@ -1375,7 +1377,7 @@ function normalizeReportData(data) {
     scores: normalizeScores(getFirstValue(data, ["scores", "score", "metrics", "profileScores", "linguisticCues", "communicationStyle", "综合评分", "画像分数", "语言线索分析", "沟通风格维度"]), ["表达温度", "边界清晰度", "自我暴露程度", "沟通开放度", "关系导向"]),
     bigFive: normalizeScores(getFirstValue(data, ["bigFive", "big_five", "big5", "personality", "personalityScores", "bigFiveTendencyReference", "大五人格", "人格倾向", "Big Five 倾向参考"]), ["开放性倾向", "尽责性倾向", "外向性倾向", "宜人性倾向", "情绪稳定性倾向"]),
     personaTags: normalizeStringArray(getFirstValue(data, ["personaTags", "tags", "persona_tags", "labels", "人设标签", "标签"]), ["tag", "name", "label", "value", "title", "text", "标签"]),
-    avatarVisualCues: normalizeStringArray(getFirstValue(data, ["avatarVisualCues", "avatar_visual_cues", "visualCues", "avatarCues", "头像视觉线索", "视觉线索"]), ["cue", "content", "text", "value", "title", "线索"]),
+    avatarVisualCues: normalizeStringArray(getFirstValue(data, ["avatarVisualCues", "avatar_visual_cues", "visualCues", "avatarCues", "正脸照片线索", "视觉线索"]), ["cue", "content", "text", "value", "title", "线索"]),
     communicationAdvice: normalizeStringArray(getFirstValue(data, ["communicationAdvice", "advice", "communication_advice", "suggestions", "沟通建议", "建议"]), ["advice", "content", "text", "value", "title", "建议"]),
     riskPoints: normalizeStringArray(getFirstValue(data, ["riskPoints", "risks", "risk_points", "redFlags", "相处雷区", "风险点", "雷区"]), ["risk", "point", "content", "text", "value", "title", "风险", "雷区"]),
     approachStyle: normalizeStringArray(getFirstValue(data, ["approachStyle", "approach", "approach_style", "approaches", "接近方式", "适合接近方式"]), ["style", "content", "text", "value", "title", "方式"]),
@@ -1569,28 +1571,21 @@ function renderListCards(title, items, emptyText) {
 
 function renderVisualReport(data) {
   renderedReportData = data;
-  const personaTags = normalizeStringArray(Array.isArray(data.personaTags) ? data.personaTags : []);
-  const avatarVisualCues = normalizeStringArray(Array.isArray(data.avatarVisualCues) ? data.avatarVisualCues : []);
   const communicationAdvice = normalizeStringArray(Array.isArray(data.communicationAdvice) ? data.communicationAdvice : []);
   const riskPoints = normalizeStringArray(Array.isArray(data.riskPoints) ? data.riskPoints : []);
-  const approachStyle = normalizeStringArray(Array.isArray(data.approachStyle) ? data.approachStyle : []);
   const evidenceChain = normalizeEvidenceChain(Array.isArray(data.evidenceChain) ? data.evidenceChain : []);
 
   visualReportOutput.innerHTML = `
     <div class="dashboard-grid">
       <article class="summary-card glass-card">
-        <p class="eyebrow">COMMUNICATION PROFILE</p>
+        <p class="eyebrow">FIRST IMPRESSION</p>
         <h3>${escapeHtml(data.basicProfile.oneSentence)}</h3>
         <p>${escapeHtml(data.basicProfile.personaSummary)}</p>
         <div class="confidence-strip">
           <span>${t("confidenceLabel")}：${escapeHtml(data.basicProfile.confidence)}</span>
           <p>${escapeHtml(data.basicProfile.confidenceReason)}</p>
         </div>
-      </article>
-
-      <article class="dashboard-card glass-card">
-        <h3>${t("chartBarTitle")}</h3>
-        ${renderBarChart(data.scores)}
+        <p class="report-disclaimer">${escapeHtml(data.disclaimer || t("footerCompliance"))}</p>
       </article>
 
       <article class="dashboard-card glass-card">
@@ -1598,17 +1593,8 @@ function renderVisualReport(data) {
         ${renderRadarChart(data.bigFive)}
       </article>
 
-      <article class="dashboard-card glass-card tag-card">
-        <h3>${t("tagCloudTitle")}</h3>
-        <div class="tag-cloud">
-          ${(personaTags.length ? personaTags : [t("emptyTags")]).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
-        </div>
-      </article>
-
-      ${renderListCards(t("avatarVisualCuesTitle"), avatarVisualCues, t("emptyVisualCues"))}
       ${renderListCards(t("communicationAdviceTitle"), communicationAdvice, t("emptyAdvice"))}
       ${renderListCards(t("riskPointsTitle"), riskPoints, t("emptyRisks"))}
-      ${renderListCards(t("approachStyleTitle"), approachStyle, t("emptyApproach"))}
 
       <article class="dashboard-card glass-card evidence-card">
         <h3>${t("evidenceChainTitle")}</h3>
@@ -1621,11 +1607,6 @@ function renderVisualReport(data) {
             </div>
           `).join("")}
         </div>
-      </article>
-
-      <article class="dashboard-card glass-card disclaimer-card">
-        <h3>${t("disclaimerTitle")}</h3>
-        <p>${escapeHtml(data.disclaimer || t("footerCompliance"))}</p>
       </article>
     </div>
   `;

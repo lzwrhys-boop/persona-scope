@@ -182,6 +182,12 @@ main,
   background: rgba(255, 255, 255, 0.04);
 }
 
+.main-nav a[href="#sample"],
+.main-nav a[href="#theory"],
+.main-nav a[href="#history"] {
+  display: none;
+}
+
 .language-toggle {
   display: inline-flex;
   align-items: center;
@@ -1947,12 +1953,43 @@ pre {
   line-height: 1.6;
 }
 
+.advanced-inputs {
+  display: grid;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.advanced-inputs summary {
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 800;
+  list-style-position: inside;
+}
+
+.advanced-inputs:not([open]) {
+  gap: 0;
+}
+
+.advanced-inputs[open] summary {
+  margin-bottom: 4px;
+}
+
 .json-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
   gap: 22px;
   align-items: start;
   margin-bottom: 28px;
+}
+
+.json-workspace,
+#sample,
+#theory,
+#history {
+  display: none;
 }
 
 .json-input-card,
@@ -2024,6 +2061,13 @@ pre {
 
 .confidence-strip p {
   margin-bottom: 0;
+}
+
+.report-disclaimer {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
 }
 
 .bar-chart {
