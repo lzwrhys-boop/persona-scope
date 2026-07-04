@@ -183,8 +183,7 @@ main,
 }
 
 .main-nav a[href="#sample"],
-.main-nav a[href="#theory"],
-.main-nav a[href="#history"] {
+.main-nav a[href="#theory"] {
   display: none;
 }
 
@@ -2095,8 +2094,7 @@ pre {
 
 .json-workspace,
 #sample,
-#theory,
-#history {
+#theory {
   display: none;
 }
 
