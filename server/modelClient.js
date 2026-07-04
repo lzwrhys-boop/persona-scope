@@ -1,4 +1,5 @@
 const { buildModelMessages } = require("./prompt");
+const { normalizeReport, validateReport } = require("./schema");
 
 class ModelClientError extends Error {
   constructor(code, message) {
@@ -23,16 +24,41 @@ function getChatCompletionsUrl() {
 
 function extractJsonCandidate(text) {
   const raw = String(text || "").trim();
-  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const source = (fenced ? fenced[1] : raw).trim();
-  if (source.startsWith("{") && source.endsWith("}")) return source;
+  const withoutFences = raw
+    .replace(/```(?:json)?/gi, "")
+    .replace(/```/g, "")
+    .trim();
+  const source = withoutFences;
 
   const start = source.indexOf("{");
-  const end = source.lastIndexOf("}");
-  if (start === -1 || end === -1 || end <= start) {
+  if (start === -1) {
     throw new ModelClientError("MODEL_INVALID_JSON", "模型没有返回有效 JSON");
   }
-  return source.slice(start, end + 1);
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let index = start; index < source.length; index += 1) {
+    const char = source[index];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (char === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (char === "\"") {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+    if (depth === 0) return source.slice(start, index + 1);
+  }
+
+  throw new ModelClientError("MODEL_INVALID_JSON", "模型返回的 JSON 没有完整闭合");
 }
 
 function parseModelJson(text) {
@@ -57,10 +83,8 @@ function extractModelText(responseJson) {
   throw new ModelClientError("MODEL_EMPTY_RESPONSE", "模型没有返回可解析内容");
 }
 
-async function callModel(input) {
-  if (shouldUseMockModel()) return { useMock: true };
-
-  const modelMessages = buildModelMessages(input);
+async function requestModel(input, options = {}) {
+  const modelMessages = buildModelMessages(input, options);
   const response = await fetch(getChatCompletionsUrl(), {
     method: "POST",
     headers: {
@@ -92,9 +116,26 @@ async function callModel(input) {
   }
 
   return {
-    useMock: false,
     data: parseModelJson(extractModelText(responseJson)),
   };
+}
+
+async function callModel(input) {
+  if (shouldUseMockModel()) return { useMock: true };
+
+  let firstResult = await requestModel(input);
+  let normalized = normalizeReport(firstResult.data);
+  let validation = validateReport(normalized);
+  if (validation.ok) return { useMock: false, data: normalized };
+
+  console.warn("Model report validation failed, retrying once:", validation.errors);
+  const secondResult = await requestModel(input, { repairErrors: validation.errors });
+  normalized = normalizeReport(secondResult.data);
+  validation = validateReport(normalized);
+  if (validation.ok) return { useMock: false, data: normalized };
+
+  console.warn("Model report validation failed after retry:", validation.errors);
+  throw new ModelClientError("INVALID_REPORT_SCHEMA", "模型返回格式不符合报告结构，请稍后重试");
 }
 
 module.exports = {

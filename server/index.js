@@ -153,7 +153,7 @@ app.post("/api/analyze", async (req, res) => {
       return res.status(502).json({
         ok: false,
         code: "INVALID_REPORT_SCHEMA",
-        message: "模型返回的报告结构不完整，请稍后重试",
+        message: "模型返回格式不符合报告结构，请稍后重试",
       });
     }
 
