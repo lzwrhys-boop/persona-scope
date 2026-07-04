@@ -54,7 +54,7 @@ function normalizeInput(body) {
   }
 
   const posts = Array.isArray(source.posts) ? source.posts : [];
-  if (posts.length > 3) throw new Error("最多只能提交 3 条社交文案");
+  if (posts.length > 3) throw new Error("最多只能提交 3 条补充文案");
 
   const screenshotCount = Number(source.screenshotCount || 0);
   if (!Number.isFinite(screenshotCount) || screenshotCount < 0 || screenshotCount > 6) {
@@ -80,7 +80,7 @@ function normalizeInput(body) {
     input.hasAvatar ||
     input.screenshotCount
   );
-  if (!hasMeaningfulInput) throw new Error("请至少提交一项公开社交线索");
+  if (!hasMeaningfulInput) throw new Error("请至少上传照片或填写一个问题");
 
   return input;
 }
@@ -88,14 +88,14 @@ function normalizeInput(body) {
 function createMockReport(input) {
   const filledPosts = input.posts.filter(Boolean).length;
   const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
-  const displayName = input.nickname || "未命名对象";
+  const displayName = input.nickname || "这张照片";
 
   return {
     basicProfile: {
-      oneSentence: `${displayName}在公开社交线索中呈现出表达克制、边界清晰、重视内容质量的沟通风格。`,
-      personaSummary: `基于${input.scenario || "当前场景"}中的公开线索，TA 的表达更偏克制和有选择地暴露自我。当前后端仍为 mock API，未来可替换为真实大模型分析结果。`,
+      oneSentence: `${displayName}从当前资料看，可能给人一种清爽、有边界、适合低压开场的第一印象。`,
+      personaSummary: `基于${input.scenario || "当前场景"}中的照片上传状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前 mock API 不读取照片内容，因此不会描述具体表情、姿态或镜头细节。`,
       confidence: "中",
-      confidenceReason: `样例分析参考了${hasVisualClues ? "头像或社交截图、" : ""}个性签名和 ${filledPosts} 条社交文案；当前未调用真实模型。`,
+      confidenceReason: `样例分析参考了${hasVisualClues ? "照片或补充图片上传状态、" : ""}可选问题和 ${filledPosts} 条高级补充文字；由于 mock 模式不读取图片内容，结论仅用于演示流程。`,
     },
     scores: {
       "表达温度": 78,
@@ -111,24 +111,24 @@ function createMockReport(input) {
       "宜人性倾向": 68,
       "情绪稳定性倾向": 70,
     },
-    personaTags: ["公开人设：克制清醒", "选择性暴露", "边界意识", "质感优先"],
-    avatarVisualCues: hasVisualClues ? ["已提供视觉线索，未来可用于辅助分析公开自我呈现。"] : ["未提供头像或截图，当前主要依据文本线索。"],
-    communicationAdvice: ["适合从公开内容中的具体细节切入。", "沟通节奏宜低压、具体、可选择。", "避免过快推进关系或连续追问隐私。"],
-    riskPoints: ["不要把公开动态等同于完整人格。", "不要基于少量线索做敏感属性或重大判断。"],
-    approachStyle: ["先建立共同语境，再逐步展开话题。", "使用具体观察代替标签化评价。"],
+    personaTags: ["低压开场更稳妥", "适合具体观察", "建议保留选择空间", "仅供沟通参考"],
+    avatarVisualCues: hasVisualClues ? ["已提供照片或补充图片上传状态；当前 mock 不读取图片内容。"] : ["未提供照片内容，当前主要依据问题和补充文字。"],
+    communicationAdvice: ["可以先从轻量、具体的问题切入，例如“我看到这个点挺有意思，可以多聊一点吗？”", "沟通节奏宜低压、具体、可选择。", "如果对方回应简短，先停在轻话题，不急着推进。"],
+    riskPoints: ["不要把单张照片或一次表达当成重大判断依据。", "不要基于少量线索做敏感属性或重大判断。"],
+    approachStyle: ["第一句先低压开场，再根据回应延展。", "使用具体观察代替标签化评价。"],
     evidenceChain: [
       {
-        conclusion: "表达方式偏克制且重视边界",
-        evidence: input.signature || "个性签名或简介可作为公开自我呈现线索。",
-        source: "个性签名",
+        conclusion: "当前更适合用低压方式开场",
+        evidence: input.question || "用户没有填写具体问题，因此先给出通用低压建议。",
+        source: "用户问题",
       },
       {
         conclusion: "沟通切入适合具体而低压",
-        evidence: input.posts.find(Boolean) || "近期文案将作为未来模型分析的重要文本材料。",
-        source: filledPosts ? "社交文案" : "社交线索",
+        evidence: input.posts.find(Boolean) || "当前没有补充文案，建议会更保守。",
+        source: filledPosts ? "高级补充文案" : "输入完整度",
       },
     ],
-    disclaimer: "PersonaScope 仅基于用户提供的公开社交线索生成沟通画像，用于辅助理解表达风格与互动方式，不构成医学诊断、人格定论、关系判断或重大决策依据。",
+    disclaimer: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。",
   };
 }
 
