@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const cors = require("cors");
+const crypto = require("crypto");
 const express = require("express");
 const { validateReport } = require("./schema");
 const { checkSensitiveRequest } = require("./safety");
@@ -33,12 +34,79 @@ app.use(cors({
     return callback(null, false);
   },
   methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });
+});
+
+function getLoginSecret() {
+  return String(process.env.APP_LOGIN_SECRET || "").trim();
+}
+
+function signLoginPayload(payload) {
+  const secret = getLoginSecret();
+  if (!secret) throw new Error("APP_LOGIN_SECRET 未配置");
+  return crypto.createHmac("sha256", secret).update(payload).digest("base64url");
+}
+
+function createLoginToken() {
+  const expiresAt = Date.now() + 1000 * 60 * 60 * 24 * 14;
+  const nonce = crypto.randomBytes(12).toString("base64url");
+  const payload = Buffer.from(JSON.stringify({ exp: expiresAt, nonce }), "utf8").toString("base64url");
+  const signature = signLoginPayload(payload);
+  return `${payload}.${signature}`;
+}
+
+function verifyLoginToken(token) {
+  if (!token || typeof token !== "string" || !token.includes(".")) return false;
+  const [payload, signature] = token.split(".");
+  if (!payload || !signature) return false;
+
+  const expected = signLoginPayload(payload);
+  const expectedBuffer = Buffer.from(expected);
+  const signatureBuffer = Buffer.from(signature);
+  if (expectedBuffer.length !== signatureBuffer.length || !crypto.timingSafeEqual(expectedBuffer, signatureBuffer)) return false;
+
+  try {
+    const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    return Number.isFinite(data.exp) && data.exp > Date.now();
+  } catch (error) {
+    return false;
+  }
+}
+
+function requireLogin(req, res, next) {
+  try {
+    const header = String(req.headers.authorization || "");
+    const match = header.match(/^Bearer\s+(.+)$/i);
+    if (!match || !verifyLoginToken(match[1])) {
+      return res.status(401).json({ ok: false, error: "登录已失效，请重新输入访问码" });
+    }
+    return next();
+  } catch (error) {
+    console.warn("Auth check failed:", error.message);
+    return res.status(401).json({ ok: false, error: "登录已失效，请重新输入访问码" });
+  }
+}
+
+app.post("/api/login", (req, res) => {
+  try {
+    const expectedCode = String(process.env.APP_ACCESS_CODE || "").trim();
+    const accessCode = safeText(req.body?.accessCode, 200);
+    if (!expectedCode || !getLoginSecret()) {
+      return res.status(503).json({ ok: false, error: "登录服务暂未配置" });
+    }
+    if (accessCode !== expectedCode) {
+      return res.status(401).json({ ok: false, error: "访问码不正确" });
+    }
+    return res.json({ ok: true, token: createLoginToken() });
+  } catch (error) {
+    console.warn("Login request failed:", error.message);
+    return res.status(400).json({ ok: false, error: "请求参数无效" });
+  }
 });
 
 function safeText(value, maxLength) {
@@ -132,7 +200,7 @@ function createMockReport(input) {
   };
 }
 
-app.post("/api/analyze", async (req, res) => {
+app.post("/api/analyze", requireLogin, async (req, res) => {
   try {
     console.log("POST /api/analyze received", new Date().toISOString());
     const input = normalizeInput(req.body);

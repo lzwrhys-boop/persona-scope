@@ -1,5 +1,6 @@
 const STORAGE_KEY = "personascope.history.v3";
 const LANGUAGE_STORAGE_KEY = "personascope.language";
+const ACCESS_TOKEN_STORAGE_KEY = "personascope.accessToken";
 const DISCLAIMER = "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象和沟通风格倾向，仅供沟通参考。";
 const translations = {
   zh: {
@@ -11,6 +12,13 @@ const translations = {
     navSample: "示例报告",
     navTheory: "理论依据",
     navHistory: "最近分析",
+    loginTitle: "进入 PersonaScope",
+    loginSubtitle: "输入访问码，开始生成沟通画像",
+    accessCodeLabel: "访问码",
+    accessCodePlaceholder: "输入访问码",
+    loginButton: "进入分析",
+    loggingInButton: "正在进入...",
+    logoutButton: "退出",
     heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
     heroTitleLine1: "从一张照片开始，",
     heroTitleLine2: "生成沟通画像",
@@ -231,6 +239,13 @@ const translations = {
     navSample: "Sample Report",
     navTheory: "Framework",
     navHistory: "Recent",
+    loginTitle: "Enter PersonaScope",
+    loginSubtitle: "Enter your access code to generate communication profiles",
+    accessCodeLabel: "Access code",
+    accessCodePlaceholder: "Enter access code",
+    loginButton: "Enter",
+    loggingInButton: "Entering...",
+    logoutButton: "Exit",
     heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
     heroTitleLine1: "Start with One Photo,",
     heroTitleLine2: "Generate a Profile",
@@ -445,6 +460,11 @@ const translations = {
 };
 
 const form = document.querySelector("#personaForm");
+const loginScreen = document.querySelector("#loginScreen");
+const loginForm = document.querySelector("#loginForm");
+const accessCodeInput = document.querySelector("#accessCodeInput");
+const loginError = document.querySelector("#loginError");
+const logoutButton = document.querySelector("#logoutButton");
 const submitButton = form.querySelector('button[type="submit"]');
 const faceImageInput = document.querySelector("#faceImageInput") || document.querySelector("#avatarInput");
 const facePreview = document.querySelector("#facePreview") || document.querySelector("#avatarPreview");
@@ -484,6 +504,7 @@ const UNICORN_PROJECT_ID = "Yj3EFGnjZ1bEOuWjo6Ad";
 const UNICORN_SDK_URL = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.1.11/dist/unicornStudio.umd.js";
 const MOCK_MODE = false;
 const API_ENDPOINT = "https://persona-scope-api.onrender.com/api/analyze";
+const API_LOGIN_ENDPOINT = "https://persona-scope-api.onrender.com/api/login";
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_TOTAL_IMAGE_BYTES = 20 * 1024 * 1024;
 const MAX_SCREENSHOT_COUNT = 6;
@@ -574,6 +595,40 @@ let loadingStageTimer = null;
 function t(key, replacements = {}) {
   const value = translations[currentLanguage]?.[key] ?? translations.zh[key] ?? key;
   return Object.entries(replacements).reduce((text, [name, replacement]) => text.replaceAll(`{${name}}`, replacement), value);
+}
+
+function getAccessToken() {
+  return localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) || "";
+}
+
+function setAuthenticated(token) {
+  if (token) localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+  document.body.classList.add("is-authenticated");
+  document.body.classList.remove("is-login-required");
+  if (loginError) loginError.textContent = "";
+}
+
+function showLogin(message = "") {
+  localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+  document.body.classList.remove("is-authenticated");
+  document.body.classList.add("is-login-required");
+  if (loginError) loginError.textContent = message;
+  if (accessCodeInput) window.setTimeout(() => accessCodeInput.focus(), 0);
+}
+
+function applyAuthState() {
+  if (getAccessToken()) {
+    setAuthenticated(getAccessToken());
+  } else {
+    showLogin();
+  }
+}
+
+function setLoginLoading(isLoading) {
+  const button = loginForm?.querySelector('button[type="submit"]');
+  if (!button) return;
+  button.disabled = isLoading;
+  button.textContent = isLoading ? t("loggingInButton") : t("loginButton");
 }
 
 function getReportEmptyStateHtml() {
@@ -1112,7 +1167,10 @@ async function runAnalysis(payload) {
 
   const response = await fetch(API_ENDPOINT, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
     body: JSON.stringify({
       locale: payload.locale,
       input: payload.input,
@@ -1129,10 +1187,49 @@ async function runAnalysis(payload) {
   }
 
   if (!response.ok || !result?.ok) {
-    throw new Error(result?.message || "分析 API 请求失败");
+    if (response.status === 401) {
+      showLogin("登录已失效，请重新输入访问码");
+      throw new Error("登录已失效，请重新输入访问码");
+    }
+    throw new Error(result?.message || result?.error || "分析 API 请求失败");
   }
 
   return normalizeReportData(result.data);
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+  const accessCode = accessCodeInput.value.trim();
+  if (!accessCode) {
+    loginError.textContent = "请输入访问码";
+    return;
+  }
+
+  setLoginLoading(true);
+  loginError.textContent = "";
+  try {
+    const response = await fetch(API_LOGIN_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accessCode }),
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || !result?.ok || !result?.token) {
+      throw new Error(result?.error || "访问码不正确");
+    }
+    accessCodeInput.value = "";
+    setAuthenticated(result.token);
+    showToast("已进入 PersonaScope");
+  } catch (error) {
+    loginError.textContent = error?.message || "访问码不正确";
+  } finally {
+    setLoginLoading(false);
+  }
+}
+
+function handleLogout() {
+  showLogin();
+  showToast("已退出");
 }
 
 function updateGeneratedState(prompt, recordDraft) {
@@ -1936,6 +2033,7 @@ function alignInitialHash() {
 }
 
 form.addEventListener("submit", handleSubmit);
+loginForm.addEventListener("submit", handleLogin);
 form.addEventListener("reset", () => setTimeout(handleReset, 0));
 faceImageInput.addEventListener("change", () => handleFacePhotoFile(faceImageInput.files && faceImageInput.files[0]));
 screenshotInput.addEventListener("change", () => addScreenshotFiles(screenshotInput.files));
@@ -1957,6 +2055,7 @@ clearJsonBtn.addEventListener("click", clearJsonReport);
 clearHistoryBtn.addEventListener("click", clearAllHistory);
 historyList.addEventListener("click", handleHistoryClick);
 if (languageToggle) languageToggle.addEventListener("click", toggleLanguage);
+if (logoutButton) logoutButton.addEventListener("click", handleLogout);
 
 menuToggle.addEventListener("click", () => {
   const isOpen = mainNav.classList.toggle("open");
@@ -1973,3 +2072,4 @@ window.addEventListener("load", () => {
 
 UnicornBackground();
 applyLanguage();
+applyAuthState();

@@ -16,6 +16,26 @@
     <div class="unicorn-scene" id="unicornScene" data-us-project="Yj3EFGnjZ1bEOuWjo6Ad"></div>
   </div>
 
+  <section class="login-screen" id="loginScreen" aria-live="polite">
+    <form class="login-card glass-card" id="loginForm">
+      <a class="brand login-brand" href="#home" aria-label="PersonaScope 首页">
+        <span class="brand-mark"></span>
+        <span>PersonaScope</span>
+      </a>
+      <div>
+        <p class="eyebrow">PRIVATE ACCESS</p>
+        <h1 data-i18n="loginTitle">进入 PersonaScope</h1>
+        <p data-i18n="loginSubtitle">输入访问码，开始生成沟通画像</p>
+      </div>
+      <label>
+        <span data-i18n="accessCodeLabel">访问码</span>
+        <input id="accessCodeInput" type="password" autocomplete="current-password" placeholder="输入访问码" data-i18n-placeholder="accessCodePlaceholder">
+      </label>
+      <button class="button primary" type="submit" data-i18n="loginButton">进入分析</button>
+      <p class="login-error" id="loginError" role="alert"></p>
+    </form>
+  </section>
+
   <div class="site-content">
   <header class="site-header">
     <a class="brand" href="#home" aria-label="PersonaScope 首页">
@@ -36,6 +56,7 @@
         <span class="language-divider">/</span>
         <span class="language-option language-option-en">EN</span>
       </button>
+      <button class="logout-button" id="logoutButton" type="button" data-i18n="logoutButton">退出</button>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav" data-i18n="menuToggle">菜单</button>
     </div>
   </header>
