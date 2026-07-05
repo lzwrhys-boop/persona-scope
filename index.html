@@ -220,6 +220,20 @@
             </label>
           </div>
 
+          <fieldset class="scenario-group">
+            <legend data-i18n="scenarioLabel">分析场景</legend>
+            <label><input type="radio" name="scenario" value="亲密关系" checked><span data-i18n="scenarioDating">亲密关系</span></label>
+            <label><input type="radio" name="scenario" value="客户沟通"><span data-i18n="scenarioClient">客户沟通</span></label>
+            <label><input type="radio" name="scenario" value="职场协作"><span data-i18n="scenarioWork">职场协作</span></label>
+            <label><input type="radio" name="scenario" value="朋友社交"><span data-i18n="scenarioFriend">朋友社交</span></label>
+            <label><input type="radio" name="scenario" value="自我呈现"><span data-i18n="scenarioSelf">自我呈现</span></label>
+          </fieldset>
+
+          <fieldset class="goal-group">
+            <legend data-i18n="goalLabel">我想达成</legend>
+            <div class="goal-options" id="goalOptions" aria-live="polite"></div>
+          </fieldset>
+
           <label>
             <span><span data-i18n="questionLabel">你想了解什么？</span> <small data-i18n="optionalQuestionLabel">选填</small></span>
             <textarea id="questionInput" rows="3" placeholder="比如“我该怎么自然开场？”" data-i18n-placeholder="questionPlaceholder"></textarea>
@@ -268,15 +282,6 @@
               </label>
               <div class="screenshot-grid" id="screenshotGrid" aria-live="polite"></div>
             </div>
-
-            <fieldset class="scenario-group">
-              <legend data-i18n="scenarioLabel">分析场景</legend>
-              <label><input type="radio" name="scenario" value="亲密关系" checked><span data-i18n="scenarioDating">亲密关系</span></label>
-              <label><input type="radio" name="scenario" value="客户沟通"><span data-i18n="scenarioClient">客户沟通</span></label>
-              <label><input type="radio" name="scenario" value="职场协作"><span data-i18n="scenarioWork">职场协作</span></label>
-              <label><input type="radio" name="scenario" value="朋友社交"><span data-i18n="scenarioFriend">朋友社交</span></label>
-              <label><input type="radio" name="scenario" value="自我呈现"><span data-i18n="scenarioSelf">自我呈现</span></label>
-            </fieldset>
           </details>
 
           <div class="form-actions">

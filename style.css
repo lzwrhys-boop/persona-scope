@@ -1826,7 +1826,8 @@ textarea:focus {
   backdrop-filter: blur(10px);
 }
 
-.scenario-group {
+.scenario-group,
+.goal-group {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -1835,7 +1836,8 @@ textarea:focus {
   border: 0;
 }
 
-.scenario-group legend {
+.scenario-group legend,
+.goal-group legend {
   width: 100%;
   margin-bottom: 2px;
   color: var(--muted-strong);
@@ -1863,6 +1865,30 @@ textarea:focus {
 }
 
 .scenario-group input:checked + span {
+  color: var(--text);
+  border-color: rgba(95, 244, 255, 0.58);
+  background: rgba(95, 244, 255, 0.12);
+}
+
+.goal-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+}
+
+.goal-pill {
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.035);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.goal-pill:hover,
+.goal-pill.active {
   color: var(--text);
   border-color: rgba(95, 244, 255, 0.58);
   background: rgba(95, 244, 255, 0.12);
@@ -2982,11 +3008,13 @@ pre {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .scenario-group label {
+  .scenario-group label,
+  .goal-pill {
     flex: 1 1 calc(50% - 10px);
   }
 
-  .scenario-group span {
+  .scenario-group span,
+  .goal-pill {
     width: 100%;
     text-align: center;
   }
@@ -3025,7 +3053,8 @@ pre {
     flex-direction: column;
   }
 
-  .scenario-group label {
+  .scenario-group label,
+  .goal-pill {
     flex-basis: 100%;
   }
 }

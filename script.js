@@ -92,6 +92,7 @@ const translations = {
     scenarioWork: "职场协作",
     scenarioFriend: "朋友社交",
     scenarioSelf: "自我呈现",
+    goalLabel: "我想达成",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
     generatePromptBtn: "开始 AI 分析",
@@ -318,6 +319,7 @@ const translations = {
     scenarioWork: "Workplace Collaboration",
     scenarioFriend: "Friends",
     scenarioSelf: "Self Presentation",
+    goalLabel: "Goal",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
     generatePromptBtn: "Start AI Analysis",
@@ -476,6 +478,7 @@ const nicknameInput = document.querySelector("#nicknameInput");
 const signatureInput = document.querySelector("#signatureInput");
 const postInputs = Array.from(document.querySelectorAll(".post-input"));
 const questionInput = document.querySelector("#questionInput");
+const goalOptions = document.querySelector("#goalOptions");
 const promptOutput = document.querySelector("#promptOutput");
 const promptStatus = document.querySelector("#promptStatus");
 const analysisPreview = document.querySelector("#analysisPreview");
@@ -534,6 +537,14 @@ const SCENE_CONFIG = {
     theory: "本报告参考印象管理、自我呈现与 Big Five 外显线索相关框架，仅用于沟通准备，不构成定论。",
     dimensions: ["第一印象一致性", "专业感呈现", "亲和力呈现", "表达记忆点", "边界感", "社交可接近度"],
   },
+};
+const SCENE_GOALS = {
+  客户沟通: ["预约见面", "推进合作", "维护关系", "唤醒沉默客户", "处理异议"],
+  职场协作: ["提需求", "汇报进展", "请求支持", "表达不同意见", "化解尴尬"],
+  亲密关系: ["自然开场", "表达好感", "恢复聊天", "推进关系", "降低压力"],
+  朋友社交: ["轻松破冰", "找话题", "拉近关系", "避免尴尬", "保持联系"],
+  自我呈现: ["优化头像印象", "优化个人介绍", "提升专业感", "提升亲和力", "增强记忆点"],
+  自我画像: ["优化头像印象", "优化个人介绍", "提升专业感", "提升亲和力", "增强记忆点"],
 };
 const SAMPLE_REPORT_DATA = {
   basicProfile: {
@@ -606,6 +617,7 @@ const SAMPLE_REPORT_DATA = {
 let avatarDataUrl = "";
 let avatarFileSize = 0;
 let socialScreenshots = [];
+let selectedGoal = "";
 let generatedPrompt = "";
 let generatedRecordDraft = null;
 let expandedHistoryId = "";
@@ -882,6 +894,7 @@ function compactPromptRecord(record) {
     signature: truncateText(record.signature || "", 240),
     posts: Array.isArray(record.posts) ? record.posts.map((post) => truncateText(post || "", 240)) : [],
     scenario: record.scenario,
+    selectedGoal: record.selectedGoal,
     question: truncateText(record.question || "", 240),
     hasAvatar: Boolean(record.hasAvatar),
     screenshotCount: Number(record.screenshotCount || 0),
@@ -903,6 +916,7 @@ function compactReportData(data) {
     evidenceChain: normalizeEvidenceChain(data.evidenceChain).slice(0, 8),
     disclaimer: data.disclaimer,
     scenario: data.scenario,
+    selectedGoal: data.selectedGoal,
   };
 }
 
@@ -951,7 +965,25 @@ function truncateText(value, length = 64) {
 
 function getSelectedScenario() {
   const selected = document.querySelector('input[name="scenario"]:checked');
-  return selected ? selected.value : "恋爱了解";
+  return selected ? selected.value : "亲密关系";
+}
+
+function getGoalsForScenario(scenario) {
+  return SCENE_GOALS[scenario] || SCENE_GOALS["亲密关系"];
+}
+
+function getSelectedGoal() {
+  const goals = getGoalsForScenario(getSelectedScenario());
+  return goals.includes(selectedGoal) ? selectedGoal : goals[0];
+}
+
+function renderGoalOptions() {
+  if (!goalOptions) return;
+  const goals = getGoalsForScenario(getSelectedScenario());
+  if (!goals.includes(selectedGoal)) selectedGoal = goals[0];
+  goalOptions.innerHTML = goals.map((goal) => (
+    `<button class="goal-pill${goal === selectedGoal ? " active" : ""}" type="button" data-goal="${escapeHtml(goal)}">${escapeHtml(goal)}</button>`
+  )).join("");
 }
 
 function isSupportedImage(file) {
@@ -1058,6 +1090,7 @@ function collectAnalysisInput() {
     signature: signatureInput.value.trim(),
     posts: postInputs.map((input) => input.value.trim()),
     scenario: getSelectedScenario(),
+    selectedGoal: getSelectedGoal(),
     question: questionInput.value.trim(),
     hasAvatar: Boolean(avatarDataUrl),
     screenshotCount: socialScreenshots.length,
@@ -1102,6 +1135,7 @@ function buildPrompt(data) {
 用户输入资料：
 - 分析对象昵称：${displayName}
 - 分析场景：${data.scenario}
+- 我想达成：${data.selectedGoal || "未指定"}
 - ${photoMaterial}
 - ${screenshotMaterial}
 - 调试说明：本 Prompt 仅作为开发者调试或备用方案。当前链路没有把照片像素发送给模型，也不做 OCR 或图像识别。
@@ -1116,6 +1150,7 @@ ${normalizedPosts}
 ${normalizedQuestion}
 
 分析要求：
+0. 所有沟通切入口、适合说的话、不建议说的话，都必须围绕“分析场景 + 我想达成”生成。
 1. 分析任务是：基于照片中的公开呈现描述与用户补充问题，生成沟通画像。
 2. Big Five 只能作为“倾向参考”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
 3. 所有结论都必须使用“可能、倾向、从照片呈现看、从补充信息看”等克制措辞。
@@ -1168,16 +1203,17 @@ function mockAnalysis(payload) {
   const reportData = JSON.parse(JSON.stringify(SAMPLE_REPORT_DATA));
   const input = payload.input || {};
   const displayName = input.nickname || translations.zh.unnamedObject;
+  const goalText = input.selectedGoal || "自然开场";
   const filledPosts = (input.posts || []).filter(Boolean).length;
   const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
 
-  reportData.basicProfile.oneSentence = `${displayName}从当前资料看，可能给人一种清爽、有边界、适合低压开场的第一印象。`;
-  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的视觉呈现状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前前端 mock 不读取照片内容，因此不会描述具体画面细节。`;
+  reportData.basicProfile.oneSentence = `${displayName}在“${input.scenario || "当前场景"}”里，当前更适合围绕“${goalText}”做低压、具体、可选择的开场。`;
+  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的视觉呈现状态、沟通目标和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前前端 mock 不读取照片内容，因此不会描述具体画面细节。`;
   reportData.basicProfile.confidenceReason = `样例分析参考了${hasVisualClues ? "照片/补充图片上传状态、" : ""}可选问题和 ${filledPosts} 条高级补充文字；由于 mock 模式不读取图片内容，结论仅用于演示新版流程。`;
   reportData.evidenceChain = [
     {
-      conclusion: "当前更适合用低压、具体的方式开场",
-      evidence: input.question || "用户没有填写具体问题，因此先给出通用的低压开场建议。",
+      conclusion: `当前更适合围绕“${goalText}”用低压、具体的方式开场`,
+      evidence: input.question || `用户选择了“${input.scenario || "当前场景"} / ${goalText}”，因此先给出对应目标下的低压开场建议。`,
       source: "用户问题"
     },
     {
@@ -1349,6 +1385,7 @@ async function handleSubmit(event) {
   try {
     const reportData = await runAnalysis(payload);
     reportData.scenario = data.scenario;
+    reportData.selectedGoal = data.selectedGoal;
     stopAnalysisLoading();
     renderVisualReport(reportData);
     renderAnalysisPreview(reportData);
@@ -1377,6 +1414,8 @@ function handleReset() {
   renderScreenshotGrid();
   const defaultScenario = document.querySelector('input[name="scenario"][value="亲密关系"]');
   if (defaultScenario) defaultScenario.checked = true;
+  selectedGoal = "";
+  renderGoalOptions();
   renderedReportData = null;
   updateGeneratedState("", null);
   analysisPreview.innerHTML = getAnalysisWaitingHtml();
@@ -1586,6 +1625,7 @@ function normalizeReportData(data) {
   const basicProfile = getFirstObject(data, ["basicProfile", "profile", "basic_profile", "summaryProfile", "基础画像", "基本画像"]);
   return {
     scenario: coerceText(getFirstValue(data, ["scenario", "scene", "场景"]), ["text", "value"]) || "",
+    selectedGoal: coerceText(getFirstValue(data, ["selectedGoal", "goal", "communicationGoal", "沟通目标"]), ["text", "value"]) || "",
     basicProfile: {
       oneSentence: coerceText(getFirstValue(basicProfile, ["oneSentence", "oneSentenceProfile", "one_sentence", "profile", "headline", "一句话画像", "一句话总结"]) || getFirstValue(data, ["oneSentence", "oneSentenceProfile", "one_sentence", "一句话画像", "一句话总结"]), ["text", "content", "summary", "value"]) || "未提供一句话画像",
       personaSummary: coerceText(getFirstValue(basicProfile, ["personaSummary", "persona_summary", "summary", "persona", "description", "人设总结", "画像总结"]) || getFirstValue(data, ["personaSummary", "persona_summary", "summary", "人设总结", "画像总结"]), ["text", "content", "summary", "value"]) || "未提供人设总结",
@@ -2171,6 +2211,20 @@ screenshotGrid.addEventListener("click", (event) => {
 });
 bindDropZone(faceUploadZone, (files) => handleFacePhotoFile(files && files[0]));
 bindDropZone(screenshotDropZone, addScreenshotFiles);
+document.querySelectorAll('input[name="scenario"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    selectedGoal = "";
+    renderGoalOptions();
+  });
+});
+if (goalOptions) {
+  goalOptions.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-goal]");
+    if (!button) return;
+    selectedGoal = button.dataset.goal;
+    renderGoalOptions();
+  });
+}
 copyPromptBtn.addEventListener("click", () => copyText(generatedPrompt));
 saveHistoryBtn.addEventListener("click", saveCurrentPrompt);
 renderReportBtn.addEventListener("click", handleRenderReport);
@@ -2196,4 +2250,5 @@ window.addEventListener("load", () => {
 
 UnicornBackground();
 applyLanguage();
+renderGoalOptions();
 applyAuthState();

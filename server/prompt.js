@@ -73,6 +73,7 @@ const SCENE_GUIDES = {
 function buildModelMessages(input, options = {}) {
   const repairErrors = Array.isArray(options.repairErrors) ? options.repairErrors : [];
   const scene = SCENE_GUIDES[input.scenario] || SCENE_GUIDES["亲密关系"];
+  const selectedGoal = input.selectedGoal || "未指定";
   return {
     system: [
       "你是 PersonaScope 的沟通画像分析服务，也是一名谨慎、细腻、重证据的沟通策略师。",
@@ -107,6 +108,10 @@ function buildModelMessages(input, options = {}) {
       "riskPoints 必须给 3 条需要避免的表达，可以写成“不要说：……”，并说明它为什么会显得冒犯、太油、太急或太压迫。",
       "evidenceChain 必须引用用户输入里的具体线索，例如用户问题、签名、文案、昵称、场景、图片数量；如果没有具体文本，就写“当前线索有限”。不要引用不存在的照片或截图内容。",
       `当前场景：${input.scenario || "亲密关系"}。理论依据：${scene.theory}。${scene.focus}`,
+      `当前沟通目标：${selectedGoal}。approachStyle、communicationAdvice、riskPoints 必须围绕“${input.scenario || "亲密关系"} + ${selectedGoal}”生成，避免泛泛而谈。`,
+      "沟通切入口要回答：为了达成当前目标，第一句话怎么说、第二步怎么接、对方反应冷淡时怎么退。",
+      "适合说的话必须给 3 条可直接复制的话术，并分别覆盖开场、推进、留出选择空间。",
+      "不建议说的话必须给 3 条具体表达，说明它们为什么会影响当前目标，例如太急、太压迫、显得套近乎、显得推责或过度承诺。",
       `sceneMetrics 必须按这些维度输出 6 条：${scene.dimensions.join("、")}。每条包含 label、score、basis、suggestion。score 是 0-100 的沟通参考分。`,
       "sceneMetrics 的 basis 要简短说明来自公开呈现/补充问题的依据，suggestion 要给对应沟通建议。",
       "理论依据只保留一行，不要为了显得专业而堆理论。",
@@ -121,6 +126,7 @@ function buildModelMessages(input, options = {}) {
       signature: input.signature || "",
       posts: Array.isArray(input.posts) ? input.posts : [],
       scenario: input.scenario || "",
+      selectedGoal,
       question: input.question || "",
       hasAvatar: Boolean(input.hasAvatar),
       hasFacePhoto: Boolean(input.hasAvatar),

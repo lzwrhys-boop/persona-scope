@@ -134,6 +134,7 @@ function normalizeInput(body) {
     signature: safeText(source.signature, MAX_TEXT_LENGTHS.signature),
     posts: posts.map((post) => safeText(post, MAX_TEXT_LENGTHS.post)),
     scenario: safeText(source.scenario || "亲密关系", 80),
+    selectedGoal: safeText(source.selectedGoal, 80),
     question: safeText(source.question, MAX_TEXT_LENGTHS.question),
     hasAvatar: Boolean(source.hasAvatar),
     screenshotCount,
@@ -157,6 +158,7 @@ function createMockReport(input) {
   const filledPosts = input.posts.filter(Boolean).length;
   const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
   const displayName = input.nickname || "这张照片";
+  const goalText = input.selectedGoal || "自然开场";
   const sceneMetricLabels = {
     客户沟通: ["信任建立路径", "风险敏感度", "价值沟通偏好", "决策理性倾向", "推进节奏", "关系维护偏好"],
     职场协作: ["可信呈现感", "责任边界感", "协作开放度", "反馈接受方式", "沟通直接度", "压力下表达"],
@@ -173,9 +175,10 @@ function createMockReport(input) {
 
   return {
     scenario: input.scenario,
+    selectedGoal: input.selectedGoal,
     basicProfile: {
-      oneSentence: `${displayName}从当前资料看，可能给人一种清爽、有边界、适合低压开场的第一印象。`,
-      personaSummary: `基于${input.scenario || "当前场景"}中的照片上传状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前 mock API 不读取照片内容，因此不会描述具体表情、姿态或镜头细节。`,
+      oneSentence: `${displayName}在“${input.scenario || "当前场景"}”里，当前更适合围绕“${goalText}”做低压、具体、可选择的开场。`,
+      personaSummary: `基于${input.scenario || "当前场景"}中的照片上传状态、沟通目标和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前 mock API 不读取照片内容，因此不会描述具体表情、姿态或镜头细节。`,
       confidence: "中",
       confidenceReason: `样例分析参考了${hasVisualClues ? "照片或补充图片上传状态、" : ""}可选问题和 ${filledPosts} 条高级补充文字；由于 mock 模式不读取图片内容，结论仅用于演示流程。`,
     },
@@ -201,8 +204,8 @@ function createMockReport(input) {
     sceneMetrics,
     evidenceChain: [
       {
-        conclusion: "当前更适合用低压方式开场",
-        evidence: input.question || "用户没有填写具体问题，因此先给出通用低压建议。",
+        conclusion: `当前更适合围绕“${goalText}”用低压方式开场`,
+        evidence: input.question || `用户选择了“${input.scenario || "当前场景"} / ${goalText}”，因此先给出对应目标下的低压建议。`,
         source: "用户问题",
       },
       {
