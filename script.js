@@ -93,6 +93,7 @@ const translations = {
     scenarioFriend: "朋友社交",
     scenarioSelf: "自我呈现",
     goalLabel: "我想达成",
+    statusLabel: "当前状态",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
     generatePromptBtn: "开始 AI 分析",
@@ -373,6 +374,7 @@ const translations = {
     scenarioFriend: "Friends",
     scenarioSelf: "Self Presentation",
     goalLabel: "Goal",
+    statusLabel: "Current Status",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
     generatePromptBtn: "Start Analysis",
@@ -585,6 +587,7 @@ const signatureInput = document.querySelector("#signatureInput");
 const postInputs = Array.from(document.querySelectorAll(".post-input"));
 const questionInput = document.querySelector("#questionInput");
 const goalOptions = document.querySelector("#goalOptions");
+const statusOptions = document.querySelector("#statusOptions");
 const promptOutput = document.querySelector("#promptOutput");
 const promptStatus = document.querySelector("#promptStatus");
 const analysisPreview = document.querySelector("#analysisPreview");
@@ -652,6 +655,14 @@ const SCENE_GOALS = {
   自我呈现: ["优化头像印象", "优化个人介绍", "提升专业感", "提升亲和力", "增强记忆点"],
   自我画像: ["优化头像印象", "优化个人介绍", "提升专业感", "提升亲和力", "增强记忆点"],
 };
+const SCENE_STATUSES = {
+  客户沟通: ["刚认识", "聊过但没推进", "之前答应过但没下文", "正在犹豫", "已经合作过"],
+  职场协作: ["第一次沟通", "对方比较强势", "对方比较忙", "之前有分歧", "需要对方支持"],
+  亲密关系: ["刚认识", "聊过几次", "关系变冷", "有点暧昧", "想重新开启"],
+  朋友社交: ["第一次认识", "不太熟", "偶尔聊天", "有点尴尬", "想拉近关系"],
+  自我呈现: ["用于社交平台", "用于职场展示", "用于认识新朋友", "用于客户沟通", "用于个人介绍"],
+  自我画像: ["用于社交平台", "用于职场展示", "用于认识新朋友", "用于客户沟通", "用于个人介绍"],
+};
 const SCENE_LABELS = {
   亲密关系: { zh: "亲密关系", en: "Relationship" },
   客户沟通: { zh: "客户沟通", en: "Client Communication" },
@@ -686,6 +697,32 @@ const GOAL_LABELS = {
   提升专业感: { zh: "提升专业感", en: "Increase Professional Feel" },
   提升亲和力: { zh: "提升亲和力", en: "Increase Approachability" },
   增强记忆点: { zh: "增强记忆点", en: "Make It More Memorable" },
+};
+const STATUS_LABELS = {
+  刚认识: { zh: "刚认识", en: "Just Met" },
+  聊过但没推进: { zh: "聊过但没推进", en: "Talked, No Progress Yet" },
+  之前答应过但没下文: { zh: "之前答应过但没下文", en: "Previously Agreed, No Follow-up" },
+  正在犹豫: { zh: "正在犹豫", en: "Still Hesitating" },
+  已经合作过: { zh: "已经合作过", en: "Worked Together Before" },
+  第一次沟通: { zh: "第一次沟通", en: "First Conversation" },
+  对方比较强势: { zh: "对方比较强势", en: "They Seem Quite Assertive" },
+  对方比较忙: { zh: "对方比较忙", en: "They Seem Busy" },
+  之前有分歧: { zh: "之前有分歧", en: "Had Disagreement Before" },
+  需要对方支持: { zh: "需要对方支持", en: "Need Their Support" },
+  聊过几次: { zh: "聊过几次", en: "Talked a Few Times" },
+  关系变冷: { zh: "关系变冷", en: "Conversation Has Cooled" },
+  有点暧昧: { zh: "有点暧昧", en: "Slightly Flirtatious" },
+  想重新开启: { zh: "想重新开启", en: "Want to Restart" },
+  第一次认识: { zh: "第一次认识", en: "First Time Meeting" },
+  不太熟: { zh: "不太熟", en: "Not Very Close" },
+  偶尔聊天: { zh: "偶尔聊天", en: "Occasional Chat" },
+  有点尴尬: { zh: "有点尴尬", en: "A Bit Awkward" },
+  想拉近关系: { zh: "想拉近关系", en: "Want to Get Closer" },
+  用于社交平台: { zh: "用于社交平台", en: "For Social Platforms" },
+  用于职场展示: { zh: "用于职场展示", en: "For Workplace Presence" },
+  用于认识新朋友: { zh: "用于认识新朋友", en: "For Meeting New Friends" },
+  用于客户沟通: { zh: "用于客户沟通", en: "For Client Communication" },
+  用于个人介绍: { zh: "用于个人介绍", en: "For Personal Bio" },
 };
 const SAMPLE_REPORT_DATA = {
   basicProfile: {
@@ -759,6 +796,7 @@ let avatarDataUrl = "";
 let avatarFileSize = 0;
 let socialScreenshots = [];
 let selectedGoal = "";
+let selectedStatus = "";
 let generatedPrompt = "";
 let generatedRecordDraft = null;
 let expandedHistoryId = "";
@@ -893,6 +931,7 @@ function applyLanguage() {
   }
   updateDebugPromptVisibility();
   renderGoalOptions();
+  renderStatusOptions();
   updateGeneratedState(generatedPrompt, generatedRecordDraft);
   renderScreenshotGrid();
   if (renderedReportData) {
@@ -1037,6 +1076,7 @@ function compactPromptRecord(record) {
     posts: Array.isArray(record.posts) ? record.posts.map((post) => truncateText(post || "", 240)) : [],
     scenario: record.scenario,
     selectedGoal: record.selectedGoal,
+    selectedStatus: record.selectedStatus,
     question: truncateText(record.question || "", 240),
     hasAvatar: Boolean(record.hasAvatar),
     screenshotCount: Number(record.screenshotCount || 0),
@@ -1059,6 +1099,7 @@ function compactReportData(data) {
     disclaimer: data.disclaimer,
     scenario: data.scenario,
     selectedGoal: data.selectedGoal,
+    selectedStatus: data.selectedStatus,
   };
 }
 
@@ -1114,6 +1155,10 @@ function getGoalsForScenario(scenario) {
   return SCENE_GOALS[scenario] || SCENE_GOALS["亲密关系"];
 }
 
+function getStatusesForScenario(scenario) {
+  return SCENE_STATUSES[scenario] || SCENE_STATUSES["亲密关系"];
+}
+
 function getLocalizedLabel(labels, fallback = "") {
   if (!labels || typeof labels !== "object") return fallback;
   return labels[currentLanguage] || labels.zh || fallback;
@@ -1125,6 +1170,10 @@ function translateScenario(scenario) {
 
 function translateGoal(goal) {
   return getLocalizedLabel(GOAL_LABELS[goal], goal || "");
+}
+
+function translateStatus(status) {
+  return getLocalizedLabel(STATUS_LABELS[status], status || "");
 }
 
 function translateConfidence(value) {
@@ -1146,12 +1195,26 @@ function getSelectedGoal() {
   return goals.includes(selectedGoal) ? selectedGoal : goals[0];
 }
 
+function getSelectedStatus() {
+  const statuses = getStatusesForScenario(getSelectedScenario());
+  return statuses.includes(selectedStatus) ? selectedStatus : statuses[0];
+}
+
 function renderGoalOptions() {
   if (!goalOptions) return;
   const goals = getGoalsForScenario(getSelectedScenario());
   if (!goals.includes(selectedGoal)) selectedGoal = goals[0];
   goalOptions.innerHTML = goals.map((goal) => (
     `<button class="goal-pill${goal === selectedGoal ? " active" : ""}" type="button" data-goal="${escapeHtml(goal)}">${escapeHtml(translateGoal(goal))}</button>`
+  )).join("");
+}
+
+function renderStatusOptions() {
+  if (!statusOptions) return;
+  const statuses = getStatusesForScenario(getSelectedScenario());
+  if (!statuses.includes(selectedStatus)) selectedStatus = statuses[0];
+  statusOptions.innerHTML = statuses.map((status) => (
+    `<button class="status-pill${status === selectedStatus ? " active" : ""}" type="button" data-status="${escapeHtml(status)}">${escapeHtml(translateStatus(status))}</button>`
   )).join("");
 }
 
@@ -1260,6 +1323,7 @@ function collectAnalysisInput() {
     posts: postInputs.map((input) => input.value.trim()),
     scenario: getSelectedScenario(),
     selectedGoal: getSelectedGoal(),
+    selectedStatus: getSelectedStatus(),
     question: questionInput.value.trim(),
     hasAvatar: Boolean(avatarDataUrl),
     screenshotCount: socialScreenshots.length,
@@ -1306,6 +1370,7 @@ function buildPrompt(data) {
 - 分析对象昵称：${displayName}
 - 分析场景：${data.scenario}
 - 我想达成：${data.selectedGoal || "未指定"}
+- 当前状态：${data.selectedStatus || "未指定"}
 - ${photoMaterial}
 - ${screenshotMaterial}
 - 调试说明：本 Prompt 仅作为开发者调试或备用方案。当前链路没有把照片像素发送给模型，也不做 OCR 或图像识别。
@@ -1320,7 +1385,7 @@ ${normalizedPosts}
 ${normalizedQuestion}
 
 分析要求：
-0. 所有沟通切入口、适合说的话、不建议说的话，都必须围绕“分析场景 + 我想达成”生成。
+0. 所有沟通切入口、适合说的话、不建议说的话，都必须围绕“分析场景 + 我想达成 + 当前状态”生成。
 1. 分析任务是：基于照片中的公开呈现描述与用户补充问题，生成沟通画像。
 2. Big Five 只能作为“倾向参考”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
 3. 所有结论都必须使用“可能、倾向、从照片呈现看、从补充信息看”等克制措辞。
@@ -1374,16 +1439,17 @@ function mockAnalysis(payload) {
   const input = payload.input || {};
   const displayName = input.nickname || translations.zh.unnamedObject;
   const goalText = input.selectedGoal || "自然开场";
+  const statusText = input.selectedStatus || "刚认识";
   const filledPosts = (input.posts || []).filter(Boolean).length;
   const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
 
-  reportData.basicProfile.oneSentence = `${displayName}在“${input.scenario || "当前场景"}”里，当前更适合围绕“${goalText}”做低压、具体、可选择的开场。`;
-  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的视觉呈现状态、沟通目标和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前前端 mock 不读取照片内容，因此不会描述具体画面细节。`;
+  reportData.basicProfile.oneSentence = `${displayName}在“${input.scenario || "当前场景"} / ${goalText} / ${statusText}”里，当前更适合做低压、具体、可选择的开场。`;
+  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的视觉呈现状态、沟通目标、当前状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前前端 mock 不读取照片内容，因此不会描述具体画面细节。`;
   reportData.basicProfile.confidenceReason = `样例分析参考了${hasVisualClues ? "照片/补充图片上传状态、" : ""}可选问题和 ${filledPosts} 条高级补充文字；由于 mock 模式不读取图片内容，结论仅用于演示新版流程。`;
   reportData.evidenceChain = [
     {
-      conclusion: `当前更适合围绕“${goalText}”用低压、具体的方式开场`,
-      evidence: input.question || `用户选择了“${input.scenario || "当前场景"} / ${goalText}”，因此先给出对应目标下的低压开场建议。`,
+      conclusion: `当前更适合围绕“${goalText} / ${statusText}”用低压、具体的方式开场`,
+      evidence: input.question || `用户选择了“${input.scenario || "当前场景"} / ${goalText} / ${statusText}”，因此先给出对应状态下的低压开场建议。`,
       source: "用户问题"
     },
     {
@@ -1557,6 +1623,7 @@ async function handleSubmit(event) {
     const reportData = await runAnalysis(payload);
     reportData.scenario = data.scenario;
     reportData.selectedGoal = data.selectedGoal;
+    reportData.selectedStatus = data.selectedStatus;
     stopAnalysisLoading();
     renderVisualReport(reportData);
     renderAnalysisPreview(reportData);
@@ -1586,7 +1653,9 @@ function handleReset() {
   const defaultScenario = document.querySelector('input[name="scenario"][value="亲密关系"]');
   if (defaultScenario) defaultScenario.checked = true;
   selectedGoal = "";
+  selectedStatus = "";
   renderGoalOptions();
+  renderStatusOptions();
   renderedReportData = null;
   updateGeneratedState("", null);
   analysisPreview.innerHTML = getAnalysisWaitingHtml();
@@ -1797,6 +1866,7 @@ function normalizeReportData(data) {
   return {
     scenario: coerceText(getFirstValue(data, ["scenario", "scene", "场景"]), ["text", "value"]) || "",
     selectedGoal: coerceText(getFirstValue(data, ["selectedGoal", "goal", "communicationGoal", "沟通目标"]), ["text", "value"]) || "",
+    selectedStatus: coerceText(getFirstValue(data, ["selectedStatus", "status", "currentStatus", "当前状态"]), ["text", "value"]) || "",
     basicProfile: {
       oneSentence: coerceText(getFirstValue(basicProfile, ["oneSentence", "oneSentenceProfile", "one_sentence", "profile", "headline", "一句话画像", "一句话总结"]) || getFirstValue(data, ["oneSentence", "oneSentenceProfile", "one_sentence", "一句话画像", "一句话总结"]), ["text", "content", "summary", "value"]) || t("fallbackOneSentence"),
       personaSummary: coerceText(getFirstValue(basicProfile, ["personaSummary", "persona_summary", "summary", "persona", "description", "人设总结", "画像总结"]) || getFirstValue(data, ["personaSummary", "persona_summary", "summary", "人设总结", "画像总结"]), ["text", "content", "summary", "value"]) || t("fallbackPersonaSummary"),
@@ -2384,7 +2454,9 @@ bindDropZone(screenshotDropZone, addScreenshotFiles);
 document.querySelectorAll('input[name="scenario"]').forEach((input) => {
   input.addEventListener("change", () => {
     selectedGoal = "";
+    selectedStatus = "";
     renderGoalOptions();
+    renderStatusOptions();
   });
 });
 if (goalOptions) {
@@ -2393,6 +2465,14 @@ if (goalOptions) {
     if (!button) return;
     selectedGoal = button.dataset.goal;
     renderGoalOptions();
+  });
+}
+if (statusOptions) {
+  statusOptions.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-status]");
+    if (!button) return;
+    selectedStatus = button.dataset.status;
+    renderStatusOptions();
   });
 }
 copyPromptBtn.addEventListener("click", () => copyText(generatedPrompt));
@@ -2421,4 +2501,5 @@ window.addEventListener("load", () => {
 UnicornBackground();
 applyLanguage();
 renderGoalOptions();
+renderStatusOptions();
 applyAuthState();

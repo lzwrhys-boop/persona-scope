@@ -1827,7 +1827,8 @@ textarea:focus {
 }
 
 .scenario-group,
-.goal-group {
+.goal-group,
+.status-group {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -1837,7 +1838,8 @@ textarea:focus {
 }
 
 .scenario-group legend,
-.goal-group legend {
+.goal-group legend,
+.status-group legend {
   width: 100%;
   margin-bottom: 2px;
   color: var(--muted-strong);
@@ -1870,14 +1872,16 @@ textarea:focus {
   background: rgba(95, 244, 255, 0.12);
 }
 
-.goal-options {
+.goal-options,
+.status-options {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   width: 100%;
 }
 
-.goal-pill {
+.goal-pill,
+.status-pill {
   padding: 9px 13px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -1888,7 +1892,9 @@ textarea:focus {
 }
 
 .goal-pill:hover,
-.goal-pill.active {
+.goal-pill.active,
+.status-pill:hover,
+.status-pill.active {
   color: var(--text);
   border-color: rgba(95, 244, 255, 0.58);
   background: rgba(95, 244, 255, 0.12);
@@ -3009,12 +3015,14 @@ pre {
   }
 
   .scenario-group label,
-  .goal-pill {
+  .goal-pill,
+  .status-pill {
     flex: 1 1 calc(50% - 10px);
   }
 
   .scenario-group span,
-  .goal-pill {
+  .goal-pill,
+  .status-pill {
     width: 100%;
     text-align: center;
   }
@@ -3054,7 +3062,8 @@ pre {
   }
 
   .scenario-group label,
-  .goal-pill {
+  .goal-pill,
+  .status-pill {
     flex-basis: 100%;
   }
 }
