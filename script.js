@@ -87,11 +87,11 @@ const translations = {
     screenshotUploadTitle: "点击或拖拽上传社交截图",
     screenshotUploadDesc: "最多 6 张；支持朋友圈、小红书、微博、LinkedIn 等截图；用于公开文本与视觉线索分析",
     scenarioLabel: "分析场景",
-    scenarioDating: "恋爱了解",
+    scenarioDating: "亲密关系",
     scenarioClient: "客户沟通",
-    scenarioWork: "同事协作",
-    scenarioFriend: "朋友相处",
-    scenarioSelf: "自我画像",
+    scenarioWork: "职场协作",
+    scenarioFriend: "朋友社交",
+    scenarioSelf: "自我呈现",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
     generatePromptBtn: "开始 AI 分析",
@@ -142,7 +142,7 @@ const translations = {
     waitingJsonTitle: "等待生成可视化报告",
     waitingJsonDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。也可以使用开发者调试模式手动导入报告数据。",
     chartBarTitle: "沟通风格维度图",
-    chartRadarTitle: "Big Five 倾向参考",
+    chartRadarTitle: "场景专业维度",
     tagCloudTitle: "沟通标签",
     avatarVisualCuesTitle: "视觉呈现线索",
     communicationAdviceTitle: "适合说的话",
@@ -313,11 +313,11 @@ const translations = {
     screenshotUploadTitle: "Click or drag to upload social screenshots",
     screenshotUploadDesc: "Up to 6 images. Used for public text and visual cue analysis; screenshots stay local.",
     scenarioLabel: "Scenario",
-    scenarioDating: "Dating",
+    scenarioDating: "Relationship",
     scenarioClient: "Client Communication",
-    scenarioWork: "Work Collaboration",
-    scenarioFriend: "Friendship",
-    scenarioSelf: "Self Profile",
+    scenarioWork: "Workplace Collaboration",
+    scenarioFriend: "Friends",
+    scenarioSelf: "Self Presentation",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
     generatePromptBtn: "Start AI Analysis",
@@ -368,7 +368,7 @@ const translations = {
     waitingJsonTitle: "Waiting for Visual Report",
     waitingJsonDesc: "Once analysis is complete, the system will generate a visual communication profile report here. Developer debug mode can also import report data manually.",
     chartBarTitle: "Communication Style Dimensions",
-    chartRadarTitle: "Big Five Tendency Reference",
+    chartRadarTitle: "Scenario Dimensions",
     tagCloudTitle: "Communication Tags",
     avatarVisualCuesTitle: "Visual Presentation Cues",
     communicationAdviceTitle: "Good Lines to Use",
@@ -509,6 +509,32 @@ const MAX_SCREENSHOT_COUNT = 6;
 const MAX_HISTORY_RECORDS = 20;
 const MAX_HISTORY_RAW_JSON_LENGTH = 12000;
 const MAX_HISTORY_PROMPT_LENGTH = 12000;
+const SCENE_CONFIG = {
+  客户沟通: {
+    theory: "本报告参考信任形成模型、风险感知、关系销售与沟通适配相关框架，仅用于沟通准备，不构成定论。",
+    dimensions: ["信任建立路径", "风险敏感度", "价值沟通偏好", "决策理性倾向", "推进节奏", "关系维护偏好"],
+  },
+  职场协作: {
+    theory: "本报告参考 Big Five、心理安全感、反馈接受与协作风格相关框架，仅用于沟通准备，不构成定论。",
+    dimensions: ["可信呈现感", "责任边界感", "协作开放度", "反馈接受方式", "沟通直接度", "压力下表达"],
+  },
+  亲密关系: {
+    theory: "本报告参考成人依恋、社会渗透、关系边界与情绪表达相关框架，仅用于沟通准备，不判断关系结果。",
+    dimensions: ["关系稳定表达", "投入表达方式", "回应主动性", "情绪表达度", "边界清晰度", "亲密推进节奏"],
+  },
+  朋友社交: {
+    theory: "本报告参考不确定性降低、社会渗透与对话风格适配相关框架，仅用于沟通准备，不构成定论。",
+    dimensions: ["破冰难度", "话题开放度", "幽默接受度", "距离感", "相处节奏", "情绪松弛度"],
+  },
+  自我呈现: {
+    theory: "本报告参考印象管理、自我呈现与 Big Five 外显线索相关框架，仅用于沟通准备，不构成定论。",
+    dimensions: ["第一印象一致性", "专业感呈现", "亲和力呈现", "表达记忆点", "边界感", "社交可接近度"],
+  },
+  自我画像: {
+    theory: "本报告参考印象管理、自我呈现与 Big Five 外显线索相关框架，仅用于沟通准备，不构成定论。",
+    dimensions: ["第一印象一致性", "专业感呈现", "亲和力呈现", "表达记忆点", "边界感", "社交可接近度"],
+  },
+};
 const SAMPLE_REPORT_DATA = {
   basicProfile: {
     oneSentence: "从当前资料看，可能给人一种清爽、有边界、适合低压开场的第一印象。",
@@ -545,7 +571,7 @@ const SAMPLE_REPORT_DATA = {
   riskPoints: [
     "不建议说的话：不要把单张照片或一次表达直接当作重大判断依据。",
     "避免过快推进亲密感，或用标签化语言概括对方。",
-    "不要围绕隐私、收入、健康、政治宗教等敏感属性做推断。"
+    "不要围绕隐私或敏感属性做推断。"
   ],
   approachStyle: [
     "第一句话建议低压、具体、可选择：先提一个观察到的点，再把回应权交给对方。",
@@ -873,8 +899,10 @@ function compactReportData(data) {
     communicationAdvice: normalizeStringArray(data.communicationAdvice).slice(0, 8),
     riskPoints: normalizeStringArray(data.riskPoints).slice(0, 8),
     approachStyle: normalizeStringArray(data.approachStyle).slice(0, 8),
+    sceneMetrics: normalizeSceneMetrics(data.sceneMetrics).slice(0, 8),
     evidenceChain: normalizeEvidenceChain(data.evidenceChain).slice(0, 8),
     disclaimer: data.disclaimer,
+    scenario: data.scenario,
   };
 }
 
@@ -1320,6 +1348,7 @@ async function handleSubmit(event) {
   startAnalysisLoading();
   try {
     const reportData = await runAnalysis(payload);
+    reportData.scenario = data.scenario;
     stopAnalysisLoading();
     renderVisualReport(reportData);
     renderAnalysisPreview(reportData);
@@ -1346,7 +1375,7 @@ function handleReset() {
   facePreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
   renderScreenshotGrid();
-  const defaultScenario = document.querySelector('input[name="scenario"][value="恋爱了解"]');
+  const defaultScenario = document.querySelector('input[name="scenario"][value="亲密关系"]');
   if (defaultScenario) defaultScenario.checked = true;
   renderedReportData = null;
   updateGeneratedState("", null);
@@ -1556,6 +1585,7 @@ function normalizeReportData(data) {
   if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("JSON 内容不是有效对象。");
   const basicProfile = getFirstObject(data, ["basicProfile", "profile", "basic_profile", "summaryProfile", "基础画像", "基本画像"]);
   return {
+    scenario: coerceText(getFirstValue(data, ["scenario", "scene", "场景"]), ["text", "value"]) || "",
     basicProfile: {
       oneSentence: coerceText(getFirstValue(basicProfile, ["oneSentence", "oneSentenceProfile", "one_sentence", "profile", "headline", "一句话画像", "一句话总结"]) || getFirstValue(data, ["oneSentence", "oneSentenceProfile", "one_sentence", "一句话画像", "一句话总结"]), ["text", "content", "summary", "value"]) || "未提供一句话画像",
       personaSummary: coerceText(getFirstValue(basicProfile, ["personaSummary", "persona_summary", "summary", "persona", "description", "人设总结", "画像总结"]) || getFirstValue(data, ["personaSummary", "persona_summary", "summary", "人设总结", "画像总结"]), ["text", "content", "summary", "value"]) || "未提供人设总结",
@@ -1569,9 +1599,45 @@ function normalizeReportData(data) {
     communicationAdvice: normalizeStringArray(getFirstValue(data, ["communicationAdvice", "advice", "communication_advice", "suggestions", "沟通建议", "建议"]), ["advice", "content", "text", "value", "title", "建议"]),
     riskPoints: normalizeStringArray(getFirstValue(data, ["riskPoints", "risks", "risk_points", "redFlags", "相处雷区", "风险点", "雷区"]), ["risk", "point", "content", "text", "value", "title", "风险", "雷区"]),
     approachStyle: normalizeStringArray(getFirstValue(data, ["approachStyle", "approach", "approach_style", "approaches", "接近方式", "适合接近方式"]), ["style", "content", "text", "value", "title", "方式"]),
+    sceneMetrics: normalizeSceneMetrics(getFirstValue(data, ["sceneMetrics", "scene_metrics", "scenarioMetrics", "场景维度", "专业维度"])),
     evidenceChain: normalizeEvidenceChain(getFirstValue(data, ["evidenceChain", "evidence_chain", "evidence", "proofs", "证据链", "依据"])),
     disclaimer: coerceText(getFirstValue(data, ["disclaimer", "免责声明"]), ["text", "content", "value"]) || DISCLAIMER,
   };
+}
+
+function getSceneConfig(scenario) {
+  return SCENE_CONFIG[scenario] || SCENE_CONFIG[getSelectedScenario()] || SCENE_CONFIG["亲密关系"];
+}
+
+function normalizeSceneMetrics(value) {
+  const items = Array.isArray(value) ? value : value && typeof value === "object" ? Object.values(value) : [];
+  return items.map((item) => {
+    if (!item || typeof item !== "object") return null;
+    const label = coerceText(getFirstValue(item, ["label", "name", "dimension", "维度", "名称"]), ["text", "value"]);
+    if (!label) return null;
+    return {
+      label,
+      score: clampScore(getFirstValue(item, ["score", "value", "分数", "得分"])),
+      basis: coerceText(getFirstValue(item, ["basis", "reason", "evidence", "依据", "理由"]), ["text", "content", "value"]) || "基于公开呈现与补充信息的沟通参考。",
+      suggestion: coerceText(getFirstValue(item, ["suggestion", "advice", "建议"]), ["text", "content", "value"]) || "建议保持低压、具体、尊重边界的沟通方式。",
+    };
+  }).filter(Boolean);
+}
+
+function buildFallbackSceneMetrics(data, scenario) {
+  const config = getSceneConfig(scenario);
+  const sourceScores = [...Object.values(data.scores || {}), ...Object.values(data.bigFive || {})].map(clampScore).filter(Number.isFinite);
+  const fallbackScores = sourceScores.length ? sourceScores : [62, 68, 72, 66, 70, 64];
+  return config.dimensions.map((label, index) => ({
+    label,
+    score: fallbackScores[index % fallbackScores.length],
+    basis: "基于公开呈现、补充问题与通用沟通线索的参考映射。",
+    suggestion: "建议把它作为沟通准备参考，先用低压、具体、可选择的方式试探回应。",
+  }));
+}
+
+function getReportScenario(data) {
+  return data.scenario || getSelectedScenario();
 }
 
 function getFirstObject(source, keys) {
@@ -1777,6 +1843,26 @@ function renderBigFiveBars(bigFive) {
   `;
 }
 
+function renderSceneMetrics(data) {
+  const scenario = getReportScenario(data);
+  const config = getSceneConfig(scenario);
+  const metrics = normalizeSceneMetrics(data.sceneMetrics).length
+    ? normalizeSceneMetrics(data.sceneMetrics)
+    : buildFallbackSceneMetrics(data, scenario);
+  return `
+    <div class="scene-framework-note">${escapeHtml(config.theory)}</div>
+    <div class="scene-metric-list">
+      ${metrics.slice(0, 6).map((item) => `
+        <div class="scene-metric-row">
+          <div class="bar-meta"><span>${escapeHtml(item.label)}</span><strong>${item.score}</strong></div>
+          <div class="bar-track"><span style="width: ${item.score}%"></span></div>
+          <p>${escapeHtml(item.suggestion || item.basis)}</p>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
 function renderListCards(title, items, emptyText) {
   const normalizedItems = normalizeStringArray(Array.isArray(items) ? items : []).length
     ? normalizeStringArray(items)
@@ -1793,6 +1879,7 @@ function renderListCards(title, items, emptyText) {
 
 function renderVisualReport(data) {
   renderedReportData = data;
+  const scenario = getReportScenario(data);
   const communicationAdvice = normalizeStringArray(Array.isArray(data.communicationAdvice) ? data.communicationAdvice : []);
   const riskPoints = normalizeStringArray(Array.isArray(data.riskPoints) ? data.riskPoints : []);
   const approachStyle = normalizeStringArray(Array.isArray(data.approachStyle) ? data.approachStyle : []);
@@ -1811,8 +1898,8 @@ function renderVisualReport(data) {
       </article>
 
       <article class="dashboard-card glass-card">
-        <h3>${t("chartRadarTitle")}</h3>
-        ${renderBigFiveBars(data.bigFive)}
+        <h3>${escapeHtml(scenario)} · ${t("chartRadarTitle")}</h3>
+        ${renderSceneMetrics(data)}
       </article>
 
       ${renderListCards(t("approachStyleTitle"), approachStyle, t("emptyApproach"))}

@@ -2272,6 +2272,34 @@ pre {
   gap: 16px;
 }
 
+.scene-framework-note {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(159, 181, 232, 0.14);
+  border-radius: 14px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.scene-metric-list {
+  display: grid;
+  gap: 16px;
+}
+
+.scene-metric-row {
+  display: grid;
+  gap: 8px;
+}
+
+.scene-metric-row p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
 .bar-row {
   display: grid;
   gap: 8px;

@@ -99,6 +99,19 @@ function normalizeEvidenceChain(value) {
   return normalized.length ? normalized : fallback;
 }
 
+function normalizeSceneMetrics(value) {
+  const items = Array.isArray(value) ? value : isObject(value) ? Object.values(value) : [];
+  return items.map((item) => {
+    if (!isObject(item)) return null;
+    return {
+      label: coerceText(getFirstValue(item, ["label", "name", "dimension", "维度", "名称"])),
+      score: clampScore(getFirstValue(item, ["score", "value", "分数", "得分"])) ?? 0,
+      basis: coerceText(getFirstValue(item, ["basis", "reason", "evidence", "依据", "理由"])),
+      suggestion: coerceText(getFirstValue(item, ["suggestion", "advice", "建议"])),
+    };
+  }).filter((item) => item && item.label && Number.isFinite(item.score));
+}
+
 function normalizeReport(data) {
   if (!isObject(data)) return data;
   const basic = getFirstValue(data, ["basicProfile", "profile", "basic_profile", "summaryProfile", "基础画像", "基本画像", "画像摘要"]);
@@ -123,6 +136,7 @@ function normalizeReport(data) {
 
   return {
     ...data,
+    scenario: coerceText(getFirstValue(data, ["scenario", "scene", "场景"])),
     basicProfile: {
       oneSentence: coerceText(getFirstValue(basicSource, ["oneSentence", "oneSentenceProfile", "headline", "summary", "一句话画像", "一句话总结"])),
       personaSummary: coerceText(getFirstValue(basicSource, ["personaSummary", "persona_summary", "profileSummary", "description", "summary", "人设总结", "画像总结"])),
@@ -136,6 +150,7 @@ function normalizeReport(data) {
     communicationAdvice: normalizeStringArray(getFirstValue(data, ["communicationAdvice", "advice", "communication_advice", "suggestions", "沟通建议", "建议"]), "建议以具体、低压、尊重边界的方式沟通。"),
     riskPoints: normalizeStringArray(getFirstValue(data, ["riskPoints", "risks", "risk_points", "redFlags", "相处雷区", "风险点", "雷区"]), "避免基于少量公开线索做绝对判断。"),
     approachStyle: normalizeStringArray(getFirstValue(data, ["approachStyle", "approach", "approach_style", "approaches", "接近方式", "适合接近方式"]), "先从公开内容中的具体细节自然切入。"),
+    sceneMetrics: normalizeSceneMetrics(getFirstValue(data, ["sceneMetrics", "scene_metrics", "scenarioMetrics", "场景维度", "专业维度"])),
     evidenceChain: normalizeEvidenceChain(getFirstValue(data, ["evidenceChain", "evidence_chain", "evidence", "proofs", "证据链", "依据"])),
     disclaimer: coerceText(getFirstValue(data, ["disclaimer", "免责声明", "使用提醒", "安全声明"])),
   };
@@ -181,6 +196,21 @@ function validateReport(data) {
   }
 
   if (!isString(data.disclaimer)) errors.push("disclaimer 必须是非空字符串");
+
+  if (data.sceneMetrics !== undefined) {
+    if (!Array.isArray(data.sceneMetrics)) {
+      errors.push("sceneMetrics 必须是数组");
+    } else {
+      data.sceneMetrics.forEach((item, index) => {
+        if (!isObject(item)) {
+          errors.push(`sceneMetrics[${index}] 必须是对象`);
+          return;
+        }
+        if (!isString(item.label)) errors.push(`sceneMetrics[${index}].label 必须是非空字符串`);
+        if (!Number.isFinite(item.score) || item.score < 0 || item.score > 100) errors.push(`sceneMetrics[${index}].score 必须是 0-100 数字`);
+      });
+    }
+  }
 
   return { ok: errors.length === 0, errors };
 }

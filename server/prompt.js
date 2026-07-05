@@ -24,6 +24,14 @@ const REPORT_JSON_TEMPLATE = {
   communicationAdvice: ["至少 1 条字符串"],
   riskPoints: ["至少 1 条字符串"],
   approachStyle: ["至少 1 条字符串"],
+  sceneMetrics: [
+    {
+      label: "场景维度名称",
+      score: 0,
+      basis: "简短依据",
+      suggestion: "对应建议",
+    },
+  ],
   evidenceChain: [
     {
       conclusion: "结论，非空字符串",
@@ -34,8 +42,37 @@ const REPORT_JSON_TEMPLATE = {
   disclaimer: "非空免责声明字符串",
 };
 
+const SCENE_GUIDES = {
+  客户沟通: {
+    theory: "信任形成模型、风险感知、关系销售、沟通适配",
+    dimensions: ["信任建立路径", "风险敏感度", "价值沟通偏好", "决策理性倾向", "推进节奏", "关系维护偏好"],
+    focus: "重点输出如何建立信任、降低风险感、表达价值、把握推进节奏。",
+  },
+  职场协作: {
+    theory: "Big Five、心理安全感、反馈接受、协作风格",
+    dimensions: ["可信呈现感", "责任边界感", "协作开放度", "反馈接受方式", "沟通直接度", "压力下表达"],
+    focus: "重点输出协作边界、反馈方式、沟通直接度和压力下表达建议。",
+  },
+  亲密关系: {
+    theory: "成人依恋、社会渗透理论、亲密关系边界、情绪表达",
+    dimensions: ["关系稳定表达", "投入表达方式", "回应主动性", "情绪表达度", "边界清晰度", "亲密推进节奏"],
+    focus: "只能表达沟通和关系互动倾向，禁止判断专一度、忠诚度、渣不渣、是否真心、是否适合结婚。",
+  },
+  朋友社交: {
+    theory: "不确定性降低理论、社会渗透理论、对话风格适配",
+    dimensions: ["破冰难度", "话题开放度", "幽默接受度", "距离感", "相处节奏", "情绪松弛度"],
+    focus: "重点输出破冰、话题、幽默、距离感和相处节奏建议。",
+  },
+  自我呈现: {
+    theory: "印象管理、自我呈现理论、Big Five 外显线索",
+    dimensions: ["第一印象一致性", "专业感呈现", "亲和力呈现", "表达记忆点", "边界感", "社交可接近度"],
+    focus: "重点输出如何优化公开呈现、记忆点、专业感与可接近度。",
+  },
+};
+
 function buildModelMessages(input, options = {}) {
   const repairErrors = Array.isArray(options.repairErrors) ? options.repairErrors : [];
+  const scene = SCENE_GUIDES[input.scenario] || SCENE_GUIDES["亲密关系"];
   return {
     system: [
       "你是 PersonaScope 的沟通画像分析服务，也是一名谨慎、细腻、重证据的沟通策略师。",
@@ -50,7 +87,7 @@ function buildModelMessages(input, options = {}) {
     ].join("\n"),
     developer: [
       "输出必须是严格 JSON，字段必须完整符合下面的 JSON 模板。",
-      "必须包含 basicProfile、scores、bigFive、personaTags、avatarVisualCues、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer。",
+      "必须包含 basicProfile、scores、bigFive、personaTags、avatarVisualCues、communicationAdvice、riskPoints、approachStyle、sceneMetrics、evidenceChain、disclaimer。",
       "basicProfile 必须包含 oneSentence、personaSummary、confidence、confidenceReason，且 confidence 只能是 高/中/低。",
       "scores 必须包含：表达温度、边界清晰度、自我暴露程度、沟通开放度、关系导向。",
       "bigFive 必须包含：开放性倾向、尽责性倾向、外向性倾向、宜人性倾向、情绪稳定性倾向。",
@@ -71,6 +108,9 @@ function buildModelMessages(input, options = {}) {
       "communicationAdvice 必须给 3 条可以直接复制的表达，每条都要像真实聊天中能发出去的一句话，不要写成分析说明。",
       "riskPoints 必须说明哪些话容易冒犯、太油、太急、太压迫；每条都要具体到说法或行为。",
       "approachStyle 必须回答“第一句话怎么开口”，第一条必须是一句可直接使用的开场白，后面再补充沟通节奏。",
+      `当前场景：${input.scenario || "亲密关系"}。理论依据：${scene.theory}。${scene.focus}`,
+      `sceneMetrics 必须按这些维度输出 6 条：${scene.dimensions.join("、")}。每条包含 label、score、basis、suggestion。score 是 0-100 的沟通参考分。`,
+      "sceneMetrics 的 basis 要简短说明来自公开呈现/补充问题的依据，suggestion 要给对应沟通建议。",
       "evidenceChain 每条必须包含：一个结论、对应证据、证据来源。证据解释要自然，不要只复制原文。",
       "如果输入线索很少，要明确置信度较低，并给出更保守的建议；不要为了显得丰富而编造不存在的照片细节。",
       "如果用户提出具体问题，要优先回答这个问题，但仍必须保持安全边界。",

@@ -133,7 +133,7 @@ function normalizeInput(body) {
     nickname: safeText(source.nickname, MAX_TEXT_LENGTHS.nickname),
     signature: safeText(source.signature, MAX_TEXT_LENGTHS.signature),
     posts: posts.map((post) => safeText(post, MAX_TEXT_LENGTHS.post)),
-    scenario: safeText(source.scenario || "恋爱了解", 80),
+    scenario: safeText(source.scenario || "亲密关系", 80),
     question: safeText(source.question, MAX_TEXT_LENGTHS.question),
     hasAvatar: Boolean(source.hasAvatar),
     screenshotCount,
@@ -157,8 +157,22 @@ function createMockReport(input) {
   const filledPosts = input.posts.filter(Boolean).length;
   const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
   const displayName = input.nickname || "这张照片";
+  const sceneMetricLabels = {
+    客户沟通: ["信任建立路径", "风险敏感度", "价值沟通偏好", "决策理性倾向", "推进节奏", "关系维护偏好"],
+    职场协作: ["可信呈现感", "责任边界感", "协作开放度", "反馈接受方式", "沟通直接度", "压力下表达"],
+    亲密关系: ["关系稳定表达", "投入表达方式", "回应主动性", "情绪表达度", "边界清晰度", "亲密推进节奏"],
+    朋友社交: ["破冰难度", "话题开放度", "幽默接受度", "距离感", "相处节奏", "情绪松弛度"],
+    自我呈现: ["第一印象一致性", "专业感呈现", "亲和力呈现", "表达记忆点", "边界感", "社交可接近度"],
+  };
+  const sceneMetrics = (sceneMetricLabels[input.scenario] || sceneMetricLabels["亲密关系"]).map((label, index) => ({
+    label,
+    score: [72, 64, 76, 68, 70, 66][index],
+    basis: "基于公开呈现与补充问题的沟通参考。",
+    suggestion: "建议先用低压、具体、可选择的表达观察回应。",
+  }));
 
   return {
+    scenario: input.scenario,
     basicProfile: {
       oneSentence: `${displayName}从当前资料看，可能给人一种清爽、有边界、适合低压开场的第一印象。`,
       personaSummary: `基于${input.scenario || "当前场景"}中的照片上传状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前 mock API 不读取照片内容，因此不会描述具体表情、姿态或镜头细节。`,
@@ -184,6 +198,7 @@ function createMockReport(input) {
     communicationAdvice: ["可以先从轻量、具体的问题切入，例如“我看到这个点挺有意思，可以多聊一点吗？”", "沟通节奏宜低压、具体、可选择。", "如果对方回应简短，先停在轻话题，不急着推进。"],
     riskPoints: ["不要把单张照片或一次表达当成重大判断依据。", "不要基于少量线索做敏感属性或重大判断。"],
     approachStyle: ["第一句先低压开场，再根据回应延展。", "使用具体观察代替标签化评价。"],
+    sceneMetrics,
     evidenceChain: [
       {
         conclusion: "当前更适合用低压方式开场",
