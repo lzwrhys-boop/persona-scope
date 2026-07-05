@@ -207,15 +207,15 @@
         <form class="input-card glass-card" id="personaForm">
           <div class="upload-field">
             <div class="field-title">
-              <span data-i18n="avatarLabel">照片</span>
+              <span data-i18n="avatarLabel">上传一张正脸照片</span>
               <button class="text-button" id="removeAvatarBtn" type="button" hidden data-i18n="removeAvatar">删除当前照片</button>
             </div>
             <label class="upload-box avatar-upload" id="faceUploadZone" for="faceImageInput">
               <input id="faceImageInput" name="facePhoto" type="file" accept="image/jpeg,image/jpg,image/png,image/webp">
               <span class="upload-preview avatar-preview" id="facePreview">+</span>
               <span>
-                <strong data-i18n="avatarUploadTitle">拖入照片，或点击选择</strong>
-                <small data-i18n="avatarUploadDesc">支持 JPG、PNG、WEBP，建议使用自然、清晰、无遮挡的人像照片</small>
+                <strong data-i18n="avatarUploadTitle">点击或拖拽照片到这里</strong>
+                <small data-i18n="avatarUploadDesc">建议选择光线清晰、无遮挡、接近正脸的照片</small>
               </span>
             </label>
           </div>
@@ -280,7 +280,7 @@
           </details>
 
           <div class="form-actions">
-            <button class="button primary" type="submit" data-i18n="generatePromptBtn">生成沟通画像</button>
+            <button class="button primary" type="submit" data-i18n="generatePromptBtn">开始 AI 分析</button>
             <button class="button ghost" id="resetBtn" type="reset" data-i18n="resetBtn">清空当前内容</button>
           </div>
         </form>
@@ -314,7 +314,7 @@
       <div class="section-heading">
         <p class="eyebrow" data-i18n="visualEyebrow">VISUAL REPORT</p>
         <h2 data-i18n="visualTitle">沟通画像</h2>
-        <p data-i18n="visualDesc">分析完成后，系统将在这里展示第一印象、Big Five 视觉呈现倾向和沟通建议。</p>
+        <p data-i18n="visualDesc">分析完成后，系统将在这里展示第一印象、Big Five 倾向参考和可直接使用的沟通建议。</p>
       </div>
 
       <div class="json-workspace">
@@ -410,7 +410,7 @@
         <article class="report-card glass-card">
           <span class="card-index">10</span>
           <h3 data-i18n="sampleCard10Title">使用提醒</h3>
-          <p data-i18n="sampleCard10Desc">报告只用于辅助理解和改善沟通，不应作为诊断、筛选、控制或重大决策依据。真实关系仍需要通过持续互动验证。</p>
+          <p data-i18n="sampleCard10Desc">报告只用于辅助理解和改善沟通，不应作为筛选、控制或重大决策依据。真实关系仍需要通过持续互动验证。</p>
         </article>
       </div>
     </section>
@@ -419,7 +419,7 @@
       <div class="section-heading">
         <p class="eyebrow" data-i18n="theoryEyebrow">FRAMEWORK</p>
         <h2 data-i18n="theoryTitle">理论依据</h2>
-        <p data-i18n="theoryDesc">PersonaScope 不做诊断，只做辅助理解和沟通建议。它把公开线索整理为可讨论、可复核、概率化的分析框架。</p>
+        <p data-i18n="theoryDesc">PersonaScope 只做辅助理解和沟通建议。它把公开线索整理为可讨论、可复核、概率化的分析框架。</p>
       </div>
 
       <div class="theory-grid">
@@ -435,8 +435,8 @@
         </article>
         <article class="theory-card glass-card">
           <span>FRAME 03</span>
-          <h3 data-i18n="theoryBigFiveTitle">Big Five：公开表达中的人格倾向参考</h3>
-          <p data-i18n="theoryBigFiveDesc">Big Five 仅作为视觉呈现倾向框架，用于辅助整理画面可能带来的沟通感受。</p>
+          <h3 data-i18n="theoryBigFiveTitle">Big Five：倾向参考</h3>
+          <p data-i18n="theoryBigFiveDesc">Big Five 仅作为倾向参考框架，用于辅助整理画面可能带来的沟通感受。</p>
         </article>
         <article class="theory-card glass-card">
           <span>FRAME 04</span>

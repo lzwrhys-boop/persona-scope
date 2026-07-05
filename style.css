@@ -1976,6 +1976,28 @@ textarea:focus {
   font-weight: 800;
 }
 
+.loading-stage-list {
+  display: grid;
+  width: min(100%, 320px);
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.loading-stage-list span {
+  padding: 9px 12px;
+  border: 1px solid rgba(159, 181, 232, 0.12);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 13px;
+}
+
+.loading-stage-list span.active {
+  border-color: rgba(95, 244, 255, 0.42);
+  color: var(--text);
+  background: rgba(95, 244, 255, 0.08);
+}
+
 .loading-spinner {
   width: 38px;
   height: 38px;
@@ -2244,7 +2266,8 @@ pre {
   line-height: 1.7;
 }
 
-.bar-chart {
+.bar-chart,
+.big-five-bars {
   display: grid;
   gap: 16px;
 }

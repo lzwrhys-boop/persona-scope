@@ -69,10 +69,10 @@ const translations = {
     optionalLabel: "可选",
     optionalQuestionLabel: "选填",
     nicknamePlaceholder: "例如：某位朋友 / 客户 A / 自我画像",
-    avatarLabel: "照片",
+    avatarLabel: "上传一张正脸照片",
     removeAvatar: "删除当前照片",
-    avatarUploadTitle: "拖入照片，或点击选择",
-    avatarUploadDesc: "支持 JPG、PNG、WEBP，建议使用自然、清晰、无遮挡的人像照片",
+    avatarUploadTitle: "点击或拖拽照片到这里",
+    avatarUploadDesc: "建议选择光线清晰、无遮挡、接近正脸的照片",
     advancedSummary: "高级补充信息",
     signatureLabel: "个性签名",
     signaturePlaceholder: "输入公开可见的个性签名、简介或主页文案",
@@ -94,8 +94,8 @@ const translations = {
     scenarioSelf: "自我画像",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
-    generatePromptBtn: "生成沟通画像",
-    generatingBtn: "正在生成...",
+    generatePromptBtn: "开始 AI 分析",
+    generatingBtn: "正在生成画像...",
     resetBtn: "清空当前内容",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
     analysisPreviewTitle: "你的沟通画像会出现在这里",
@@ -105,10 +105,9 @@ const translations = {
     analysisWaitingCueStrategy: "开场建议",
     loadingTitle: "正在生成你的沟通画像",
     loadingDesc: "请稍等几秒，系统正在整理第一印象、沟通倾向与开场建议。",
-    loadingStage1: "正在读取输入",
-    loadingStage2: "正在整理视觉呈现线索",
-    loadingStage3: "正在生成沟通画像",
-    loadingStage4: "正在生成开场建议",
+    loadingStage1: "识别公开呈现",
+    loadingStage2: "生成沟通倾向",
+    loadingStage3: "输出开场建议",
     analysisSummaryTitle: "沟通画像摘要",
     analysisDimensionsTitle: "核心维度",
     analysisTagsTitle: "关键标签",
@@ -125,7 +124,7 @@ const translations = {
     saveHistoryBtn: "保存到历史记录",
     visualEyebrow: "VISUAL REPORT",
     visualTitle: "沟通画像",
-    visualDesc: "分析完成后，系统将在这里展示第一印象、Big Five 视觉呈现倾向和沟通建议。",
+    visualDesc: "分析完成后，系统将在这里展示第一印象、Big Five 倾向参考和可直接使用的沟通建议。",
     jsonPasteLabel: "手动导入报告数据",
     jsonHelper: "开发者调试模式：可导入结构化报告 JSON，系统会尽量自动识别兼容字段。",
     jsonPlaceholder: "可导入完整报告 JSON，例如包含 basicProfile、scores、bigFive、personaTags、avatarVisualCues、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。",
@@ -143,13 +142,13 @@ const translations = {
     waitingJsonTitle: "等待生成可视化报告",
     waitingJsonDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。也可以使用开发者调试模式手动导入报告数据。",
     chartBarTitle: "沟通风格维度图",
-    chartRadarTitle: "Big Five 视觉呈现倾向",
+    chartRadarTitle: "Big Five 倾向参考",
     tagCloudTitle: "沟通标签",
     avatarVisualCuesTitle: "视觉呈现线索",
-    communicationAdviceTitle: "怎么开口",
-    riskPointsTitle: "哪些话别说",
-    approachStyleTitle: "开场节奏",
-    evidenceChainTitle: "为什么这么判断",
+    communicationAdviceTitle: "适合说的话",
+    riskPointsTitle: "不建议说的话",
+    approachStyleTitle: "沟通切入口",
+    evidenceChainTitle: "依据参考",
     confidenceLabel: "置信度",
     disclaimerTitle: "免责声明",
     emptyTags: "暂无标签",
@@ -175,7 +174,7 @@ const translations = {
     sampleCard4Desc: "情绪表达偏间接，常通过隐喻、自嘲或场景描述释放压力。与其直接追问“你怎么了”，不如用低压方式邀请对方补充。",
     sampleCard5Title: "沟通偏好",
     sampleCard5Desc: "更适合具体、真诚、可选择的沟通方式。对方可能更容易回应有观察、有边界、有信息量的开场，而不是泛泛寒暄。",
-    sampleCard6Title: "哪些话别说",
+    sampleCard6Title: "不建议说的话",
     sampleCard6Desc: "避免过快推进关系、连续追问隐私、用标签概括对方，或把单次视觉呈现当作重大判断依据。",
     sampleCard7Title: "适合的接近方式",
     sampleCard7Desc: "可以从对方公开表达中的具体主题切入：“你最近提到的那个观点挺有意思，我很好奇你为什么会这样看。”",
@@ -184,16 +183,16 @@ const translations = {
     sampleCard9Title: "置信度",
     sampleCard9Desc: "中。原因是线索来自视觉呈现和补充信息，适合作为沟通参考，但不能替代真实互动。",
     sampleCard10Title: "使用提醒",
-    sampleCard10Desc: "报告只用于辅助理解表达风格和改善沟通，不应作为诊断、筛选、控制、关系判断或重大决策依据。真实互动仍需要持续验证。",
+    sampleCard10Desc: "报告只用于辅助理解表达风格和改善沟通，不应作为筛选、控制、关系判断或重大决策依据。真实互动仍需要持续验证。",
     theoryEyebrow: "FRAMEWORK",
     theoryTitle: "理论依据",
-    theoryDesc: "PersonaScope 采用视觉呈现沟通画像模型：照片视觉呈现 → Big Five 视觉呈现倾向 → 用户问题 → 沟通建议。",
+    theoryDesc: "PersonaScope 采用视觉呈现沟通画像模型：照片视觉呈现 → Big Five 倾向参考 → 用户问题 → 沟通建议。",
     theoryLanguageTitle: "补充信息：让建议更贴近场景",
     theoryLanguageDesc: "通过情绪词、自我指代、关系词、行动词、判断词与表达抽象度，观察公开文本中呈现出的沟通风格、情绪显性度、自我暴露程度与关系导向。",
     theorySocialTitle: "自我呈现：识别 TA 想被如何看见",
     theorySocialDesc: "照片和补充信息只用于观察视觉呈现与沟通场景，帮助生成更低压、更具体的沟通建议。",
-    theoryBigFiveTitle: "Big Five：视觉呈现倾向参考",
-    theoryBigFiveDesc: "Big Five 仅作为视觉呈现倾向框架，用于辅助整理画面可能带来的沟通感受。",
+    theoryBigFiveTitle: "Big Five：倾向参考",
+    theoryBigFiveDesc: "Big Five 仅作为倾向参考框架，用于辅助整理画面可能带来的沟通感受。",
     theoryAvatarTitle: "画面呈现",
     theoryAvatarDesc: "照片仅用于整理画面中的公开呈现，结论只能作为沟通参考。",
     theoryStrategyTitle: "综合沟通策略：从分析到可执行建议",
@@ -296,10 +295,10 @@ const translations = {
     optionalLabel: "Optional",
     optionalQuestionLabel: "Optional",
     nicknamePlaceholder: "Example: a friend / client A / self profile",
-    avatarLabel: "Photo",
+    avatarLabel: "Upload a face photo",
     removeAvatar: "Remove photo",
-    avatarUploadTitle: "Drop a photo, or click to choose",
-    avatarUploadDesc: "Supports JPG, PNG, and WEBP. Use a natural, clear portrait without heavy obstruction.",
+    avatarUploadTitle: "Click or drag a photo here",
+    avatarUploadDesc: "Choose a clear, unobstructed, near-front-facing photo.",
     advancedSummary: "Advanced Details",
     signatureLabel: "Personal Bio",
     signaturePlaceholder: "Enter a public bio, signature, or profile intro",
@@ -321,8 +320,8 @@ const translations = {
     scenarioSelf: "Self Profile",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
-    generatePromptBtn: "Generate Profile",
-    generatingBtn: "Generating...",
+    generatePromptBtn: "Start AI Analysis",
+    generatingBtn: "Generating profile...",
     resetBtn: "Clear Current Input",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
     analysisPreviewTitle: "Your communication profile will appear here",
@@ -332,10 +331,9 @@ const translations = {
     analysisWaitingCueStrategy: "Opening advice",
     loadingTitle: "Generating your communication profile",
     loadingDesc: "Please wait a few seconds while the system organizes first impressions, communication tendencies, and opening advice.",
-    loadingStage1: "Reading input",
-    loadingStage2: "Organizing visual-presentation cues",
-    loadingStage3: "Generating communication profile",
-    loadingStage4: "Generating opening advice",
+    loadingStage1: "Reading public presentation",
+    loadingStage2: "Generating communication tendency",
+    loadingStage3: "Creating opening advice",
     analysisSummaryTitle: "Communication Profile Summary",
     analysisDimensionsTitle: "Key Dimensions",
     analysisTagsTitle: "Key Tags",
@@ -352,7 +350,7 @@ const translations = {
     saveHistoryBtn: "Save to History",
     visualEyebrow: "VISUAL REPORT",
     visualTitle: "Communication Profile",
-    visualDesc: "Once analysis is complete, this area shows the first impression, Big Five visual-presentation tendencies, and communication guidance.",
+    visualDesc: "Once analysis is complete, this area shows the first impression, Big Five tendency reference, and ready-to-use communication advice.",
     jsonPasteLabel: "Import Report Data Manually",
     jsonHelper: "Developer debug mode: import structured report JSON and the system will try to recognize compatible fields.",
     jsonPlaceholder: "Import complete report JSON, such as fields including basicProfile, scores, bigFive, personaTags, avatarVisualCues, communicationAdvice, riskPoints, approachStyle, evidenceChain, and disclaimer.",
@@ -370,13 +368,13 @@ const translations = {
     waitingJsonTitle: "Waiting for Visual Report",
     waitingJsonDesc: "Once analysis is complete, the system will generate a visual communication profile report here. Developer debug mode can also import report data manually.",
     chartBarTitle: "Communication Style Dimensions",
-    chartRadarTitle: "Big Five Visual-Presentation Tendencies",
+    chartRadarTitle: "Big Five Tendency Reference",
     tagCloudTitle: "Communication Tags",
     avatarVisualCuesTitle: "Visual Presentation Cues",
-    communicationAdviceTitle: "How to Start",
-    riskPointsTitle: "What Not to Say",
-    approachStyleTitle: "Opening Rhythm",
-    evidenceChainTitle: "Why This Reading",
+    communicationAdviceTitle: "Good Lines to Use",
+    riskPointsTitle: "Lines to Avoid",
+    approachStyleTitle: "Conversation Opener",
+    evidenceChainTitle: "Reference Notes",
     confidenceLabel: "Confidence",
     disclaimerTitle: "Disclaimer",
     emptyTags: "No tags yet",
@@ -540,19 +538,19 @@ const SAMPLE_REPORT_DATA = {
     "审美控制感：色彩和构图呈现一定筛选感。"
   ],
   communicationAdvice: [
-    "适合开场方式：引用对方公开内容中的具体细节，避免泛泛寒暄。",
-    "合适沟通节奏：先建立共同语境，再逐步增加话题深度。",
-    "建议话术方向：给对方保留选择空间，例如用“如果你愿意的话”降低压力。"
+    "“我看到这个点挺有意思，想听听你是怎么想的。”",
+    "“如果你方便的话，我想从一个轻松的问题开始聊。”",
+    "“我不急着下结论，先想了解一下你的感受。”"
   ],
   riskPoints: [
-    "哪些话别说：不要把单张照片或一次表达直接当作重大判断依据。",
+    "不建议说的话：不要把单张照片或一次表达直接当作重大判断依据。",
     "避免过快推进亲密感，或用标签化语言概括对方。",
     "不要围绕隐私、收入、健康、政治宗教等敏感属性做推断。"
   ],
   approachStyle: [
-    "适合接近方式：从作品、观点、地点或共同兴趣切入。",
-    "沟通节奏：用低压邀请代替高强度索取回应。",
-    "互动建议：先确认对方愿意延展话题，再表达进一步了解的意图。"
+    "第一句话建议低压、具体、可选择：先提一个观察到的点，再把回应权交给对方。",
+    "可以这样开口：“我注意到你给人的感觉挺清爽，我想用一个轻松的问题开始，可以吗？”",
+    "如果对方回应简短，先停在轻话题，不要马上追问隐私或关系态度。"
   ],
   evidenceChain: [
     {
@@ -656,12 +654,16 @@ function getAnalysisWaitingHtml() {
 }
 
 function getAnalysisLoadingHtml(stageText = t("loadingStage1")) {
+  const stages = [t("loadingStage1"), t("loadingStage2"), t("loadingStage3")];
   return `
     <div class="analysis-loading">
       <span class="loading-spinner" aria-hidden="true"></span>
       <h4>${t("loadingTitle")}</h4>
       <p>${t("loadingDesc")}</p>
       <div class="loading-progress" aria-hidden="true"><span></span></div>
+      <div class="loading-stage-list">
+        ${stages.map((stage, index) => `<span class="${stage === stageText || index === 0 ? "active" : ""}">${escapeHtml(stage)}</span>`).join("")}
+      </div>
       <small id="loadingStageText">${escapeHtml(stageText)}</small>
     </div>
   `;
@@ -675,7 +677,7 @@ function setSubmitLoading(isLoading) {
 }
 
 function startAnalysisLoading() {
-  const stages = [t("loadingStage1"), t("loadingStage2"), t("loadingStage3"), t("loadingStage4")];
+  const stages = [t("loadingStage1"), t("loadingStage2"), t("loadingStage3")];
   let stageIndex = 0;
   window.clearInterval(loadingStageTimer);
   setSubmitLoading(true);
@@ -685,6 +687,9 @@ function startAnalysisLoading() {
     stageIndex = Math.min(stageIndex + 1, stages.length - 1);
     const stageNode = document.querySelector("#loadingStageText");
     if (stageNode) stageNode.textContent = stages[stageIndex];
+    document.querySelectorAll(".loading-stage-list span").forEach((node, index) => {
+      node.classList.toggle("active", index <= stageIndex);
+    });
   }, 1300);
 }
 
@@ -1084,10 +1089,10 @@ ${normalizedQuestion}
 
 分析要求：
 1. 分析任务是：基于照片中的公开呈现描述与用户补充问题，生成沟通画像。
-2. Big Five 只能作为“视觉呈现倾向”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
+2. Big Five 只能作为“倾向参考”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
 3. 所有结论都必须使用“可能、倾向、从照片呈现看、从补充信息看”等克制措辞。
 4. 如果只知道用户上传了照片，但没有获得照片内容，请明确降低置信度，主要基于用户问题和补充文字给出保守建议，不要假装看到了具体画面细节。
-5. 结果只聚焦：一句话第一印象、Big Five 视觉呈现倾向、怎么开口、哪些话别说、为什么这么判断。
+5. 结果只聚焦：第一印象、Big Five 倾向参考、沟通切入口、适合说的话、不建议说的话。
 6. 所有分数必须是 0-100 的倾向分数。
 7. 每个关键结论必须回到用户提供的照片状态、补充问题、签名或补充文字。
 8. 不得判断政治、宗教、健康、性取向、犯罪倾向、收入水平、招聘录用、能力高低或道德品质。
@@ -1148,7 +1153,7 @@ function mockAnalysis(payload) {
       source: "用户问题"
     },
     {
-      conclusion: "Big Five 只能作为视觉呈现倾向参考",
+      conclusion: "Big Five 只能作为倾向参考",
       evidence: "当前链路没有把照片内容传给模型，不能把上传状态当作具体视觉证据。",
       source: "照片状态"
     },
@@ -1165,19 +1170,24 @@ function mockAnalysis(payload) {
 async function runAnalysis(payload) {
   if (MOCK_MODE) return mockAnalysis(payload);
 
-  const response = await fetch(API_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-    body: JSON.stringify({
-      locale: payload.locale,
-      input: payload.input,
-      frameworks: payload.frameworks,
-      outputFormat: payload.outputFormat,
-    }),
-  });
+  let response = null;
+  try {
+    response = await fetch(API_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+      body: JSON.stringify({
+        locale: payload.locale,
+        input: payload.input,
+        frameworks: payload.frameworks,
+        outputFormat: payload.outputFormat,
+      }),
+    });
+  } catch (error) {
+    throw new Error("分析服务连接失败，请稍后重试。如果服务刚启动，可能需要等待几十秒");
+  }
 
   let result = null;
   try {
@@ -1195,6 +1205,14 @@ async function runAnalysis(payload) {
   }
 
   return normalizeReportData(result.data);
+}
+
+function getFriendlyAnalysisError(error) {
+  const message = String(error?.message || "");
+  if (/Failed to fetch|NetworkError|Load failed|fetch/i.test(message)) {
+    return "分析服务连接失败，请稍后重试。如果服务刚启动，可能需要等待几十秒";
+  }
+  return message || "分析失败，请稍后重试";
 }
 
 async function handleLogin(event) {
@@ -1314,7 +1332,7 @@ async function handleSubmit(event) {
     stopAnalysisLoading();
     analysisPreview.innerHTML = getAnalysisWaitingHtml();
     promptStatus.textContent = t("promptStatusEmpty");
-    showToast(error?.message || "分析失败，请稍后重试");
+    showToast(getFriendlyAnalysisError(error));
   }
 }
 
@@ -1545,7 +1563,7 @@ function normalizeReportData(data) {
       confidenceReason: coerceText(getFirstValue(basicProfile, ["confidenceReason", "confidence_reason", "reason", "confidenceExplanation", "置信度说明", "置信度原因"]) || getFirstValue(data, ["confidenceReason", "confidence_reason", "置信度说明", "置信度原因"]), ["reason", "content", "text", "value"]) || "未提供置信度说明",
     },
     scores: normalizeScores(getFirstValue(data, ["scores", "score", "metrics", "profileScores", "linguisticCues", "communicationStyle", "综合评分", "画像分数", "补充信息", "沟通风格维度"]), ["表达温度", "边界清晰度", "自我暴露程度", "沟通开放度", "关系导向"]),
-    bigFive: normalizeScores(getFirstValue(data, ["bigFive", "big_five", "big5", "personality", "personalityScores", "bigFiveTendencyReference", "大五人格", "人格倾向", "Big Five 倾向参考"]), ["开放性倾向", "尽责性倾向", "外向性倾向", "宜人性倾向", "情绪稳定性倾向"]),
+    bigFive: normalizeScores(getFirstValue(data, ["bigFive", "big_five", "big5", "personality", "personalityScores", "bigFiveTendencyReference", "Big Five 倾向参考"]), ["开放性倾向", "尽责性倾向", "外向性倾向", "宜人性倾向", "情绪稳定性倾向"]),
     personaTags: normalizeStringArray(getFirstValue(data, ["personaTags", "tags", "persona_tags", "labels", "人设标签", "标签"]), ["tag", "name", "label", "value", "title", "text", "标签"]),
     avatarVisualCues: normalizeStringArray(getFirstValue(data, ["avatarVisualCues", "avatar_visual_cues", "visualCues", "avatarCues", "画面呈现", "视觉线索"]), ["cue", "content", "text", "value", "title", "线索"]),
     communicationAdvice: normalizeStringArray(getFirstValue(data, ["communicationAdvice", "advice", "communication_advice", "suggestions", "沟通建议", "建议"]), ["advice", "content", "text", "value", "title", "建议"]),
@@ -1742,6 +1760,23 @@ function renderRadarChart(bigFive) {
   `;
 }
 
+function renderBigFiveBars(bigFive) {
+  const shortLabel = (label) => String(label)
+    .replace(/情绪稳定性倾向/g, "稳定性")
+    .replace(/情绪稳定性/g, "稳定性")
+    .replace(/倾向/g, "");
+  return `
+    <div class="big-five-bars">
+      ${Object.entries(bigFive || {}).map(([label, value]) => `
+        <div class="bar-row">
+          <div class="bar-meta"><span>${escapeHtml(shortLabel(label))}</span><strong>${value}</strong></div>
+          <div class="bar-track"><span style="width: ${value}%"></span></div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
 function renderListCards(title, items, emptyText) {
   const normalizedItems = normalizeStringArray(Array.isArray(items) ? items : []).length
     ? normalizeStringArray(items)
@@ -1760,12 +1795,12 @@ function renderVisualReport(data) {
   renderedReportData = data;
   const communicationAdvice = normalizeStringArray(Array.isArray(data.communicationAdvice) ? data.communicationAdvice : []);
   const riskPoints = normalizeStringArray(Array.isArray(data.riskPoints) ? data.riskPoints : []);
-  const evidenceChain = normalizeEvidenceChain(Array.isArray(data.evidenceChain) ? data.evidenceChain : []);
+  const approachStyle = normalizeStringArray(Array.isArray(data.approachStyle) ? data.approachStyle : []);
 
   visualReportOutput.innerHTML = `
     <div class="dashboard-grid">
       <article class="summary-card glass-card">
-        <p class="eyebrow">FIRST IMPRESSION</p>
+        <p class="eyebrow">${t("valuePersonaTitle")}</p>
         <h3>${escapeHtml(data.basicProfile.oneSentence)}</h3>
         <p>${escapeHtml(data.basicProfile.personaSummary)}</p>
         <div class="confidence-strip">
@@ -1777,24 +1812,12 @@ function renderVisualReport(data) {
 
       <article class="dashboard-card glass-card">
         <h3>${t("chartRadarTitle")}</h3>
-        ${renderRadarChart(data.bigFive)}
+        ${renderBigFiveBars(data.bigFive)}
       </article>
 
+      ${renderListCards(t("approachStyleTitle"), approachStyle, t("emptyApproach"))}
       ${renderListCards(t("communicationAdviceTitle"), communicationAdvice, t("emptyAdvice"))}
       ${renderListCards(t("riskPointsTitle"), riskPoints, t("emptyRisks"))}
-
-      <article class="dashboard-card glass-card evidence-card">
-        <h3>${t("evidenceChainTitle")}</h3>
-        <div class="evidence-list">
-          ${(evidenceChain.length ? evidenceChain : [{ conclusion: t("emptyEvidenceTitle"), evidence: t("emptyEvidenceDesc"), source: t("emptySource") }]).map((item) => `
-            <div>
-              <strong>${escapeHtml(item.conclusion || t("emptyConclusion"))}</strong>
-              <p>${escapeHtml(item.evidence || t("emptyEvidence"))}</p>
-              <span>${escapeHtml(item.source || t("emptySource"))}</span>
-            </div>
-          `).join("")}
-        </div>
-      </article>
     </div>
   `;
 }
