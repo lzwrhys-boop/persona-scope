@@ -45,7 +45,7 @@ const translations = {
     previewFrameworkAvatar: "画面呈现",
     previewFrameworkSocial: "沟通建议",
     previewFooter: "基于用户提供的视觉呈现与补充信息生成，仅供沟通参考。",
-    valuePersonaTitle: "第一印象",
+    valuePersonaTitle: "第一判断",
     valuePersonaDesc: "从照片中的视觉呈现整理可能给人的感觉，并保持结论克制、可复核。",
     valuePreferenceTitle: "沟通偏好",
     valuePreferenceDesc: "基于公开线索推测更适合直接沟通、情绪铺垫还是价值共鸣，让开场方式更自然。",
@@ -148,7 +148,7 @@ const translations = {
     communicationAdviceTitle: "适合说的话",
     riskPointsTitle: "不建议说的话",
     approachStyleTitle: "沟通切入口",
-    evidenceChainTitle: "依据参考",
+    evidenceChainTitle: "判断依据",
     confidenceLabel: "置信度",
     disclaimerTitle: "免责声明",
     emptyTags: "暂无标签",
@@ -271,7 +271,7 @@ const translations = {
     previewFrameworkAvatar: "Image Presence",
     previewFrameworkSocial: "Communication Guidance",
     previewFooter: "Generated from user-provided visual presentation and optional context. For communication reference only.",
-    valuePersonaTitle: "First Impression",
+    valuePersonaTitle: "First Read",
     valuePersonaDesc: "Summarize the possible impression created by the photo's visual presentation while keeping every conclusion cautious and reviewable.",
     valuePreferenceTitle: "Communication Preference",
     valuePreferenceDesc: "Use public clues to estimate whether direct context, emotional pacing, or shared values will make the opening feel more natural.",
@@ -374,7 +374,7 @@ const translations = {
     communicationAdviceTitle: "Good Lines to Use",
     riskPointsTitle: "Lines to Avoid",
     approachStyleTitle: "Conversation Opener",
-    evidenceChainTitle: "Reference Notes",
+    evidenceChainTitle: "Why This Suggestion",
     confidenceLabel: "Confidence",
     disclaimerTitle: "Disclaimer",
     emptyTags: "No tags yet",
@@ -1120,7 +1120,7 @@ ${normalizedQuestion}
 2. Big Five 只能作为“倾向参考”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
 3. 所有结论都必须使用“可能、倾向、从照片呈现看、从补充信息看”等克制措辞。
 4. 如果只知道用户上传了照片，但没有获得照片内容，请明确降低置信度，主要基于用户问题和补充文字给出保守建议，不要假装看到了具体画面细节。
-5. 结果只聚焦：第一印象、Big Five 倾向参考、沟通切入口、适合说的话、不建议说的话。
+5. 结果只聚焦：第一判断、沟通切入口、适合说的话、不建议说的话、判断依据。
 6. 所有分数必须是 0-100 的倾向分数。
 7. 每个关键结论必须回到用户提供的照片状态、补充问题、签名或补充文字。
 8. 不得判断政治、宗教、健康、性取向、犯罪倾向、收入水平、招聘录用、能力高低或道德品质。
@@ -1883,6 +1883,7 @@ function renderVisualReport(data) {
   const communicationAdvice = normalizeStringArray(Array.isArray(data.communicationAdvice) ? data.communicationAdvice : []);
   const riskPoints = normalizeStringArray(Array.isArray(data.riskPoints) ? data.riskPoints : []);
   const approachStyle = normalizeStringArray(Array.isArray(data.approachStyle) ? data.approachStyle : []);
+  const evidenceChain = normalizeEvidenceChain(Array.isArray(data.evidenceChain) ? data.evidenceChain : []);
 
   visualReportOutput.innerHTML = `
     <div class="dashboard-grid">
@@ -1897,14 +1898,27 @@ function renderVisualReport(data) {
         <p class="report-disclaimer">${escapeHtml(data.disclaimer || t("footerCompliance"))}</p>
       </article>
 
+      ${renderListCards(t("approachStyleTitle"), approachStyle, t("emptyApproach"))}
+      ${renderListCards(t("communicationAdviceTitle"), communicationAdvice, t("emptyAdvice"))}
+      ${renderListCards(t("riskPointsTitle"), riskPoints, t("emptyRisks"))}
+
+      <article class="dashboard-card glass-card evidence-card">
+        <h3>${t("evidenceChainTitle")}</h3>
+        <div class="evidence-list">
+          ${(evidenceChain.length ? evidenceChain : [{ conclusion: t("emptyEvidenceTitle"), evidence: t("emptyEvidenceDesc"), source: t("emptySource") }]).slice(0, 4).map((item) => `
+            <div>
+              <strong>${escapeHtml(item.conclusion || t("emptyConclusion"))}</strong>
+              <p>${escapeHtml(item.evidence || t("emptyEvidence"))}</p>
+              <span>${escapeHtml(item.source || t("emptySource"))}</span>
+            </div>
+          `).join("")}
+        </div>
+      </article>
+
       <article class="dashboard-card glass-card">
         <h3>${escapeHtml(scenario)} · ${t("chartRadarTitle")}</h3>
         ${renderSceneMetrics(data)}
       </article>
-
-      ${renderListCards(t("approachStyleTitle"), approachStyle, t("emptyApproach"))}
-      ${renderListCards(t("communicationAdviceTitle"), communicationAdvice, t("emptyAdvice"))}
-      ${renderListCards(t("riskPointsTitle"), riskPoints, t("emptyRisks"))}
     </div>
   `;
 }
