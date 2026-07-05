@@ -919,7 +919,8 @@ function stopAnalysisLoading() {
 function applyLanguage() {
   document.documentElement.lang = currentLanguage === "en" ? "en" : "zh-CN";
   document.querySelectorAll("[data-i18n]").forEach((element) => {
-    element.textContent = t(element.dataset.i18n);
+    const key = element.dataset.i18n;
+    if (translations[currentLanguage]?.[key] || translations.zh[key]) element.textContent = t(key);
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
     element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
@@ -1214,7 +1215,7 @@ function renderStatusOptions() {
   const statuses = getStatusesForScenario(getSelectedScenario());
   if (!statuses.includes(selectedStatus)) selectedStatus = statuses[0];
   statusOptions.innerHTML = statuses.map((status) => (
-    `<button class="status-pill${status === selectedStatus ? " active" : ""}" type="button" data-status="${escapeHtml(status)}">${escapeHtml(translateStatus(status))}</button>`
+    `<button class="goal-pill status-pill${status === selectedStatus ? " active" : ""}" type="button" data-status="${escapeHtml(status)}">${escapeHtml(translateStatus(status))}</button>`
   )).join("");
 }
 
