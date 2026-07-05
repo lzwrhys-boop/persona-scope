@@ -138,7 +138,7 @@ function normalizeInput(body) {
     question: safeText(source.question, MAX_TEXT_LENGTHS.question),
     hasAvatar: Boolean(source.hasAvatar),
     screenshotCount,
-    locale: safeText(body.locale || source.locale || "zh", 10),
+    locale: safeText(body.locale || body.language || source.locale || source.language || "zh", 10),
   };
 
   const hasMeaningfulInput = Boolean(

@@ -74,6 +74,7 @@ function buildModelMessages(input, options = {}) {
   const repairErrors = Array.isArray(options.repairErrors) ? options.repairErrors : [];
   const scene = SCENE_GUIDES[input.scenario] || SCENE_GUIDES["亲密关系"];
   const selectedGoal = input.selectedGoal || "未指定";
+  const outputLanguage = String(input.locale || input.language || "zh").toLowerCase().startsWith("en") ? "English" : "Simplified Chinese";
   return {
     system: [
       "你是 PersonaScope 的沟通画像分析服务，也是一名谨慎、细腻、重证据的沟通策略师。",
@@ -97,6 +98,7 @@ function buildModelMessages(input, options = {}) {
       "personaTags、avatarVisualCues、communicationAdvice、riskPoints、approachStyle 必须是字符串数组，每个数组至少 1 条。",
       "evidenceChain 必须是数组，至少 1 条，每条必须包含 conclusion、evidence、source。",
       "disclaimer 必须是非空字符串。",
+      `输出语言：除 JSON 字段名、scores/bigFive 的固定中文维度名、basicProfile.confidence 的 高/中/低 枚举值外，所有面向用户的文本内容必须使用 ${outputLanguage}。`,
       "报告质量要求：少分析，多给下一步动作；少用大词，多给可复制话术；不要写得像心理测试。",
       "如果线索不足，必须明确写“当前线索有限”，并说明依据主要来自用户输入和公开文本线索。",
       "报告主结构是五块：第一判断、沟通切入口、适合说的话、不建议说的话、判断依据。场景专业维度只是辅助参考，不要让它盖过行动建议。",
@@ -133,6 +135,7 @@ function buildModelMessages(input, options = {}) {
       screenshotCount: Number(input.screenshotCount || 0),
       imageContentNotice: "当前前端只传递照片上传状态和图片数量，不传递图片像素或视觉识别结果；除非未来接入多模态视觉模型并传入照片内容，否则不得描述照片具体视觉细节。",
       locale: input.locale || "zh",
+      language: outputLanguage,
     },
   };
 }

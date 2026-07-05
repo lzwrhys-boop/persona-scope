@@ -116,7 +116,7 @@ const translations = {
     viewVisualReportBtn: "查看可视化报告",
     generatedPromptEyebrow: "DEVELOPER DEBUG",
     generatedPromptTitle: "开发者调试 Prompt",
-    promptStatusEmpty: "分析完成后，你会看到第一感觉、沟通倾向、开场建议和需要避开的表达。",
+    promptStatusEmpty: "等待开始分析。分析完成后，你会看到第一感觉、沟通倾向、开场建议和需要避开的表达。",
     promptStatusReady: "分析已完成。你可以查看右侧摘要，或进入完整可视化报告。",
     promptUsageNote: "当前为静态原型，主流程会先生成本地 mock 报告；下方 Prompt 仅作为无 API 备用调试材料。",
     promptOutputEmpty: "开始分析后，系统会在这里生成一段开发者调试 Prompt。",
@@ -150,6 +150,7 @@ const translations = {
     riskPointsTitle: "不建议说的话",
     approachStyleTitle: "沟通切入口",
     evidenceChainTitle: "判断依据",
+    firstReadTitle: "第一判断",
     confidenceLabel: "置信度",
     disclaimerTitle: "免责声明",
     emptyTags: "暂无标签",
@@ -162,6 +163,9 @@ const translations = {
     emptySource: "未提供",
     emptyConclusion: "未提供结论",
     emptyEvidence: "未提供证据",
+    fallbackOneSentence: "未提供一句话画像",
+    fallbackPersonaSummary: "未提供画像总结",
+    fallbackConfidenceReason: "未提供置信度说明",
     sampleEyebrow: "SAMPLE REPORT",
     sampleTitle: "《PersonaScope 示例报告：视觉呈现沟通画像》",
     sampleDesc: "以下样例展示报告的结构与表达方式。当前静态原型会使用本地示例数据模拟分析结果。",
@@ -201,7 +205,7 @@ const translations = {
     principleTitle: "边界原则",
     principleDesc: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。",
     historyEyebrow: "LOCAL HISTORY",
-    historyTitle: "历史记录",
+    historyTitle: "最近分析",
     historyDesc: "最近生成并手动保存的记录会保存在当前浏览器 localStorage 中。",
     clearHistoryBtn: "清空全部记录",
     noHistoryEyebrow: "NO HISTORY",
@@ -223,11 +227,60 @@ const translations = {
     viewPrompt: "查看调试 Prompt",
     collapsePrompt: "收起调试 Prompt",
     copyPrompt: "复制调试 Prompt",
-    deleteRecord: "删除记录",
+    deleteRecord: "删除",
     viewReport: "查看报告",
     copyJson: "复制 JSON",
     totalScore: "综合分",
     bigFiveLabel: "Big Five 倾向参考",
+    toastHistoryQuotaFailed: "历史记录空间不足，本次结果未保存",
+    toastLoginRequired: "请输入访问码",
+    toastLoginSuccess: "已进入 PersonaScope",
+    toastLogoutSuccess: "已退出",
+    toastNeedInput: "请先上传照片，或填写一个想了解的问题",
+    toastAnalysisSuccess: "分析已完成",
+    toastAnalysisMockSuccess: "分析已完成，当前使用本地 mock 报告",
+    toastResetDone: "当前内容已清空",
+    toastPhotoPreview: "照片已本地预览",
+    toastPhotoReadFailed: "照片读取失败，请重新选择图片",
+    toastPhotoRemoved: "照片已删除",
+    toastScreenshotLimit: "最多只能上传 {count} 张社交截图",
+    toastScreenshotPartial: "最多 {max} 张，已处理前 {count} 张",
+    toastScreenshotReadFailed: "截图读取失败，请重新选择图片",
+    toastScreenshotMixed: "已添加 {added} 张，跳过 {skipped} 张异常图片",
+    toastScreenshotRemoved: "截图已删除",
+    imageErrorChooseFile: "请选择图片文件",
+    imageErrorEmpty: "图片文件为空或已损坏",
+    imageErrorMaxSingle: "单张图片不能超过 {size}",
+    imageErrorMaxTotal: "图片总大小不能超过 {size}",
+    imageErrorUnsupported: "请选择 jpg、jpeg、png 或 webp 图片",
+    imageErrorUnknownFormat: "图片格式无法识别，可能是损坏或伪装文件",
+    imageErrorMismatch: "图片扩展名、类型和内容不一致",
+    imageErrorReadFailed: "图片读取失败，请换一张未损坏的图片",
+    toastNothingToCopy: "没有可复制内容",
+    toastCopied: "已复制",
+    toastStartAnalysisFirst: "请先开始 AI 分析",
+    toastPromptSaved: "调试 Prompt 已保存到历史记录",
+    toastReportImportedSaved: "报告数据已导入并保存",
+    toastReportImportedNoHistory: "报告数据已导入，历史记录未保存",
+    toastReportImportFailed: "报告数据导入失败",
+    toastSampleSaved: "示例报告已生成并保存",
+    toastSampleNoHistory: "示例报告已生成，历史记录未保存",
+    toastRecordDeleted: "记录已删除",
+    toastNoHistory: "当前没有历史记录",
+    toastHistoryCleared: "全部历史记录已清空",
+    errorServiceConnection: "分析服务连接失败，请稍后重试。如果服务刚启动，可能需要等待几十秒",
+    errorInvalidApiJson: "API 返回格式不是有效 JSON",
+    errorLoginExpired: "登录已失效，请重新输入访问码",
+    errorApiRequestFailed: "分析 API 请求失败",
+    errorAccessCodeInvalid: "访问码不正确",
+    errorAnalysisFailed: "分析失败，请稍后重试",
+    errorImportJsonFirst: "请先导入报告 JSON 数据。",
+    errorJsonParseFailed: "JSON 格式仍无法解析。请检查是否缺少逗号、引号或括号；也可以点击“生成示例报告”对照格式。",
+    errorNoJsonObject: "没有检测到 JSON 对象。请导入以 { 开头的 JSON，或直接点击“生成示例报告”查看格式。",
+    errorJsonIncomplete: "JSON 看起来没有完整闭合。请检查最后是否缺少 }。",
+    errorInvalidJsonObject: "JSON 内容不是有效对象。",
+    screenshotAlt: "社交截图 {index}",
+    removeScreenshotAria: "删除第 {index} 张截图",
     footerCompliance: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。"
   },
   en: {
@@ -322,7 +375,7 @@ const translations = {
     goalLabel: "Goal",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
-    generatePromptBtn: "Start AI Analysis",
+    generatePromptBtn: "Start Analysis",
     generatingBtn: "Generating profile...",
     resetBtn: "Clear Current Input",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
@@ -343,7 +396,7 @@ const translations = {
     viewVisualReportBtn: "View Visual Report",
     generatedPromptEyebrow: "DEVELOPER DEBUG",
     generatedPromptTitle: "Developer Debug Prompt",
-    promptStatusEmpty: "After analysis, you will see the first feeling, communication tendency, opening advice, and phrases to avoid.",
+    promptStatusEmpty: "Waiting to start analysis. After analysis, you will see the first feeling, communication tendency, opening advice, and phrases to avoid.",
     promptStatusReady: "Analysis complete. You can review the summary here or open the full visual report.",
     promptUsageNote: "This static prototype currently generates a local mock report. The prompt below is only a fallback for developer debugging.",
     promptOutputEmpty: "After analysis starts, a developer debug prompt will appear here.",
@@ -362,7 +415,7 @@ const translations = {
     localDashboardEyebrow: "LOCAL DASHBOARD",
     localDashboardTitle: "API-ready Analysis Flow",
     localDashboardStep1: "Upload a photo, with optional advanced details.",
-    localDashboardStep2: "Click Start AI Analysis.",
+    localDashboardStep2: "Click Start Analysis.",
     localDashboardStep3: "The current version generates a local mock report first.",
     localDashboardStep4: "A secure API service can replace the mock data later.",
     localDashboardPrivacy: "This is a static prototype that can later connect to a secure API service. Report records stay in localStorage.",
@@ -373,10 +426,11 @@ const translations = {
     chartRadarTitle: "Scenario Dimensions",
     tagCloudTitle: "Communication Tags",
     avatarVisualCuesTitle: "Visual Presentation Cues",
-    communicationAdviceTitle: "Good Lines to Use",
-    riskPointsTitle: "Lines to Avoid",
-    approachStyleTitle: "Conversation Opener",
-    evidenceChainTitle: "Why This Suggestion",
+    communicationAdviceTitle: "What to Say",
+    riskPointsTitle: "What to Avoid",
+    approachStyleTitle: "Opening Angle",
+    evidenceChainTitle: "Reasoning",
+    firstReadTitle: "First Read",
     confidenceLabel: "Confidence",
     disclaimerTitle: "Disclaimer",
     emptyTags: "No tags yet",
@@ -389,6 +443,9 @@ const translations = {
     emptySource: "No source",
     emptyConclusion: "No conclusion",
     emptyEvidence: "No evidence",
+    fallbackOneSentence: "No one-sentence profile provided",
+    fallbackPersonaSummary: "No profile summary provided",
+    fallbackConfidenceReason: "No confidence explanation provided",
     sampleEyebrow: "SAMPLE REPORT",
     sampleTitle: "PersonaScope Sample Report: Public Social Clue Communication Profile",
     sampleDesc: "This sample shows the structure and writing style of a report. The current static prototype simulates analysis with local sample data.",
@@ -428,7 +485,7 @@ const translations = {
     principleTitle: "Boundary Principle",
     principleDesc: "PersonaScope generates communication profiles only from user-provided public social signals. It is intended to support understanding of expression style and interaction patterns, and does not constitute medical diagnosis, definitive personality judgment, relationship judgment, or a basis for major decisions.",
     historyEyebrow: "LOCAL HISTORY",
-    historyTitle: "History",
+    historyTitle: "Recent Analyses",
     historyDesc: "Recently generated and manually saved records are stored in this browser's localStorage.",
     clearHistoryBtn: "Clear All Records",
     noHistoryEyebrow: "NO HISTORY",
@@ -455,6 +512,55 @@ const translations = {
     copyJson: "Copy JSON",
     totalScore: "Overall scores",
     bigFiveLabel: "Big Five Tendency Reference",
+    toastHistoryQuotaFailed: "History storage is full. This result was not saved.",
+    toastLoginRequired: "Please enter the access code",
+    toastLoginSuccess: "Entered PersonaScope",
+    toastLogoutSuccess: "Signed out",
+    toastNeedInput: "Please upload a photo or enter a question first",
+    toastAnalysisSuccess: "Analysis complete",
+    toastAnalysisMockSuccess: "Analysis complete. Using a local mock report.",
+    toastResetDone: "Current input cleared",
+    toastPhotoPreview: "Photo preview is ready",
+    toastPhotoReadFailed: "Photo failed to load. Please choose another image.",
+    toastPhotoRemoved: "Photo removed",
+    toastScreenshotLimit: "You can upload up to {count} social screenshots",
+    toastScreenshotPartial: "Up to {max} images. Processing the first {count}.",
+    toastScreenshotReadFailed: "Screenshot failed to load. Please choose another image.",
+    toastScreenshotMixed: "Added {added}, skipped {skipped} invalid images",
+    toastScreenshotRemoved: "Screenshot removed",
+    imageErrorChooseFile: "Please choose an image file",
+    imageErrorEmpty: "The image file is empty or damaged",
+    imageErrorMaxSingle: "Each image must be under {size}",
+    imageErrorMaxTotal: "Total image size must be under {size}",
+    imageErrorUnsupported: "Please choose a jpg, jpeg, png, or webp image",
+    imageErrorUnknownFormat: "Image format could not be recognized. It may be damaged or disguised.",
+    imageErrorMismatch: "Image extension, type, and content do not match",
+    imageErrorReadFailed: "Image failed to load. Please choose an undamaged image.",
+    toastNothingToCopy: "Nothing to copy",
+    toastCopied: "Copied",
+    toastStartAnalysisFirst: "Please start analysis first",
+    toastPromptSaved: "Debug prompt saved to history",
+    toastReportImportedSaved: "Report data imported and saved",
+    toastReportImportedNoHistory: "Report data imported. History was not saved.",
+    toastReportImportFailed: "Report data import failed",
+    toastSampleSaved: "Sample report generated and saved",
+    toastSampleNoHistory: "Sample report generated. History was not saved.",
+    toastRecordDeleted: "Record deleted",
+    toastNoHistory: "No history records yet",
+    toastHistoryCleared: "All history records cleared",
+    errorServiceConnection: "Analysis service connection failed. Please try again later. If the service just started, it may need a few dozen seconds.",
+    errorInvalidApiJson: "The API response is not valid JSON",
+    errorLoginExpired: "Login expired. Please enter the access code again.",
+    errorApiRequestFailed: "Analysis API request failed",
+    errorAccessCodeInvalid: "Incorrect access code",
+    errorAnalysisFailed: "Analysis failed. Please try again later.",
+    errorImportJsonFirst: "Please import report JSON data first.",
+    errorJsonParseFailed: "JSON still cannot be parsed. Check for missing commas, quotes, or brackets, or use the sample report as a reference.",
+    errorNoJsonObject: "No JSON object detected. Import JSON starting with {, or generate a sample report.",
+    errorJsonIncomplete: "The JSON object does not seem fully closed. Check whether the final } is missing.",
+    errorInvalidJsonObject: "JSON content is not a valid object.",
+    screenshotAlt: "Social screenshot {index}",
+    removeScreenshotAria: "Remove screenshot {index}",
     footerCompliance: "PersonaScope generates communication profiles only from user-provided public social signals. It supports understanding expression style and interaction patterns, and does not constitute medical diagnosis, definitive personality judgment, relationship judgment, or a basis for major decisions."
   }
 };
@@ -545,6 +651,41 @@ const SCENE_GOALS = {
   朋友社交: ["轻松破冰", "找话题", "拉近关系", "避免尴尬", "保持联系"],
   自我呈现: ["优化头像印象", "优化个人介绍", "提升专业感", "提升亲和力", "增强记忆点"],
   自我画像: ["优化头像印象", "优化个人介绍", "提升专业感", "提升亲和力", "增强记忆点"],
+};
+const SCENE_LABELS = {
+  亲密关系: { zh: "亲密关系", en: "Relationship" },
+  客户沟通: { zh: "客户沟通", en: "Client Communication" },
+  职场协作: { zh: "职场协作", en: "Workplace Collaboration" },
+  朋友社交: { zh: "朋友社交", en: "Friends" },
+  自我呈现: { zh: "自我呈现", en: "Self Presentation" },
+  自我画像: { zh: "自我呈现", en: "Self Presentation" },
+};
+const GOAL_LABELS = {
+  预约见面: { zh: "预约见面", en: "Book a Meeting" },
+  推进合作: { zh: "推进合作", en: "Move Collaboration Forward" },
+  维护关系: { zh: "维护关系", en: "Maintain the Relationship" },
+  唤醒沉默客户: { zh: "唤醒沉默客户", en: "Re-engage a Quiet Client" },
+  处理异议: { zh: "处理异议", en: "Handle Objections" },
+  提需求: { zh: "提需求", en: "Make a Request" },
+  汇报进展: { zh: "汇报进展", en: "Report Progress" },
+  请求支持: { zh: "请求支持", en: "Ask for Support" },
+  表达不同意见: { zh: "表达不同意见", en: "Disagree Constructively" },
+  化解尴尬: { zh: "化解尴尬", en: "Defuse Awkwardness" },
+  自然开场: { zh: "自然开场", en: "Start Naturally" },
+  表达好感: { zh: "表达好感", en: "Show Interest" },
+  恢复聊天: { zh: "恢复聊天", en: "Restart the Chat" },
+  推进关系: { zh: "推进关系", en: "Move Closer" },
+  降低压力: { zh: "降低压力", en: "Lower the Pressure" },
+  轻松破冰: { zh: "轻松破冰", en: "Break the Ice" },
+  找话题: { zh: "找话题", en: "Find a Topic" },
+  拉近关系: { zh: "拉近关系", en: "Get Closer" },
+  避免尴尬: { zh: "避免尴尬", en: "Avoid Awkwardness" },
+  保持联系: { zh: "保持联系", en: "Stay in Touch" },
+  优化头像印象: { zh: "优化头像印象", en: "Improve Photo Impression" },
+  优化个人介绍: { zh: "优化个人介绍", en: "Improve Bio" },
+  提升专业感: { zh: "提升专业感", en: "Increase Professional Feel" },
+  提升亲和力: { zh: "提升亲和力", en: "Increase Approachability" },
+  增强记忆点: { zh: "增强记忆点", en: "Make It More Memorable" },
 };
 const SAMPLE_REPORT_DATA = {
   basicProfile: {
@@ -751,6 +892,7 @@ function applyLanguage() {
     languageToggle.setAttribute("aria-pressed", currentLanguage === "en" ? "true" : "false");
   }
   updateDebugPromptVisibility();
+  renderGoalOptions();
   updateGeneratedState(generatedPrompt, generatedRecordDraft);
   renderScreenshotGrid();
   if (renderedReportData) {
@@ -868,7 +1010,7 @@ function saveHistory(records) {
     return true;
   } catch (error) {
     console.warn("历史记录保存失败。", error);
-    showToast("历史记录空间不足，本次结果未保存");
+    showToast(t("toastHistoryQuotaFailed"));
     return false;
   }
 }
@@ -972,6 +1114,33 @@ function getGoalsForScenario(scenario) {
   return SCENE_GOALS[scenario] || SCENE_GOALS["亲密关系"];
 }
 
+function getLocalizedLabel(labels, fallback = "") {
+  if (!labels || typeof labels !== "object") return fallback;
+  return labels[currentLanguage] || labels.zh || fallback;
+}
+
+function translateScenario(scenario) {
+  return getLocalizedLabel(SCENE_LABELS[scenario], scenario || t("unsetScenario"));
+}
+
+function translateGoal(goal) {
+  return getLocalizedLabel(GOAL_LABELS[goal], goal || "");
+}
+
+function translateConfidence(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  const labels = {
+    高: { zh: "高", en: "High" },
+    high: { zh: "高", en: "High" },
+    中: { zh: "中", en: "Medium" },
+    medium: { zh: "中", en: "Medium" },
+    mid: { zh: "中", en: "Medium" },
+    低: { zh: "低", en: "Low" },
+    low: { zh: "低", en: "Low" },
+  };
+  return getLocalizedLabel(labels[normalized], value || "");
+}
+
 function getSelectedGoal() {
   const goals = getGoalsForScenario(getSelectedScenario());
   return goals.includes(selectedGoal) ? selectedGoal : goals[0];
@@ -982,7 +1151,7 @@ function renderGoalOptions() {
   const goals = getGoalsForScenario(getSelectedScenario());
   if (!goals.includes(selectedGoal)) selectedGoal = goals[0];
   goalOptions.innerHTML = goals.map((goal) => (
-    `<button class="goal-pill${goal === selectedGoal ? " active" : ""}" type="button" data-goal="${escapeHtml(goal)}">${escapeHtml(goal)}</button>`
+    `<button class="goal-pill${goal === selectedGoal ? " active" : ""}" type="button" data-goal="${escapeHtml(goal)}">${escapeHtml(translateGoal(goal))}</button>`
   )).join("");
 }
 
@@ -1027,11 +1196,11 @@ function isFileTypeConsistent(file, signature) {
 }
 
 function validateImageBudget(file, replacingBytes = 0) {
-  if (!file) return "请选择图片文件";
-  if (!file.size) return "图片文件为空或已损坏";
-  if (file.size > MAX_IMAGE_BYTES) return `单张图片不能超过 ${formatMb(MAX_IMAGE_BYTES)}`;
+  if (!file) return t("imageErrorChooseFile");
+  if (!file.size) return t("imageErrorEmpty");
+  if (file.size > MAX_IMAGE_BYTES) return t("imageErrorMaxSingle", { size: formatMb(MAX_IMAGE_BYTES) });
   const totalBytes = getCurrentImageBytes() - replacingBytes + file.size;
-  if (totalBytes > MAX_TOTAL_IMAGE_BYTES) return `图片总大小不能超过 ${formatMb(MAX_TOTAL_IMAGE_BYTES)}`;
+  if (totalBytes > MAX_TOTAL_IMAGE_BYTES) return t("imageErrorMaxTotal", { size: formatMb(MAX_TOTAL_IMAGE_BYTES) });
   return "";
 }
 
@@ -1060,17 +1229,17 @@ async function validateImageFile(file, options = {}) {
   const budgetError = validateImageBudget(file, options.replacingBytes || 0);
   if (budgetError) return { ok: false, message: budgetError };
   if (!isSupportedImage(file)) {
-    return { ok: false, message: "请选择 jpg、jpeg、png 或 webp 图片" };
+    return { ok: false, message: t("imageErrorUnsupported") };
   }
   try {
     const signature = await readImageSignature(file);
-    if (!signature) return { ok: false, message: "图片格式无法识别，可能是损坏或伪装文件" };
-    if (!isFileTypeConsistent(file, signature)) return { ok: false, message: "图片扩展名、类型和内容不一致" };
+    if (!signature) return { ok: false, message: t("imageErrorUnknownFormat") };
+    if (!isFileTypeConsistent(file, signature)) return { ok: false, message: t("imageErrorMismatch") };
     await verifyImageDecodes(file);
     return { ok: true };
   } catch (error) {
     console.warn("图片校验失败。", error);
-    return { ok: false, message: "图片读取失败，请换一张未损坏的图片" };
+    return { ok: false, message: t("imageErrorReadFailed") };
   }
 }
 
@@ -1094,6 +1263,7 @@ function collectAnalysisInput() {
     question: questionInput.value.trim(),
     hasAvatar: Boolean(avatarDataUrl),
     screenshotCount: socialScreenshots.length,
+    language: currentLanguage,
   };
 }
 
@@ -1244,28 +1414,29 @@ async function runAnalysis(payload) {
       },
       body: JSON.stringify({
         locale: payload.locale,
+        language: payload.locale,
         input: payload.input,
         frameworks: payload.frameworks,
         outputFormat: payload.outputFormat,
       }),
     });
   } catch (error) {
-    throw new Error("分析服务连接失败，请稍后重试。如果服务刚启动，可能需要等待几十秒");
+    throw new Error(t("errorServiceConnection"));
   }
 
   let result = null;
   try {
     result = await response.json();
   } catch (error) {
-    throw new Error("API 返回格式不是有效 JSON");
+    throw new Error(t("errorInvalidApiJson"));
   }
 
   if (!response.ok || !result?.ok) {
     if (response.status === 401) {
-      showLogin("登录已失效，请重新输入访问码");
-      throw new Error("登录已失效，请重新输入访问码");
+      showLogin(t("errorLoginExpired"));
+      throw new Error(t("errorLoginExpired"));
     }
-    throw new Error(result?.message || result?.error || "分析 API 请求失败");
+    throw new Error(result?.message || result?.error || t("errorApiRequestFailed"));
   }
 
   return normalizeReportData(result.data);
@@ -1274,16 +1445,16 @@ async function runAnalysis(payload) {
 function getFriendlyAnalysisError(error) {
   const message = String(error?.message || "");
   if (/Failed to fetch|NetworkError|Load failed|fetch/i.test(message)) {
-    return "分析服务连接失败，请稍后重试。如果服务刚启动，可能需要等待几十秒";
+    return t("errorServiceConnection");
   }
-  return message || "分析失败，请稍后重试";
+  return message || t("errorAnalysisFailed");
 }
 
 async function handleLogin(event) {
   event.preventDefault();
   const accessCode = accessCodeInput.value.trim();
   if (!accessCode) {
-    loginError.textContent = "请输入访问码";
+    loginError.textContent = t("toastLoginRequired");
     return;
   }
 
@@ -1297,13 +1468,13 @@ async function handleLogin(event) {
     });
     const result = await response.json().catch(() => null);
     if (!response.ok || !result?.ok || !result?.token) {
-      throw new Error(result?.error || "访问码不正确");
+      throw new Error(result?.error || t("errorAccessCodeInvalid"));
     }
     accessCodeInput.value = "";
     setAuthenticated(result.token);
-    showToast("已进入 PersonaScope");
+    showToast(t("toastLoginSuccess"));
   } catch (error) {
-    loginError.textContent = error?.message || "访问码不正确";
+    loginError.textContent = error?.message || t("errorAccessCodeInvalid");
   } finally {
     setLoginLoading(false);
   }
@@ -1311,7 +1482,7 @@ async function handleLogin(event) {
 
 function handleLogout() {
   showLogin();
-  showToast("已退出");
+  showToast(t("toastLogoutSuccess"));
 }
 
 function updateGeneratedState(prompt, recordDraft) {
@@ -1367,7 +1538,7 @@ async function handleSubmit(event) {
   if (submitButton?.disabled) return;
   const data = collectAnalysisInput();
   if (!hasMeaningfulInput(data)) {
-    showToast("请先上传照片，或填写一个想了解的问题");
+    showToast(t("toastNeedInput"));
     return;
   }
 
@@ -1392,7 +1563,7 @@ async function handleSubmit(event) {
     promptStatus.textContent = t("promptStatusReady");
     saveAnalysisHistory(reportData, JSON.stringify(reportData, null, 2));
     jsonError.textContent = "";
-    showToast(MOCK_MODE ? "AI 分析已完成，当前使用本地 mock 报告" : "AI 分析已完成");
+    showToast(MOCK_MODE ? t("toastAnalysisMockSuccess") : t("toastAnalysisSuccess"));
   } catch (error) {
     console.warn("分析流程失败。", error);
     stopAnalysisLoading();
@@ -1419,7 +1590,7 @@ function handleReset() {
   renderedReportData = null;
   updateGeneratedState("", null);
   analysisPreview.innerHTML = getAnalysisWaitingHtml();
-  showToast("当前内容已清空");
+  showToast(t("toastResetDone"));
 }
 
 async function handleFacePhotoFile(file) {
@@ -1439,13 +1610,13 @@ async function handleFacePhotoFile(file) {
   try {
     avatarDataUrl = await readFileAsDataUrl(file);
     avatarFileSize = file.size;
-    facePreview.innerHTML = `<img src="${avatarDataUrl}" alt="照片预览">`;
+    facePreview.innerHTML = `<img src="${avatarDataUrl}" alt="${escapeHtml(t("avatarLabel"))}">`;
     removeAvatarBtn.hidden = false;
-    showToast("照片已本地预览");
+    showToast(t("toastPhotoPreview"));
   } catch (error) {
     console.warn("照片读取失败。", error);
     faceImageInput.value = "";
-    showToast("照片读取失败，请重新选择图片");
+    showToast(t("toastPhotoReadFailed"));
   }
 }
 
@@ -1455,7 +1626,7 @@ function removeAvatar() {
   faceImageInput.value = "";
   facePreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
-  showToast("照片已删除");
+  showToast(t("toastPhotoRemoved"));
 }
 
 function renderScreenshotGrid() {
@@ -1463,8 +1634,8 @@ function renderScreenshotGrid() {
   screenshotGrid.innerHTML = socialScreenshots
     .map((item, index) => `
       <div class="screenshot-item">
-        <img src="${item.dataUrl}" alt="社交截图 ${index + 1}">
-        <button class="remove-shot" type="button" data-id="${item.id}" aria-label="删除第 ${index + 1} 张截图">×</button>
+        <img src="${item.dataUrl}" alt="${escapeHtml(t("screenshotAlt", { index: index + 1 }))}">
+        <button class="remove-shot" type="button" data-id="${item.id}" aria-label="${escapeHtml(t("removeScreenshotAria", { index: index + 1 }))}">×</button>
       </div>
     `)
     .join("");
@@ -1475,13 +1646,13 @@ async function addScreenshotFiles(files) {
   const availableSlots = MAX_SCREENSHOT_COUNT - socialScreenshots.length;
   if (!incomingFiles.length) return;
   if (!availableSlots) {
-    showToast(`最多只能上传 ${MAX_SCREENSHOT_COUNT} 张社交截图`);
+    showToast(t("toastScreenshotLimit", { count: MAX_SCREENSHOT_COUNT }));
     return;
   }
   let addedCount = 0;
   let skippedCount = 0;
   const filesToProcess = incomingFiles.slice(0, availableSlots);
-  if (incomingFiles.length > availableSlots) showToast(`最多 ${MAX_SCREENSHOT_COUNT} 张，已处理前 ${availableSlots} 张`);
+  if (incomingFiles.length > availableSlots) showToast(t("toastScreenshotPartial", { max: MAX_SCREENSHOT_COUNT, count: availableSlots }));
 
   for (const file of filesToProcess) {
     const validation = await validateImageFile(file);
@@ -1498,10 +1669,10 @@ async function addScreenshotFiles(files) {
     } catch (error) {
       skippedCount += 1;
       console.warn("截图读取失败。", error);
-      showToast("截图读取失败，请重新选择图片");
+      showToast(t("toastScreenshotReadFailed"));
     }
   }
-  if (addedCount && skippedCount) showToast(`已添加 ${addedCount} 张，跳过 ${skippedCount} 张异常图片`);
+  if (addedCount && skippedCount) showToast(t("toastScreenshotMixed", { added: addedCount, skipped: skippedCount }));
   screenshotInput.value = "";
 }
 
@@ -1534,7 +1705,7 @@ function bindDropZone(dropZone, onFiles) {
 
 async function copyText(text) {
   if (!text) {
-    showToast("没有可复制内容");
+    showToast(t("toastNothingToCopy"));
     return;
   }
   try {
@@ -1543,7 +1714,7 @@ async function copyText(text) {
     } else {
       throw new Error("Clipboard API unavailable");
     }
-    showToast("已复制");
+    showToast(t("toastCopied"));
   } catch (error) {
     console.warn("剪贴板复制失败，使用降级方案。", error);
     const textarea = document.createElement("textarea");
@@ -1555,31 +1726,31 @@ async function copyText(text) {
     textarea.select();
     document.execCommand("copy");
     document.body.removeChild(textarea);
-    showToast("已复制");
+    showToast(t("toastCopied"));
   }
 }
 
 function saveCurrentPrompt() {
   if (!generatedRecordDraft || !generatedPrompt) {
-    showToast("请先开始 AI 分析");
+    showToast(t("toastStartAnalysisFirst"));
     return;
   }
   const record = { ...generatedRecordDraft, id: createId(), createdAt: new Date().toISOString() };
   const saved = saveHistory([record, ...getHistory()].slice(0, MAX_HISTORY_RECORDS));
   if (saved) expandedHistoryId = record.id;
   renderHistory();
-  if (saved) showToast("调试 Prompt 已保存到历史记录");
+  if (saved) showToast(t("toastPromptSaved"));
 }
 
 function parseReportJson() {
   const rawInput = jsonInput.value.trim();
-  if (!rawInput) throw new Error("请先导入报告 JSON 数据。");
+  if (!rawInput) throw new Error(t("errorImportJsonFirst"));
   const rawJson = extractJsonCandidate(rawInput);
   try {
     return { data: JSON.parse(rawJson), rawJson };
   } catch (error) {
     console.warn("JSON 解析失败。", error);
-    throw new Error("JSON 格式仍无法解析。请检查是否缺少逗号、引号或括号；也可以点击“生成示例报告”对照格式。");
+    throw new Error(t("errorJsonParseFailed"));
   }
 }
 
@@ -1591,7 +1762,7 @@ function extractJsonCandidate(rawInput) {
 
   const start = text.indexOf("{");
   if (start === -1) {
-    throw new Error("没有检测到 JSON 对象。请导入以 { 开头的 JSON，或直接点击“生成示例报告”查看格式。");
+    throw new Error(t("errorNoJsonObject"));
   }
 
   let depth = 0;
@@ -1617,20 +1788,20 @@ function extractJsonCandidate(rawInput) {
     if (depth === 0) return text.slice(start, index + 1);
   }
 
-  throw new Error("JSON 看起来没有完整闭合。请检查最后是否缺少 }。");
+  throw new Error(t("errorJsonIncomplete"));
 }
 
 function normalizeReportData(data) {
-  if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("JSON 内容不是有效对象。");
+  if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error(t("errorInvalidJsonObject"));
   const basicProfile = getFirstObject(data, ["basicProfile", "profile", "basic_profile", "summaryProfile", "基础画像", "基本画像"]);
   return {
     scenario: coerceText(getFirstValue(data, ["scenario", "scene", "场景"]), ["text", "value"]) || "",
     selectedGoal: coerceText(getFirstValue(data, ["selectedGoal", "goal", "communicationGoal", "沟通目标"]), ["text", "value"]) || "",
     basicProfile: {
-      oneSentence: coerceText(getFirstValue(basicProfile, ["oneSentence", "oneSentenceProfile", "one_sentence", "profile", "headline", "一句话画像", "一句话总结"]) || getFirstValue(data, ["oneSentence", "oneSentenceProfile", "one_sentence", "一句话画像", "一句话总结"]), ["text", "content", "summary", "value"]) || "未提供一句话画像",
-      personaSummary: coerceText(getFirstValue(basicProfile, ["personaSummary", "persona_summary", "summary", "persona", "description", "人设总结", "画像总结"]) || getFirstValue(data, ["personaSummary", "persona_summary", "summary", "人设总结", "画像总结"]), ["text", "content", "summary", "value"]) || "未提供人设总结",
+      oneSentence: coerceText(getFirstValue(basicProfile, ["oneSentence", "oneSentenceProfile", "one_sentence", "profile", "headline", "一句话画像", "一句话总结"]) || getFirstValue(data, ["oneSentence", "oneSentenceProfile", "one_sentence", "一句话画像", "一句话总结"]), ["text", "content", "summary", "value"]) || t("fallbackOneSentence"),
+      personaSummary: coerceText(getFirstValue(basicProfile, ["personaSummary", "persona_summary", "summary", "persona", "description", "人设总结", "画像总结"]) || getFirstValue(data, ["personaSummary", "persona_summary", "summary", "人设总结", "画像总结"]), ["text", "content", "summary", "value"]) || t("fallbackPersonaSummary"),
       confidence: coerceText(getFirstValue(basicProfile, ["confidence", "confidenceLevel", "confidence_level", "置信度"]) || getFirstValue(data, ["confidence", "置信度"]), ["level", "value", "text"]) || "中",
-      confidenceReason: coerceText(getFirstValue(basicProfile, ["confidenceReason", "confidence_reason", "reason", "confidenceExplanation", "置信度说明", "置信度原因"]) || getFirstValue(data, ["confidenceReason", "confidence_reason", "置信度说明", "置信度原因"]), ["reason", "content", "text", "value"]) || "未提供置信度说明",
+      confidenceReason: coerceText(getFirstValue(basicProfile, ["confidenceReason", "confidence_reason", "reason", "confidenceExplanation", "置信度说明", "置信度原因"]) || getFirstValue(data, ["confidenceReason", "confidence_reason", "置信度说明", "置信度原因"]), ["reason", "content", "text", "value"]) || t("fallbackConfidenceReason"),
     },
     scores: normalizeScores(getFirstValue(data, ["scores", "score", "metrics", "profileScores", "linguisticCues", "communicationStyle", "综合评分", "画像分数", "补充信息", "沟通风格维度"]), ["表达温度", "边界清晰度", "自我暴露程度", "沟通开放度", "关系导向"]),
     bigFive: normalizeScores(getFirstValue(data, ["bigFive", "big_five", "big5", "personality", "personalityScores", "bigFiveTendencyReference", "Big Five 倾向参考"]), ["开放性倾向", "尽责性倾向", "外向性倾向", "宜人性倾向", "情绪稳定性倾向"]),
@@ -1928,11 +2099,11 @@ function renderVisualReport(data) {
   visualReportOutput.innerHTML = `
     <div class="dashboard-grid">
       <article class="summary-card glass-card">
-        <p class="eyebrow">${t("valuePersonaTitle")}</p>
+        <p class="eyebrow">${t("firstReadTitle")}</p>
         <h3>${escapeHtml(data.basicProfile.oneSentence)}</h3>
         <p>${escapeHtml(data.basicProfile.personaSummary)}</p>
         <div class="confidence-strip">
-          <span>${t("confidenceLabel")}：${escapeHtml(data.basicProfile.confidence)}</span>
+          <span>${t("confidenceLabel")}：${escapeHtml(translateConfidence(data.basicProfile.confidence))}</span>
           <p>${escapeHtml(data.basicProfile.confidenceReason)}</p>
         </div>
         <p class="report-disclaimer">${escapeHtml(data.disclaimer || t("footerCompliance"))}</p>
@@ -1956,7 +2127,7 @@ function renderVisualReport(data) {
       </article>
 
       <article class="dashboard-card glass-card">
-        <h3>${escapeHtml(scenario)} · ${t("chartRadarTitle")}</h3>
+        <h3>${escapeHtml(translateScenario(scenario))} · ${t("chartRadarTitle")}</h3>
         ${renderSceneMetrics(data)}
       </article>
     </div>
@@ -1992,10 +2163,10 @@ function handleRenderReport() {
     const normalizedData = normalizeReportData(data);
     renderVisualReport(normalizedData);
     const saved = saveAnalysisHistory(normalizedData, rawJson);
-    showToast(saved ? "报告数据已导入并保存" : "报告数据已导入，历史记录未保存");
+    showToast(saved ? t("toastReportImportedSaved") : t("toastReportImportedNoHistory"));
   } catch (error) {
     jsonError.textContent = error.message;
-    showToast("报告数据导入失败");
+    showToast(t("toastReportImportFailed"));
   }
 }
 
@@ -2006,7 +2177,7 @@ function fillExampleJson() {
   jsonError.textContent = "";
   renderVisualReport(normalizedData);
   const saved = saveAnalysisHistory(normalizedData, rawJson);
-  showToast(saved ? "示例报告已生成并保存" : "示例报告已生成，历史记录未保存");
+  showToast(saved ? t("toastSampleSaved") : t("toastSampleNoHistory"));
 }
 
 function clearJsonReport() {
@@ -2048,7 +2219,7 @@ function renderPromptHistoryCard(record, date, isExpanded) {
           <h3>${escapeHtml(record.nickname || t("unnamedObject"))}</h3>
           <time datetime="${escapeHtml(record.createdAt)}">${date.toLocaleString(currentLanguage === "en" ? "en-US" : "zh-CN")}</time>
         </div>
-        <span class="scenario-tag">${escapeHtml(record.scenario || t("unsetScenario"))}</span>
+        <span class="scenario-tag">${escapeHtml(translateScenario(record.scenario))}</span>
       </div>
       <p>${escapeHtml(truncateText(record.signature))}</p>
       <ul class="history-meta">
@@ -2075,7 +2246,7 @@ function renderReportHistoryCard(record, date) {
           <h3>${escapeHtml(record.oneSentence || t("unnamedReport"))}</h3>
           <time datetime="${escapeHtml(record.createdAt)}">${date.toLocaleString(currentLanguage === "en" ? "en-US" : "zh-CN")}</time>
         </div>
-        <span class="scenario-tag">${t("confidenceLabel")}：${escapeHtml(record.confidence || "中")}</span>
+        <span class="scenario-tag">${t("confidenceLabel")}：${escapeHtml(translateConfidence(record.confidence || "中"))}</span>
       </div>
       <ul class="history-meta">
         <li>${t("totalScore")}：${Object.values(record.scores || {}).map(clampScore).join(" / ")}</li>
@@ -2083,7 +2254,6 @@ function renderReportHistoryCard(record, date) {
       </ul>
       <div class="history-actions">
         <button class="button small view-report-history" type="button" data-id="${escapeHtml(record.id)}">${t("viewReport")}</button>
-        <button class="button small copy-json-history" type="button" data-id="${escapeHtml(record.id)}">${t("copyJson")}</button>
         <button class="button small danger delete-history" type="button" data-id="${escapeHtml(record.id)}">${t("deleteRecord")}</button>
       </div>
     </article>
@@ -2094,18 +2264,18 @@ function deleteHistoryRecord(id) {
   saveHistory(getHistory().filter((record) => record.id !== id));
   if (expandedHistoryId === id) expandedHistoryId = "";
   renderHistory();
-  showToast("记录已删除");
+  showToast(t("toastRecordDeleted"));
 }
 
 function clearAllHistory() {
   if (!getHistory().length) {
-    showToast("当前没有历史记录");
+    showToast(t("toastNoHistory"));
     return;
   }
   localStorage.removeItem(STORAGE_KEY);
   expandedHistoryId = "";
   renderHistory();
-  showToast("全部历史记录已清空");
+  showToast(t("toastHistoryCleared"));
 }
 
 function handleHistoryClick(event) {
@@ -2207,7 +2377,7 @@ screenshotGrid.addEventListener("click", (event) => {
   if (!button) return;
   socialScreenshots = socialScreenshots.filter((item) => item.id !== button.dataset.id);
   renderScreenshotGrid();
-  showToast("截图已删除");
+  showToast(t("toastScreenshotRemoved"));
 });
 bindDropZone(faceUploadZone, (files) => handleFacePhotoFile(files && files[0]));
 bindDropZone(screenshotDropZone, addScreenshotFiles);
