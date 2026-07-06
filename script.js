@@ -96,7 +96,7 @@ const translations = {
     statusLabel: "当前状态",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
-    generatePromptBtn: "开始 AI 分析",
+    generatePromptBtn: "开始分析",
     generatingBtn: "正在生成画像...",
     resetBtn: "清空当前内容",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
@@ -136,10 +136,10 @@ const translations = {
     localDashboardEyebrow: "LOCAL DASHBOARD",
     localDashboardTitle: "API-ready 分析流程",
     localDashboardStep1: "上传照片，也可以填写高级补充信息。",
-    localDashboardStep2: "点击开始 AI 分析。",
+    localDashboardStep2: "点击开始分析。",
     localDashboardStep3: "当前版本先使用本地 mock 数据生成报告。",
     localDashboardStep4: "未来可替换为安全 API 服务自动返回报告数据。",
-    localDashboardPrivacy: "当前为静态原型，后续可接入安全 API 服务；报告记录仅保存在当前浏览器 localStorage。",
+    localDashboardPrivacy: "当前为静态原型，后续可接入安全 API 服务；报告记录暂存在本机浏览器。",
     waitingJsonEyebrow: "WAITING FOR REPORT",
     waitingJsonTitle: "等待生成可视化报告",
     waitingJsonDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。也可以使用开发者调试模式手动导入报告数据。",
@@ -207,11 +207,11 @@ const translations = {
     principleDesc: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。",
     historyEyebrow: "LOCAL HISTORY",
     historyTitle: "最近分析",
-    historyDesc: "最近生成并手动保存的记录会保存在当前浏览器 localStorage 中。",
+    historyDesc: "最近生成的报告会暂存在本机浏览器，方便你回来查看。",
     clearHistoryBtn: "清空全部记录",
     noHistoryEyebrow: "NO HISTORY",
     noHistoryTitle: "还没有保存任何记录",
-    noHistoryDesc: "开始 AI 分析或生成可视化报告后，会在这里看到最近记录。",
+    noHistoryDesc: "开始分析或生成可视化报告后，会在这里看到最近记录。",
     goAnalyzeBtn: "去开始分析",
     promptRecord: "调试 Prompt 记录",
     reportRecord: "可视化报告记录",
@@ -259,7 +259,7 @@ const translations = {
     imageErrorReadFailed: "图片读取失败，请换一张未损坏的图片",
     toastNothingToCopy: "没有可复制内容",
     toastCopied: "已复制",
-    toastStartAnalysisFirst: "请先开始 AI 分析",
+    toastStartAnalysisFirst: "请先开始分析",
     toastPromptSaved: "调试 Prompt 已保存到历史记录",
     toastReportImportedSaved: "报告数据已导入并保存",
     toastReportImportedNoHistory: "报告数据已导入，历史记录未保存",
@@ -420,7 +420,7 @@ const translations = {
     localDashboardStep2: "Click Start Analysis.",
     localDashboardStep3: "The current version generates a local mock report first.",
     localDashboardStep4: "A secure API service can replace the mock data later.",
-    localDashboardPrivacy: "This is a static prototype that can later connect to a secure API service. Report records stay in localStorage.",
+    localDashboardPrivacy: "This is a static prototype that can later connect to a secure API service. Reports are temporarily saved in this browser.",
     waitingJsonEyebrow: "WAITING FOR REPORT",
     waitingJsonTitle: "Waiting for Visual Report",
     waitingJsonDesc: "Once analysis is complete, the system will generate a visual communication profile report here. Developer debug mode can also import report data manually.",
@@ -488,7 +488,7 @@ const translations = {
     principleDesc: "PersonaScope generates communication profiles only from user-provided public social signals. It is intended to support understanding of expression style and interaction patterns, and does not constitute medical diagnosis, definitive personality judgment, relationship judgment, or a basis for major decisions.",
     historyEyebrow: "LOCAL HISTORY",
     historyTitle: "Recent Analyses",
-    historyDesc: "Recently generated and manually saved records are stored in this browser's localStorage.",
+    historyDesc: "Recent reports are temporarily saved in this browser for quick review.",
     clearHistoryBtn: "Clear All Records",
     noHistoryEyebrow: "NO HISTORY",
     noHistoryTitle: "No History Yet",
@@ -874,7 +874,12 @@ function getAnalysisLoadingHtml(stageText = t("loadingStage1")) {
   const stages = [t("loadingStage1"), t("loadingStage2"), t("loadingStage3")];
   return `
     <div class="analysis-loading">
-      <span class="loading-spinner" aria-hidden="true"></span>
+      <div class="signal-pulse" aria-hidden="true">
+        <svg viewBox="0 0 220 72" role="img" focusable="false">
+          <path class="signal-pulse-glow" d="M6 42 H38 L48 42 L58 18 L74 58 L88 34 L104 42 H132 L144 42 L154 26 L166 50 L178 42 H214" />
+          <path class="signal-pulse-line" d="M6 42 H38 L48 42 L58 18 L74 58 L88 34 L104 42 H132 L144 42 L154 26 L166 50 L178 42 H214" />
+        </svg>
+      </div>
       <h4>${t("loadingTitle")}</h4>
       <p>${t("loadingDesc")}</p>
       <div class="loading-progress" aria-hidden="true"><span></span></div>

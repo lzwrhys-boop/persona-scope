@@ -290,7 +290,7 @@
           </details>
 
           <div class="form-actions">
-            <button class="button primary" type="submit" data-i18n="generatePromptBtn">开始 AI 分析</button>
+            <button class="button primary" type="submit" data-i18n="generatePromptBtn">开始分析</button>
             <button class="button ghost" id="resetBtn" type="reset" data-i18n="resetBtn">清空当前内容</button>
           </div>
         </form>
@@ -347,11 +347,11 @@
           <h3 data-i18n="localDashboardTitle">API-ready 分析流程</h3>
           <ol>
             <li data-i18n="localDashboardStep1">上传照片，也可以填写高级补充信息。</li>
-            <li data-i18n="localDashboardStep2">点击开始 AI 分析。</li>
+            <li data-i18n="localDashboardStep2">点击开始分析。</li>
             <li data-i18n="localDashboardStep3">当前版本先使用本地 mock 数据生成报告。</li>
             <li data-i18n="localDashboardStep4">未来可替换为安全 API 服务自动返回报告数据。</li>
           </ol>
-          <p data-i18n="localDashboardPrivacy">当前为静态原型，后续可接入安全 API 服务；报告记录仅保存在当前浏览器 localStorage。</p>
+          <p data-i18n="localDashboardPrivacy">当前为静态原型，后续可接入安全 API 服务；报告记录暂存在本机浏览器。</p>
         </div>
       </div>
 
@@ -471,7 +471,7 @@
         <div>
           <p class="eyebrow" data-i18n="historyEyebrow">LOCAL HISTORY</p>
           <h2 data-i18n="historyTitle">历史记录</h2>
-          <p data-i18n="historyDesc">最近生成并手动保存的记录会保存在当前浏览器 localStorage 中。</p>
+          <p data-i18n="historyDesc">最近生成的报告会暂存在本机浏览器，方便你回来查看。</p>
         </div>
         <button class="button ghost" id="clearHistoryBtn" type="button" data-i18n="clearHistoryBtn">清空全部记录</button>
       </div>
@@ -480,7 +480,7 @@
         <div class="empty-state">
           <p class="eyebrow" data-i18n="noHistoryEyebrow">NO HISTORY</p>
           <h3 data-i18n="noHistoryTitle">还没有保存任何记录</h3>
-          <p data-i18n="noHistoryDesc">开始 AI 分析或生成可视化报告后，会在这里看到最近记录。</p>
+          <p data-i18n="noHistoryDesc">开始分析或生成可视化报告后，会在这里看到最近记录。</p>
           <a class="button primary" href="#analyze" data-i18n="goAnalyzeBtn">去开始分析</a>
         </div>
       </div>
