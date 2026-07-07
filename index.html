@@ -207,15 +207,15 @@
         <form class="input-card glass-card" id="personaForm">
           <div class="upload-field">
             <div class="field-title">
-              <span data-i18n="avatarLabel">上传一张正脸照片</span>
+              <span data-i18n="avatarLabel">上传一张照片或截图</span>
               <button class="text-button" id="removeAvatarBtn" type="button" hidden data-i18n="removeAvatar">删除当前照片</button>
             </div>
             <label class="upload-box avatar-upload" id="faceUploadZone" for="faceImageInput">
               <input id="faceImageInput" name="facePhoto" type="file" accept="image/jpeg,image/jpg,image/png,image/webp">
               <span class="upload-preview avatar-preview" id="facePreview">+</span>
               <span>
-                <strong data-i18n="avatarUploadTitle">点击或拖拽照片到这里</strong>
-                <small data-i18n="avatarUploadDesc">建议选择光线清晰、无遮挡、接近正脸的照片</small>
+                <strong data-i18n="avatarUploadTitle">上传照片或截图</strong>
+                <small data-i18n="avatarUploadDesc">正脸照、社交主页截图、聊天截图都可以。信息越清晰，建议越具体。</small>
               </span>
             </label>
           </div>
@@ -229,12 +229,12 @@
             <label><input type="radio" name="scenario" value="自我呈现"><span data-i18n="scenarioSelf">自我呈现</span></label>
           </fieldset>
 
-          <fieldset class="goal-group">
+          <fieldset class="goal-group hidden-context-options" hidden>
             <legend data-i18n="goalLabel">我想达成</legend>
             <div class="goal-options" id="goalOptions" aria-live="polite"></div>
           </fieldset>
 
-          <fieldset class="goal-group status-group">
+          <fieldset class="goal-group status-group hidden-context-options" hidden>
             <legend data-i18n="statusLabel">当前状态</legend>
             <div class="goal-options status-options" id="statusOptions" aria-live="polite"></div>
           </fieldset>
@@ -245,7 +245,7 @@
           </label>
 
           <details class="advanced-inputs">
-            <summary data-i18n="advancedSummary">高级补充信息</summary>
+            <summary data-i18n="advancedSummary">提升准确度（可选）</summary>
 
             <label>
               <span><span data-i18n="nicknameLabel">分析对象昵称</span> <small data-i18n="optionalLabel">可选</small></span>
@@ -299,8 +299,8 @@
           <div class="result-header">
             <div>
               <p class="eyebrow" data-i18n="analysisPreviewEyebrow">ANALYSIS PREVIEW</p>
-              <h3 data-i18n="analysisPreviewTitle">你的沟通画像会出现在这里</h3>
-              <p id="promptStatus" data-i18n="promptStatusEmpty">分析完成后，你会看到第一感觉、沟通倾向、开场建议和需要避开的表达。</p>
+              <h3 data-i18n="analysisPreviewTitle">你的沟通建议会出现在这里</h3>
+              <p id="promptStatus" data-i18n="promptStatusEmpty">分析完成后，你会看到第一判断、开场话术、适合说的话和需要避开的表达。</p>
             </div>
           </div>
           <div class="analysis-preview" id="analysisPreview"></div>
