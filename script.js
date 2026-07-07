@@ -20,29 +20,29 @@ const translations = {
     loggingInButton: "正在进入...",
     logoutButton: "退出",
     heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
-    heroTitleLine1: "看见第一印象",
-    heroTitleLine2: "准备下一句话",
-    heroDesc: "基于公开呈现与补充问题，生成不同场景下的开场方式、沟通节奏与避坑提醒。",
-    heroPrimary: "上传照片开始分析",
-    heroSecondary: "查看分析框架",
-    previewKicker: "预览报告",
-    previewTitle: "沟通画像预览",
-    previewSummary: "从视觉呈现和补充问题看，报告会提炼可能给人的第一印象、沟通风格倾向与更自然的开场方式。",
-    previewTraitsTitle: "核心特征",
-    previewTagBoundary: "边界意识",
-    previewTagExpression: "表达克制",
-    previewTagExposure: "选择性暴露",
-    previewTagObserve: "观察型沟通",
-    previewDimensionsTitle: "核心维度",
-    previewMetricWarmth: "表达温度",
-    previewMetricBoundary: "边界清晰度",
-    previewMetricOpenness: "沟通开放度",
-    previewMetricPresentation: "自我呈现强度",
-    previewFrameworkTitle: "分析框架",
-    previewFrameworkBigFive: "Big Five 倾向参考",
-    previewFrameworkLanguage: "补充文本线索",
-    previewFrameworkPresentation: "视觉呈现",
-    previewFrameworkAvatar: "画面呈现",
+    heroTitleLine1: "不知道怎么开口？",
+    heroTitleLine2: "上传一点线索，我给你下一句话。",
+    heroDesc: "上传照片、社交主页或聊天截图，选择一个场景，PersonaScope 会帮你生成第一判断、开场话术、避坑提醒和下一步接法。",
+    heroPrimary: "帮我想下一句",
+    heroSecondary: "先看一个示例",
+    previewKicker: "示例预览",
+    previewTitle: "场景：客户沟通",
+    previewSummary: "第一判断：先降低对方决策压力，再给一个很小、很明确的下一步。",
+    previewTraitsTitle: "推荐开口",
+    previewTagBoundary: "我先把重点放这里：如果你这周方便，我可以用 10 分钟把可选方案和风险点讲清楚。",
+    previewTagExpression: "",
+    previewTagExposure: "",
+    previewTagObserve: "",
+    previewDimensionsTitle: "信号标签",
+    previewMetricWarmth: "沟通节奏：宜慢不宜急",
+    previewMetricBoundary: "信任方式：先给具体价值",
+    previewMetricOpenness: "风险提醒：避免催促",
+    previewMetricPresentation: "开口方式：低压力试探",
+    previewFrameworkTitle: "下一步接法",
+    previewFrameworkBigFive: "",
+    previewFrameworkLanguage: "如果对方说“最近忙”：没关系，我先把重点用一句话发你，方便时再看。",
+    previewFrameworkPresentation: "风险提醒：不要催对方立刻表态。",
+    previewFrameworkAvatar: "",
     previewFrameworkSocial: "沟通建议",
     previewFooter: "基于用户提供的视觉呈现与补充信息生成，仅供沟通参考。",
     valuePersonaTitle: "第一印象",
@@ -152,6 +152,19 @@ const translations = {
     approachStyleTitle: "沟通切入口",
     evidenceChainTitle: "判断依据",
     firstReadTitle: "第一判断",
+    openingLineTitle: "开场话术",
+    copyLineBtn: "复制话术",
+    replyStrategyTitle: "对方这样回，你可以这样接",
+    replyNoResponse: "对方没回复",
+    replyShort: "对方回复很短，例如“嗯嗯 / 好的 / 再说”",
+    replyReject: "对方表达拒绝或暂时没兴趣",
+    recommendedReplyLabel: "推荐接话",
+    replyReasonLabel: "为什么这样接",
+    metricTagSlow: "宜慢不宜急",
+    metricTagWarmup: "适合先铺垫",
+    metricTagSpecific: "需要具体依据",
+    evidenceSummaryHint: "展开查看判断依据",
+    limitedEvidenceText: "当前线索有限",
     confidenceLabel: "置信度",
     disclaimerTitle: "免责声明",
     emptyTags: "暂无标签",
@@ -301,29 +314,29 @@ const translations = {
     loggingInButton: "Entering...",
     logoutButton: "Exit",
     heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
-    heroTitleLine1: "Read the First Impression",
-    heroTitleLine2: "Prepare the Next Line",
-    heroDesc: "Generate openings, conversation pacing, and phrases to avoid for different scenarios based on public presentation and optional context.",
-    heroPrimary: "Upload Photo to Analyze",
-    heroSecondary: "View Framework",
-    previewKicker: "PREVIEW REPORT",
-    previewTitle: "Communication Profile Preview",
-    previewSummary: "Based on visual presentation and optional context, the report highlights possible first impressions, communication-style tendencies, and natural ways to start.",
-    previewTraitsTitle: "Key Traits",
-    previewTagBoundary: "Boundary-Aware",
-    previewTagExpression: "Controlled Expression",
-    previewTagExposure: "Selective Exposure",
-    previewTagObserve: "Observational Style",
-    previewDimensionsTitle: "Core Dimensions",
-    previewMetricWarmth: "Expression Warmth",
-    previewMetricBoundary: "Boundary Clarity",
-    previewMetricOpenness: "Communication Openness",
-    previewMetricPresentation: "Self-Presentation Strength",
-    previewFrameworkTitle: "Analysis Framework",
-    previewFrameworkBigFive: "Big Five Tendency Reference",
-    previewFrameworkLanguage: "Supplemental Text",
-    previewFrameworkPresentation: "Visual Presentation",
-    previewFrameworkAvatar: "Image Presence",
+    heroTitleLine1: "Read the signal.",
+    heroTitleLine2: "Write the next line.",
+    heroDesc: "Upload a photo, profile, or chat screenshot. Choose a scenario, and PersonaScope gives you the first read, opening lines, risk alerts, and follow-up replies.",
+    heroPrimary: "Find My Next Line",
+    heroSecondary: "View Example",
+    previewKicker: "EXAMPLE PREVIEW",
+    previewTitle: "Scenario: Client Communication",
+    previewSummary: "First read: reduce decision pressure first, then offer one small and clear next step.",
+    previewTraitsTitle: "Recommended opener",
+    previewTagBoundary: "I’ll leave the key point here: if you have 10 minutes this week, I can walk you through the options and risks.",
+    previewTagExpression: "",
+    previewTagExposure: "",
+    previewTagObserve: "",
+    previewDimensionsTitle: "Signal Tags",
+    previewMetricWarmth: "Pace: slow, not rushed",
+    previewMetricBoundary: "Trust: give concrete value first",
+    previewMetricOpenness: "Risk alert: avoid pushing",
+    previewMetricPresentation: "Opening: low-pressure probe",
+    previewFrameworkTitle: "Follow-up reply",
+    previewFrameworkBigFive: "",
+    previewFrameworkLanguage: "If they say “I’ve been busy”: No worries. I’ll send the key point in one sentence first.",
+    previewFrameworkPresentation: "Risk alert: do not push them to decide immediately.",
+    previewFrameworkAvatar: "",
     previewFrameworkSocial: "Communication Guidance",
     previewFooter: "Generated from user-provided visual presentation and optional context. For communication reference only.",
     valuePersonaTitle: "First Impression",
@@ -433,6 +446,19 @@ const translations = {
     approachStyleTitle: "Opening Angle",
     evidenceChainTitle: "Reasoning",
     firstReadTitle: "First Read",
+    openingLineTitle: "Opening Line",
+    copyLineBtn: "Copy Line",
+    replyStrategyTitle: "If They Reply Like This",
+    replyNoResponse: "They do not reply",
+    replyShort: "They reply briefly, such as “Mm / OK / Maybe later”",
+    replyReject: "They decline or are not interested for now",
+    recommendedReplyLabel: "Recommended reply",
+    replyReasonLabel: "Why this works",
+    metricTagSlow: "Go slower",
+    metricTagWarmup: "Warm up first",
+    metricTagSpecific: "Use specific context",
+    evidenceSummaryHint: "Expand reasoning",
+    limitedEvidenceText: "Current clues are limited",
     confidenceLabel: "Confidence",
     disclaimerTitle: "Disclaimer",
     emptyTags: "No tags yet",
@@ -607,6 +633,7 @@ const menuToggle = document.querySelector(".menu-toggle");
 const mainNav = document.querySelector("#mainNav");
 const navLinks = Array.from(document.querySelectorAll(".main-nav a"));
 const languageToggle = document.querySelector("#languageToggle");
+const heroExampleLink = document.querySelector("#heroExampleLink");
 const unicornBackground = document.querySelector("#unicornBackground");
 const unicornScene = document.querySelector("#unicornScene");
 
@@ -2139,26 +2166,149 @@ function renderSceneMetrics(data) {
   return `
     <div class="scene-framework-note">${escapeHtml(config.theory)}</div>
     <div class="scene-metric-list">
-      ${metrics.slice(0, 6).map((item) => `
+      ${metrics.slice(0, 6).map((item) => {
+        const score = clampScore(item.score);
+        const tag = score >= 76 ? t("metricTagSpecific") : score >= 62 ? t("metricTagWarmup") : t("metricTagSlow");
+        return `
         <div class="scene-metric-row">
-          <div class="bar-meta"><span>${escapeHtml(item.label)}</span><strong>${item.score}</strong></div>
-          <div class="bar-track"><span style="width: ${item.score}%"></span></div>
+          <div class="metric-heading">
+            <span>${escapeHtml(item.label)}</span>
+            <strong>${score}</strong>
+          </div>
+          <div class="bar-track"><span style="width: ${score}%"></span></div>
+          <em>${escapeHtml(tag)}</em>
           <p>${escapeHtml(item.suggestion || item.basis)}</p>
         </div>
-      `).join("")}
+      `;
+      }).join("")}
     </div>
   `;
 }
 
-function renderListCards(title, items, emptyText) {
+function getOpeningLine(approachStyle, communicationAdvice) {
+  const candidates = [...normalizeStringArray(approachStyle), ...normalizeStringArray(communicationAdvice)];
+  return candidates.find((item) => /“|”|"|「|」|可以|建议|先|Hi|Hello|你好|我/.test(item)) || candidates[0] || t("emptyApproach");
+}
+
+function renderCopyableLine(line, prominent = false) {
+  return `
+    <div class="${prominent ? "opening-line-box" : "copyable-line"}">
+      <p>${escapeHtml(line)}</p>
+      <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(line)}">${t("copyLineBtn")}</button>
+    </div>
+  `;
+}
+
+function renderActionList(title, items, emptyText) {
   const normalizedItems = normalizeStringArray(Array.isArray(items) ? items : []).length
     ? normalizeStringArray(items)
     : [emptyText];
   return `
     <article class="dashboard-card glass-card">
       <h3>${escapeHtml(title)}</h3>
-      <div class="insight-list">
-        ${normalizedItems.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
+      <div class="action-line-list">
+        ${normalizedItems.slice(0, 3).map((item) => renderCopyableLine(item)).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function renderRiskList(title, items, emptyText) {
+  const normalizedItems = normalizeStringArray(Array.isArray(items) ? items : []).length
+    ? normalizeStringArray(items)
+    : [emptyText];
+  return `
+    <article class="dashboard-card glass-card">
+      <h3>${escapeHtml(title)}</h3>
+      <div class="risk-list">
+        ${normalizedItems.slice(0, 3).map((item) => `<p>${escapeHtml(item)}</p>`).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function getReplyFallbacks(scenario) {
+  const isEn = currentLanguage === "en";
+  const zh = {
+    客户沟通: [
+      { label: t("replyNoResponse"), reply: "我先把重点放这里：如果你这周方便，我可以用 10 分钟把可选方案和风险点讲清楚，你再决定要不要继续。", reason: "客户没回复时，降低决策压力，用明确时间和低成本下一步重新打开对话。" },
+      { label: t("replyShort"), reply: "收到。我先不展开，方便的话你回我一个方向：是想先看方案，还是先确认预算/周期？", reason: "短回复通常代表注意力有限，给两个选项比继续长篇解释更容易推进。" },
+      { label: t("replyReject"), reply: "理解，那我先不推进。后面如果你重新评估这个方向，我可以直接给你一版更轻量的参考方案。", reason: "对方暂时没兴趣时，保留关系和后续入口，比继续说服更稳。" },
+    ],
+    职场协作: [
+      { label: t("replyNoResponse"), reply: "我先同步一下关键点：这件事不急着现在定，方便时你帮我确认 A/B 哪个方向更合适就行。", reason: "职场未回复时，减少对方处理成本，把请求压缩成可判断的问题。" },
+      { label: t("replyShort"), reply: "收到。我按这个方向先推进一版，有变化我再同步你确认。", reason: "短回复适合转成可执行动作，同时保留后续确认空间。" },
+      { label: t("replyReject"), reply: "明白，我先按你的顾虑调整一下方案，再给你一个更低成本的版本确认。", reason: "被拒绝时先承接顾虑，再提出修订动作，能避免显得争辩或推责。" },
+    ],
+    亲密关系: [
+      { label: t("replyNoResponse"), reply: "不急，你先忙。等你方便的时候，我们再从刚才那个轻松的话题继续。", reason: "没回复时不追问，给对方空间，能降低压力感。" },
+      { label: t("replyShort"), reply: "哈哈收到，那我先不打扰。下次我再找个轻松点的话题和你聊。", reason: "短回复时用轻松收住，不把关系推进变成压力。" },
+      { label: t("replyReject"), reply: "没关系，我理解。那我们就先保持舒服的节奏，不用勉强。", reason: "对方表达拒绝时，尊重边界比继续解释更重要。" },
+    ],
+    朋友社交: [
+      { label: t("replyNoResponse"), reply: "我先把这个话题放这儿，等你有空我们再接着聊。", reason: "朋友社交里没回复不宜放大，用轻松方式保留话题即可。" },
+      { label: t("replyShort"), reply: "可以，那我先记下。下次见面/有空的时候我们再展开聊。", reason: "短回复时顺势收住，避免把普通聊天聊成负担。" },
+      { label: t("replyReject"), reply: "没事，那就先不聊这个。换个轻松点的话题也行。", reason: "对方不感兴趣时快速换挡，能保护轻松氛围。" },
+    ],
+    自我呈现: [
+      { label: t("replyNoResponse"), reply: "我先保留这个版本，后面如果你有具体场景，我可以再按场景微调。", reason: "没有反馈时，不急着反复修改，先保留可用版本。" },
+      { label: t("replyShort"), reply: "收到，那我先按这个方向优化：更清晰、更具体，也保留一点个人辨识度。", reason: "短反馈适合转成明确优化方向，避免继续追问。" },
+      { label: t("replyReject"), reply: "明白，那我换一个更稳妥的表达方向，先减少夸张感和目的感。", reason: "负面反馈时先收敛风格，能让呈现更自然可靠。" },
+    ],
+  };
+  const en = {
+    客户沟通: [
+      { label: t("replyNoResponse"), reply: "I’ll leave the key point here: if you have 10 minutes this week, I can walk you through the options and risks, then you can decide whether to continue.", reason: "When a client does not reply, reduce pressure and offer a small, clear next step." },
+      { label: t("replyShort"), reply: "Got it. I’ll keep it brief. Would it be more useful to look at the proposal first, or confirm budget and timeline?", reason: "A short reply often means limited attention. Two clear options are easier to answer." },
+      { label: t("replyReject"), reply: "Understood. I won’t push this now. If you revisit it later, I can send a lighter reference version.", reason: "When interest is low, preserving trust works better than continuing to persuade." },
+    ],
+    职场协作: [
+      { label: t("replyNoResponse"), reply: "I’ll summarize the key point here. No need to decide now; when convenient, just help me confirm whether A or B is the better direction.", reason: "For workplace follow-up, reduce the response effort and turn it into a simple decision." },
+      { label: t("replyShort"), reply: "Got it. I’ll move forward with this direction first and sync with you if anything changes.", reason: "A brief reply can be converted into action while keeping room for later confirmation." },
+      { label: t("replyReject"), reply: "Understood. I’ll adjust based on your concern and send a lower-cost version for review.", reason: "Acknowledge the concern first, then offer a concrete revision instead of arguing." },
+    ],
+    亲密关系: [
+      { label: t("replyNoResponse"), reply: "No rush. Take your time. We can continue from that easy topic when you’re free.", reason: "No reply is best handled with space rather than pressure." },
+      { label: t("replyShort"), reply: "Haha got it. I won’t interrupt you then. I’ll find a lighter topic next time.", reason: "A short reply is a cue to slow down and keep the tone relaxed." },
+      { label: t("replyReject"), reply: "That’s okay, I understand. Let’s keep the pace comfortable and not force it.", reason: "Respecting boundaries matters more than explaining further." },
+    ],
+    朋友社交: [
+      { label: t("replyNoResponse"), reply: "I’ll leave this topic here for now. We can pick it up when you have time.", reason: "In casual friendship, a light follow-up keeps the door open without creating pressure." },
+      { label: t("replyShort"), reply: "Sounds good. I’ll remember that, and we can talk more when there’s time.", reason: "A short reply is best met by closing lightly rather than overextending the chat." },
+      { label: t("replyReject"), reply: "No worries, let’s skip this one. We can switch to something lighter.", reason: "Changing topics quickly protects the easy social tone." },
+    ],
+    自我呈现: [
+      { label: t("replyNoResponse"), reply: "I’ll keep this version for now. If you have a specific context later, I can tune it for that use case.", reason: "No feedback does not require repeated changes; keep a usable baseline." },
+      { label: t("replyShort"), reply: "Got it. I’ll optimize in this direction: clearer, more specific, and still personally recognizable.", reason: "Brief feedback is best turned into a concrete editing direction." },
+      { label: t("replyReject"), reply: "Understood. I’ll make the expression more grounded and reduce anything that feels exaggerated or too intentional.", reason: "Negative feedback calls for lowering intensity and making the presentation feel more natural." },
+    ],
+  };
+  return (isEn ? en : zh)[scenario] || (isEn ? en["亲密关系"] : zh["亲密关系"]);
+}
+
+function buildReplyStrategies(scenario, approachStyle) {
+  const items = normalizeStringArray(approachStyle);
+  return getReplyFallbacks(scenario).map((item, index) => ({
+    ...item,
+    reply: items[index + 1] || item.reply,
+  }));
+}
+
+function renderReplyStrategies(scenario, approachStyle) {
+  return `
+    <article class="dashboard-card glass-card next-step-card reply-strategy-card">
+      <h3>${t("replyStrategyTitle")}</h3>
+      <div class="next-step-list">
+        ${buildReplyStrategies(scenario, approachStyle).map((item) => `
+          <div>
+            <strong>${escapeHtml(item.label)}</strong>
+            <small>${t("recommendedReplyLabel")}</small>
+            <p>${escapeHtml(item.reply)}</p>
+            <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(item.reply)}">${t("copyLineBtn")}</button>
+            <small>${t("replyReasonLabel")}</small>
+            <p>${escapeHtml(item.reason)}</p>
+          </div>
+        `).join("")}
       </div>
     </article>
   `;
@@ -2171,6 +2321,8 @@ function renderVisualReport(data) {
   const riskPoints = normalizeStringArray(Array.isArray(data.riskPoints) ? data.riskPoints : []);
   const approachStyle = normalizeStringArray(Array.isArray(data.approachStyle) ? data.approachStyle : []);
   const evidenceChain = normalizeEvidenceChain(Array.isArray(data.evidenceChain) ? data.evidenceChain : []);
+  const openingLine = getOpeningLine(approachStyle, communicationAdvice);
+  const evidenceItems = evidenceChain.length ? evidenceChain : [{ conclusion: t("limitedEvidenceText"), evidence: t("emptyEvidenceDesc"), source: t("emptySource") }];
 
   visualReportOutput.innerHTML = `
     <div class="dashboard-grid">
@@ -2185,14 +2337,25 @@ function renderVisualReport(data) {
         <p class="report-disclaimer">${escapeHtml(data.disclaimer || t("footerCompliance"))}</p>
       </article>
 
-      ${renderListCards(t("approachStyleTitle"), approachStyle, t("emptyApproach"))}
-      ${renderListCards(t("communicationAdviceTitle"), communicationAdvice, t("emptyAdvice"))}
-      ${renderListCards(t("riskPointsTitle"), riskPoints, t("emptyRisks"))}
+      <article class="dashboard-card glass-card opening-card">
+        <h3>${t("openingLineTitle")}</h3>
+        ${renderCopyableLine(openingLine, true)}
+      </article>
 
-      <article class="dashboard-card glass-card evidence-card">
+      ${renderActionList(t("communicationAdviceTitle"), communicationAdvice, t("emptyAdvice"))}
+      ${renderReplyStrategies(scenario, approachStyle)}
+      ${renderRiskList(t("riskPointsTitle"), riskPoints, t("emptyRisks"))}
+
+      <article class="dashboard-card glass-card metrics-card">
+        <h3>${escapeHtml(translateScenario(scenario))} · ${t("chartRadarTitle")}</h3>
+        ${renderSceneMetrics(data)}
+      </article>
+
+      <details class="dashboard-card glass-card evidence-card">
+        <summary>${t("evidenceSummaryHint")}</summary>
         <h3>${t("evidenceChainTitle")}</h3>
         <div class="evidence-list">
-          ${(evidenceChain.length ? evidenceChain : [{ conclusion: t("emptyEvidenceTitle"), evidence: t("emptyEvidenceDesc"), source: t("emptySource") }]).slice(0, 4).map((item) => `
+          ${evidenceItems.slice(0, 4).map((item) => `
             <div>
               <strong>${escapeHtml(item.conclusion || t("emptyConclusion"))}</strong>
               <p>${escapeHtml(item.evidence || t("emptyEvidence"))}</p>
@@ -2200,12 +2363,7 @@ function renderVisualReport(data) {
             </div>
           `).join("")}
         </div>
-      </article>
-
-      <article class="dashboard-card glass-card">
-        <h3>${escapeHtml(translateScenario(scenario))} · ${t("chartRadarTitle")}</h3>
-        ${renderSceneMetrics(data)}
-      </article>
+      </details>
     </div>
   `;
 }
@@ -2435,6 +2593,13 @@ function handleNavClick(event) {
   scrollToSection(section);
 }
 
+function handleHeroExampleClick(event) {
+  event.preventDefault();
+  fillExampleJson();
+  const reportSection = document.querySelector("#visual-report");
+  if (reportSection) scrollToSection(reportSection);
+}
+
 function alignInitialHash() {
   if (!window.location.hash) return;
   const section = document.querySelector(window.location.hash);
@@ -2488,6 +2653,12 @@ fillExampleJsonBtn.addEventListener("click", fillExampleJson);
 clearJsonBtn.addEventListener("click", clearJsonReport);
 clearHistoryBtn.addEventListener("click", clearAllHistory);
 historyList.addEventListener("click", handleHistoryClick);
+visualReportOutput.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-copy-text]");
+  if (!button) return;
+  copyText(button.dataset.copyText || "");
+});
+if (heroExampleLink) heroExampleLink.addEventListener("click", handleHeroExampleClick);
 if (languageToggle) languageToggle.addEventListener("click", toggleLanguage);
 if (logoutButton) logoutButton.addEventListener("click", handleLogout);
 
