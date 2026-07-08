@@ -240,6 +240,20 @@
             <div class="goal-options status-options" id="statusOptions" aria-live="polite"></div>
           </fieldset>
 
+          <div class="clue-completeness" id="clueCompleteness" aria-live="polite">
+            <div class="clue-completeness-top">
+              <span data-i18n="clueCompletenessLabel">线索完整度</span>
+              <strong id="clueCompletenessPercent">0%</strong>
+            </div>
+            <div class="clue-completeness-track" aria-hidden="true">
+              <span id="clueCompletenessBar"></span>
+            </div>
+            <p>
+              <strong id="clueCompletenessStatus" data-i18n="clueCompletenessLow">线索较少</strong>
+              <span data-i18n="clueCompletenessHint">当前线索越完整，生成的开场建议越具体</span>
+            </p>
+          </div>
+
           <label>
             <span><span data-i18n="questionLabel">你想了解什么？</span> <small data-i18n="optionalQuestionLabel">选填</small></span>
             <textarea id="questionInput" rows="3" placeholder="比如“我该怎么自然开场？”" data-i18n-placeholder="questionPlaceholder"></textarea>
@@ -485,6 +499,6 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="script.js?v=logic1"></script>
+  <script src="script.js?v=clue1"></script>
 </body>
 </html>

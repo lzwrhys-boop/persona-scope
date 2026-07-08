@@ -14,12 +14,65 @@ function shouldUseMockModel() {
   return explicitMock || !process.env.MODEL_API_KEY || !process.env.MODEL_BASE_URL || !process.env.MODEL_NAME;
 }
 
+function getModelProvider() {
+  return String(process.env.MODEL_PROVIDER || "openai-compatible").trim() || "openai-compatible";
+}
+
+function getModelRuntimeInfo(input) {
+  const socialImagesCount = Array.isArray(input?.socialImages) ? Math.min(input.socialImages.length, 6) : 0;
+  return {
+    provider: getModelProvider(),
+    modelName: String(process.env.MODEL_NAME || ""),
+    mainImageReceived: Boolean(input?.mainImage),
+    socialImagesCount,
+    multimodalPayload: Boolean(input?.mainImage || socialImagesCount),
+  };
+}
+
 function getChatCompletionsUrl() {
   const baseUrl = String(process.env.MODEL_BASE_URL || "").replace(/\/+$/, "");
   if (!baseUrl) return "";
   if (baseUrl.endsWith("/chat/completions")) return baseUrl;
   if (baseUrl.endsWith("/v1")) return `${baseUrl}/chat/completions`;
   return `${baseUrl}/v1/chat/completions`;
+}
+
+function hasImageInputs(input) {
+  return Boolean(input?.mainImage || (Array.isArray(input?.socialImages) && input.socialImages.length));
+}
+
+function supportsVisionInput() {
+  const provider = getModelProvider().toLowerCase();
+  const model = String(process.env.MODEL_NAME || "").toLowerCase();
+  if (provider === "qwen") return /(^|[-_.])vl([-_.]|$)|qwen-vl|omni|vision/i.test(model);
+  return /(vision|vl|gpt-4o|gpt-4\.1|gemini|claude-3|qwen.*vl|omni)/i.test(model);
+}
+
+function buildUserContent(modelUser, input) {
+  const userForText = {
+    ...modelUser,
+    mainImage: input.mainImage ? "[attached image]" : "",
+    socialImages: Array.isArray(input.socialImages) ? input.socialImages.map((_, index) => `[attached social image ${index + 1}]`) : [],
+  };
+  const content = [
+    {
+      type: "text",
+      text: JSON.stringify(userForText, null, 2),
+    },
+  ];
+  if (input.mainImage) {
+    content.push({
+      type: "image_url",
+      image_url: { url: input.mainImage },
+    });
+  }
+  (Array.isArray(input.socialImages) ? input.socialImages.slice(0, 6) : []).forEach((image) => {
+    content.push({
+      type: "image_url",
+      image_url: { url: image },
+    });
+  });
+  return content;
 }
 
 function extractJsonCandidate(text) {
@@ -84,23 +137,32 @@ function extractModelText(responseJson) {
 }
 
 async function requestModel(input, options = {}) {
-  const modelMessages = buildModelMessages(input, options);
+  const imageInputsPresent = hasImageInputs(input);
+  const visionEnabled = supportsVisionInput();
+  if (imageInputsPresent && !visionEnabled) {
+    throw new ModelClientError("MODEL_VISION_UNAVAILABLE", "当前模型未启用图片理解，请检查 MODEL_NAME 是否为支持视觉输入的模型");
+  }
+  const modelMessages = buildModelMessages({ ...input, imagesReadable: imageInputsPresent && visionEnabled }, options);
+  const userContent = imageInputsPresent ? buildUserContent(modelMessages.user, input) : JSON.stringify(modelMessages.user, null, 2);
+  const requestBody = {
+    model: process.env.MODEL_NAME,
+    temperature: 0.3,
+    messages: [
+      { role: "system", content: modelMessages.system },
+      { role: "system", content: `Developer instructions:\n${modelMessages.developer}` },
+      { role: "user", content: userContent },
+    ],
+  };
+  if (getModelProvider().toLowerCase() !== "qwen") {
+    requestBody.response_format = { type: "json_object" };
+  }
   const response = await fetch(getChatCompletionsUrl(), {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${process.env.MODEL_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      model: process.env.MODEL_NAME,
-      temperature: 0.3,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: modelMessages.system },
-        { role: "system", content: `Developer instructions:\n${modelMessages.developer}` },
-        { role: "user", content: JSON.stringify(modelMessages.user, null, 2) },
-      ],
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   let responseJson = null;
@@ -111,7 +173,11 @@ async function requestModel(input, options = {}) {
   }
 
   if (!response.ok) {
-    console.warn("Model provider error:", response.status, responseJson?.error?.message || responseJson?.message || "Unknown error");
+    const providerMessage = String(responseJson?.error?.message || responseJson?.message || "Unknown error");
+    console.warn("Model provider error:", response.status, providerMessage);
+    if (imageInputsPresent && /image_url|image url|vision|visual|multimodal|modal|unsupported|不支持|图片|图像/i.test(providerMessage)) {
+      throw new ModelClientError("MODEL_VISION_UNAVAILABLE", "当前模型未启用图片理解，请检查 MODEL_NAME 是否为支持视觉输入的模型");
+    }
     throw new ModelClientError("MODEL_REQUEST_FAILED", "模型服务请求失败，请稍后重试");
   }
 
@@ -141,5 +207,6 @@ async function callModel(input) {
 module.exports = {
   ModelClientError,
   callModel,
+  getModelRuntimeInfo,
   shouldUseMockModel,
 };

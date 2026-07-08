@@ -1981,6 +1981,60 @@ textarea:focus {
   background: rgba(95, 244, 255, 0.12);
 }
 
+.clue-completeness {
+  display: grid;
+  gap: 9px;
+  padding: 14px 16px;
+  border: 1px solid rgba(159, 181, 232, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.clue-completeness-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted-strong);
+  font-size: 13px;
+}
+
+.clue-completeness-top strong {
+  color: rgba(200, 250, 255, 0.86);
+  font-size: 13px;
+}
+
+.clue-completeness-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(159, 181, 232, 0.085);
+  overflow: hidden;
+}
+
+.clue-completeness-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(95, 244, 255, 0.44), rgba(169, 139, 255, 0.42));
+  box-shadow: 0 0 18px rgba(95, 244, 255, 0.12);
+  transition: width 0.25s ease;
+}
+
+.clue-completeness p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 0;
+  color: rgba(154, 168, 197, 0.78);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.clue-completeness p strong {
+  color: rgba(245, 248, 255, 0.88);
+}
+
 .result-header {
   position: relative;
   margin-bottom: 20px;

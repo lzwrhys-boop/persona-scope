@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const express = require("express");
 const { validateReport } = require("./schema");
 const { checkSensitiveRequest } = require("./safety");
-const { ModelClientError, callModel, shouldUseMockModel } = require("./modelClient");
+const { ModelClientError, callModel, getModelRuntimeInfo, shouldUseMockModel } = require("./modelClient");
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -15,6 +15,8 @@ const MAX_TEXT_LENGTHS = {
   question: 1000,
   post: 2000,
 };
+const MAX_SOCIAL_IMAGES = 6;
+const MAX_IMAGE_DATA_URL_LENGTH = 4 * 1024 * 1024;
 
 function getAllowedOrigins() {
   return String(process.env.ALLOWED_ORIGIN || "")
@@ -36,7 +38,7 @@ app.use(cors({
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "30mb" }));
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });
@@ -115,6 +117,25 @@ function safeText(value, maxLength) {
   return value.trim().slice(0, maxLength);
 }
 
+function validateImageDataUrl(value, fieldName) {
+  if (!value) return "";
+  if (typeof value !== "string") throw new Error(`${fieldName} 图片格式错误`);
+  if (value.length > MAX_IMAGE_DATA_URL_LENGTH) throw new Error(`${fieldName} 图片过大`);
+  const match = value.match(/^data:(image\/(?:jpeg|jpg|png|webp));base64,([A-Za-z0-9+/=]+)$/i);
+  if (!match) throw new Error(`${fieldName} 只支持 jpeg、png、webp 图片`);
+  return `data:${match[1].toLowerCase().replace("image/jpg", "image/jpeg")};base64,${match[2]}`;
+}
+
+function normalizeImages(source) {
+  const mainImage = validateImageDataUrl(source.mainImage || "", "mainImage");
+  const rawSocialImages = Array.isArray(source.socialImages) ? source.socialImages : [];
+  if (rawSocialImages.length > MAX_SOCIAL_IMAGES) throw new Error("socialImages 最多只能提交 6 张");
+  return {
+    mainImage,
+    socialImages: rawSocialImages.map((image, index) => validateImageDataUrl(image, `socialImages[${index}]`)).filter(Boolean),
+  };
+}
+
 function normalizeInput(body) {
   const source = body && typeof body === "object" && body.input ? body.input : body;
   if (!source || typeof source !== "object" || Array.isArray(source)) {
@@ -124,20 +145,22 @@ function normalizeInput(body) {
   const posts = Array.isArray(source.posts) ? source.posts : [];
   if (posts.length > 3) throw new Error("最多只能提交 3 条补充文案");
 
-  const screenshotCount = Number(source.screenshotCount || 0);
-  if (!Number.isFinite(screenshotCount) || screenshotCount < 0 || screenshotCount > 6) {
+  const images = normalizeImages(source);
+  const screenshotCount = Number(source.screenshotCount || images.socialImages.length || 0);
+  if (!Number.isFinite(screenshotCount) || screenshotCount < 0 || screenshotCount > MAX_SOCIAL_IMAGES) {
     throw new Error("截图数量必须在 0-6 之间");
   }
 
   const input = {
+    ...images,
     nickname: safeText(source.nickname, MAX_TEXT_LENGTHS.nickname),
     signature: safeText(source.signature, MAX_TEXT_LENGTHS.signature),
     posts: posts.map((post) => safeText(post, MAX_TEXT_LENGTHS.post)),
-    scenario: safeText(source.scenario || "亲密关系", 80),
+    scenario: safeText(source.scenario || "刚认识", 80),
     selectedGoal: safeText(source.selectedGoal, 80),
     selectedStatus: safeText(source.selectedStatus, 80),
     question: safeText(source.question, MAX_TEXT_LENGTHS.question),
-    hasAvatar: Boolean(source.hasAvatar),
+    hasAvatar: Boolean(source.hasAvatar || source.mainImage),
     screenshotCount,
     locale: safeText(body.locale || body.language || source.locale || source.language || "zh", 10),
   };
@@ -148,7 +171,9 @@ function normalizeInput(body) {
     input.posts.some(Boolean) ||
     input.question ||
     input.hasAvatar ||
-    input.screenshotCount
+    input.screenshotCount ||
+    input.mainImage ||
+    input.socialImages.length
   );
   if (!hasMeaningfulInput) throw new Error("请至少上传照片或填写一个问题");
 
@@ -225,6 +250,12 @@ app.post("/api/analyze", requireLogin, async (req, res) => {
   try {
     console.log("POST /api/analyze received", new Date().toISOString());
     const input = normalizeInput(req.body);
+    const modelRuntime = getModelRuntimeInfo(input);
+    console.log("model provider:", modelRuntime.provider);
+    console.log("model name:", modelRuntime.modelName);
+    console.log("mainImage received:", modelRuntime.mainImageReceived);
+    console.log("socialImages count:", modelRuntime.socialImagesCount);
+    console.log("multimodal payload:", modelRuntime.multimodalPayload);
     const safety = checkSensitiveRequest(input);
     if (!safety.ok) {
       return res.status(400).json({

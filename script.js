@@ -111,6 +111,12 @@ const translations = {
     scenarioSelf: "想重新靠近",
     goalLabel: "你想知道",
     statusLabel: "当前互动",
+    clueCompletenessLabel: "线索完整度",
+    clueCompletenessLow: "线索较少",
+    clueCompletenessInitial: "可初步解读",
+    clueCompletenessEnough: "线索较充分",
+    clueCompletenessDeep: "适合深度建议",
+    clueCompletenessHint: "当前线索越完整，生成的开场建议越具体",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
     generatePromptBtn: "开始分析",
@@ -422,6 +428,12 @@ const translations = {
     scenarioSelf: "Want to Reconnect",
     goalLabel: "What You Want to Know",
     statusLabel: "Current Interaction",
+    clueCompletenessLabel: "Clue Completeness",
+    clueCompletenessLow: "Limited clues",
+    clueCompletenessInitial: "Ready for an initial read",
+    clueCompletenessEnough: "Clues are fairly complete",
+    clueCompletenessDeep: "Ready for deeper suggestions",
+    clueCompletenessHint: "More complete clues lead to more specific opening suggestions",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
     generatePromptBtn: "Start Analysis",
@@ -648,6 +660,10 @@ const postInputs = Array.from(document.querySelectorAll(".post-input"));
 const questionInput = document.querySelector("#questionInput");
 const goalOptions = document.querySelector("#goalOptions");
 const statusOptions = document.querySelector("#statusOptions");
+const clueCompleteness = document.querySelector("#clueCompleteness");
+const clueCompletenessPercent = document.querySelector("#clueCompletenessPercent");
+const clueCompletenessBar = document.querySelector("#clueCompletenessBar");
+const clueCompletenessStatus = document.querySelector("#clueCompletenessStatus");
 const promptOutput = document.querySelector("#promptOutput");
 const promptStatus = document.querySelector("#promptStatus");
 const analysisPreview = document.querySelector("#analysisPreview");
@@ -679,6 +695,9 @@ const API_LOGIN_ENDPOINT = "https://persona-scope-api.onrender.com/api/login";
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_TOTAL_IMAGE_BYTES = 20 * 1024 * 1024;
 const MAX_SCREENSHOT_COUNT = 6;
+const MAX_MODEL_IMAGE_EDGE = 1200;
+const MODEL_IMAGE_JPEG_QUALITY = 0.8;
+const MAX_MODEL_IMAGE_DATA_URL_LENGTH = 3.5 * 1024 * 1024;
 const MAX_HISTORY_RECORDS = 20;
 const MAX_HISTORY_RAW_JSON_LENGTH = 12000;
 const MAX_HISTORY_PROMPT_LENGTH = 12000;
@@ -1330,6 +1349,33 @@ function renderStatusOptions() {
   )).join("");
 }
 
+function getClueCompleteness() {
+  const items = [
+    { ready: Boolean(avatarDataUrl), weight: 25 },
+    { ready: Boolean(getSelectedScenario()), weight: 20 },
+    { ready: Boolean(getSelectedStatus()), weight: 20 },
+    { ready: Boolean(questionInput?.value.trim()), weight: 15 },
+    { ready: socialScreenshots.length > 0, weight: 20 },
+  ];
+  return items.reduce((total, item) => total + (item.ready ? item.weight : 0), 0);
+}
+
+function getClueCompletenessStatus(percent) {
+  if (percent >= 85) return t("clueCompletenessDeep");
+  if (percent >= 65) return t("clueCompletenessEnough");
+  if (percent >= 40) return t("clueCompletenessInitial");
+  return t("clueCompletenessLow");
+}
+
+function updateClueCompleteness() {
+  if (!clueCompleteness || !clueCompletenessPercent || !clueCompletenessBar || !clueCompletenessStatus) return;
+  const percent = getClueCompleteness();
+  clueCompletenessPercent.textContent = `${percent}%`;
+  clueCompletenessBar.style.width = `${percent}%`;
+  clueCompletenessStatus.textContent = getClueCompletenessStatus(percent);
+  clueCompleteness.dataset.level = percent >= 85 ? "deep" : percent >= 65 ? "enough" : percent >= 40 ? "initial" : "low";
+}
+
 function isSupportedImage(file) {
   if (!file) return false;
   return ["jpg", "jpeg", "png", "webp"].includes(getFileExtension(file.name)) || ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
@@ -1428,6 +1474,47 @@ function readFileAsDataUrl(file) {
   });
 }
 
+function loadImageFromFile(file) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    const cleanup = () => URL.revokeObjectURL(objectUrl);
+    image.onload = () => {
+      cleanup();
+      resolve(image);
+    };
+    image.onerror = () => {
+      cleanup();
+      reject(new Error("图片解码失败"));
+    };
+    image.src = objectUrl;
+  });
+}
+
+async function compressImageForModel(file) {
+  const image = await loadImageFromFile(file);
+  const attempts = [
+    { edge: MAX_MODEL_IMAGE_EDGE, quality: MODEL_IMAGE_JPEG_QUALITY },
+    { edge: 1000, quality: 0.74 },
+    { edge: 850, quality: 0.68 },
+    { edge: 720, quality: 0.62 },
+  ];
+  let bestDataUrl = "";
+  for (const attempt of attempts) {
+    const scale = Math.min(1, attempt.edge / Math.max(image.naturalWidth, image.naturalHeight));
+    const width = Math.max(1, Math.round(image.naturalWidth * scale));
+    const height = Math.max(1, Math.round(image.naturalHeight * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0, width, height);
+    bestDataUrl = canvas.toDataURL("image/jpeg", attempt.quality);
+    if (bestDataUrl.length <= MAX_MODEL_IMAGE_DATA_URL_LENGTH) break;
+  }
+  return bestDataUrl;
+}
+
 function collectAnalysisInput() {
   return {
     nickname: nicknameInput.value.trim(),
@@ -1439,6 +1526,8 @@ function collectAnalysisInput() {
     question: questionInput.value.trim(),
     hasAvatar: Boolean(avatarDataUrl),
     screenshotCount: socialScreenshots.length,
+    mainImage: avatarDataUrl || "",
+    socialImages: socialScreenshots.slice(0, MAX_SCREENSHOT_COUNT).map((item) => item.dataUrl).filter(Boolean),
     language: currentLanguage,
   };
 }
@@ -1768,6 +1857,7 @@ function handleReset() {
   selectedStatus = "";
   renderGoalOptions();
   renderStatusOptions();
+  updateClueCompleteness();
   renderedReportData = null;
   updateGeneratedState("", null);
   analysisPreview.innerHTML = getAnalysisWaitingHtml();
@@ -1780,6 +1870,7 @@ async function handleFacePhotoFile(file) {
     avatarFileSize = 0;
     facePreview.innerHTML = "+";
     removeAvatarBtn.hidden = true;
+    updateClueCompleteness();
     return;
   }
   const validation = await validateImageFile(file, { replacingBytes: avatarFileSize });
@@ -1789,10 +1880,11 @@ async function handleFacePhotoFile(file) {
     return;
   }
   try {
-    avatarDataUrl = await readFileAsDataUrl(file);
+    avatarDataUrl = await compressImageForModel(file);
     avatarFileSize = file.size;
     facePreview.innerHTML = `<img src="${avatarDataUrl}" alt="${escapeHtml(t("avatarLabel"))}">`;
     removeAvatarBtn.hidden = false;
+    updateClueCompleteness();
     showToast(t("toastPhotoPreview"));
   } catch (error) {
     console.warn("照片读取失败。", error);
@@ -1807,6 +1899,7 @@ function removeAvatar() {
   faceImageInput.value = "";
   facePreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
+  updateClueCompleteness();
   showToast(t("toastPhotoRemoved"));
 }
 
@@ -1843,9 +1936,10 @@ async function addScreenshotFiles(files) {
       continue;
     }
     try {
-      const dataUrl = await readFileAsDataUrl(file);
+      const dataUrl = await compressImageForModel(file);
       socialScreenshots.push({ id: createId(), name: file.name, size: file.size, dataUrl });
       renderScreenshotGrid();
+      updateClueCompleteness();
       addedCount += 1;
     } catch (error) {
       skippedCount += 1;
@@ -2697,6 +2791,7 @@ screenshotGrid.addEventListener("click", (event) => {
   if (!button) return;
   socialScreenshots = socialScreenshots.filter((item) => item.id !== button.dataset.id);
   renderScreenshotGrid();
+  updateClueCompleteness();
   showToast(t("toastScreenshotRemoved"));
 });
 bindDropZone(faceUploadZone, (files) => handleFacePhotoFile(files && files[0]));
@@ -2707,6 +2802,7 @@ document.querySelectorAll('input[name="scenario"]').forEach((input) => {
     selectedStatus = "";
     renderGoalOptions();
     renderStatusOptions();
+    updateClueCompleteness();
   });
 });
 if (goalOptions) {
@@ -2715,6 +2811,7 @@ if (goalOptions) {
     if (!button) return;
     selectedGoal = button.dataset.goal;
     renderGoalOptions();
+    updateClueCompleteness();
   });
 }
 if (statusOptions) {
@@ -2723,6 +2820,7 @@ if (statusOptions) {
     if (!button) return;
     selectedStatus = button.dataset.status;
     renderStatusOptions();
+    updateClueCompleteness();
   });
 }
 copyPromptBtn.addEventListener("click", () => copyText(generatedPrompt));
@@ -2740,6 +2838,7 @@ visualReportOutput.addEventListener("click", (event) => {
 if (heroExampleLink) heroExampleLink.addEventListener("click", handleHeroExampleClick);
 if (languageToggle) languageToggle.addEventListener("click", toggleLanguage);
 if (logoutButton) logoutButton.addEventListener("click", handleLogout);
+if (questionInput) questionInput.addEventListener("input", updateClueCompleteness);
 
 menuToggle.addEventListener("click", () => {
   const isOpen = mainNav.classList.toggle("open");
@@ -2758,4 +2857,5 @@ UnicornBackground();
 applyLanguage();
 renderGoalOptions();
 renderStatusOptions();
+updateClueCompleteness();
 applyAuthState();

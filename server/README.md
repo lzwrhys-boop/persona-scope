@@ -11,7 +11,7 @@ GitHub Pages cannot run this backend. Keep the static frontend on GitHub Pages, 
 - `POST /api/analyze` accepts PersonaScope input and returns a report
 - Protects `POST /api/analyze` with `Authorization: Bearer <token>`
 - Uses mock report data when `MOCK_MODEL=true` or model environment variables are incomplete
-- Calls a real OpenAI-compatible model endpoint only when `MOCK_MODEL=false` and all model variables are configured
+- Calls one OpenAI-compatible multimodal model endpoint only when `MOCK_MODEL=false` and all model variables are configured
 - Keeps API keys only in server environment variables
 - Validates model output with `schema.js`
 - Blocks sensitive-attribute requests before analysis
@@ -58,6 +58,7 @@ Do not commit real secrets. Configure these in Render:
 MODEL_API_KEY=
 MODEL_BASE_URL=
 MODEL_NAME=
+MODEL_PROVIDER=qwen
 MOCK_MODEL=true
 ALLOWED_ORIGIN=https://yourname.github.io
 APP_ACCESS_CODE=your-private-access-code
@@ -69,7 +70,9 @@ Notes:
 
 - `MOCK_MODEL=true`: always returns the local mock report.
 - `MOCK_MODEL=false`: calls the real model only if `MODEL_API_KEY`, `MODEL_BASE_URL`, and `MODEL_NAME` are all present.
-- `MODEL_BASE_URL` should be an OpenAI-compatible base URL, for example `https://api.openai.com/v1`.
+- `MODEL_PROVIDER=qwen` enables Qwen-VL style multimodal model detection.
+- `MODEL_BASE_URL` should be an OpenAI-compatible base URL. For Alibaba Cloud Bailian / Model Studio in China (Beijing), prefer `https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1`. Replace `{WorkspaceId}` with your workspace ID. The older `https://dashscope.aliyuncs.com/compatible-mode/v1` domain may still work, but Alibaba Cloud recommends the workspace-specific domain for better stability.
+- `MODEL_NAME` must be a vision-capable model when images are sent, for example `qwen-vl-plus` or another available Qwen-VL model in your Bailian account.
 - `ALLOWED_ORIGIN` should be your GitHub Pages origin, for example `https://yourname.github.io`.
 - For multiple origins, use commas: `https://yourname.github.io,http://localhost:8890`.
 - `APP_ACCESS_CODE` is the private code users enter on the frontend login screen.
@@ -106,9 +109,10 @@ MOCK_MODEL=true
 ALLOWED_ORIGIN=https://yourname.github.io
 APP_ACCESS_CODE=your-private-access-code
 APP_LOGIN_SECRET=a-long-random-string
+MODEL_PROVIDER=qwen
 MODEL_API_KEY=
-MODEL_BASE_URL=
-MODEL_NAME=
+MODEL_BASE_URL=https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+MODEL_NAME=qwen-vl-plus
 ```
 
 8. Deploy.
@@ -155,12 +159,14 @@ When you are ready to call a real model:
 
 ```text
 MOCK_MODEL=false
+MODEL_PROVIDER=qwen
 MODEL_API_KEY=your-secret-key-in-render-only
-MODEL_BASE_URL=https://provider-compatible-base-url/v1
-MODEL_NAME=your-model-name
+MODEL_BASE_URL=https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+MODEL_NAME=qwen-vl-plus
 ```
 
 2. Do not put keys in frontend code.
 3. Do not commit `.env` with real secrets.
-4. Test `/api/analyze`.
-5. If the model returns invalid JSON, the API will return a friendly error instead of crashing.
+4. Test `/api/analyze` with one main photo and up to 6 social screenshots.
+5. If the configured model does not support `image_url` multimodal input, the API returns: `当前模型未启用图片理解，请检查 MODEL_NAME 是否为支持视觉输入的模型`.
+6. If the model returns invalid JSON, the API will return a friendly error instead of crashing.
