@@ -258,24 +258,9 @@
               <textarea id="signatureInput" rows="3" placeholder="输入公开可见的个性签名、简介或主页文案" data-i18n-placeholder="signaturePlaceholder"></textarea>
             </label>
 
-            <label>
-              <span data-i18n="post1Label">社交文案 1</span>
-              <textarea class="post-input" rows="3" placeholder="如果你上传的是截图，也建议补充截图中的关键文字，方便生成更准确的沟通画像。" data-i18n-placeholder="post1Placeholder"></textarea>
-            </label>
-
-            <label>
-              <span data-i18n="post2Label">社交文案 2</span>
-              <textarea class="post-input" rows="3" placeholder="补充第二条社交文案或截图中的关键文字" data-i18n-placeholder="post2Placeholder"></textarea>
-            </label>
-
-            <label>
-              <span data-i18n="post3Label">社交文案 3</span>
-              <textarea class="post-input" rows="3" placeholder="补充第三条社交文案或截图中的关键文字" data-i18n-placeholder="post3Placeholder"></textarea>
-            </label>
-
             <div class="upload-field">
               <div class="field-title">
-                <span data-i18n="screenshotLabel">朋友圈 / 社交截图</span>
+                <span data-i18n="screenshotLabel">社交截图 / 公开视觉线索</span>
                 <small id="screenshotCount">已上传 0 / 6 张</small>
               </div>
               <label class="upload-box screenshot-upload" id="screenshotDropZone" for="screenshotInput">
@@ -283,7 +268,7 @@
                 <span class="upload-icon">IMG</span>
                 <span>
                   <strong data-i18n="screenshotUploadTitle">点击或拖拽上传社交截图</strong>
-                  <small data-i18n="screenshotUploadDesc">最多 6 张；支持朋友圈、小红书、微博、LinkedIn 等截图；图片不会上传服务器</small>
+                  <small data-i18n="screenshotUploadDesc">上传主页截图、动态截图或聊天截图即可，不需要重复手动输入截图里的文字。</small>
                 </span>
               </label>
               <div class="screenshot-grid" id="screenshotGrid" aria-live="polite"></div>
@@ -500,6 +485,6 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="script.js?v=rel1"></script>
+  <script src="script.js?v=logic1"></script>
 </body>
 </html>

@@ -88,16 +88,16 @@ const translations = {
     advancedSummary: "提升准确度（可选）",
     signatureLabel: "个性签名",
     signaturePlaceholder: "输入公开可见的个性签名、简介或主页文案",
-    post1Label: "社交文案 1",
-    post1Placeholder: "如果你上传的是截图，也建议补充截图中的关键文字，方便生成更准确的沟通画像。",
-    post2Label: "社交文案 2",
-    post2Placeholder: "补充第二条社交文案或截图中的关键文字",
-    post3Label: "社交文案 3",
-    post3Placeholder: "补充第三条社交文案或截图中的关键文字",
+    post1Label: "",
+    post1Placeholder: "",
+    post2Label: "",
+    post2Placeholder: "",
+    post3Label: "",
+    post3Placeholder: "",
     screenshotLabel: "社交截图 / 公开视觉线索",
     screenshotCount: "已上传 {count} / 6 张",
     screenshotUploadTitle: "点击或拖拽上传社交截图",
-    screenshotUploadDesc: "最多 6 张；支持朋友圈、小红书、微博、LinkedIn 等截图；用于公开文本与视觉线索分析",
+    screenshotUploadDesc: "上传主页截图、动态截图或聊天截图即可，不需要重复手动输入截图里的文字。",
     scenarioLabel: "关系阶段",
     scenarioDating: "刚认识",
     scenarioJustMet: "刚认识",
@@ -167,7 +167,7 @@ const translations = {
     communicationAdviceTitle: "适合说的话",
     riskPointsTitle: "不建议说的话",
     approachStyleTitle: "靠近方式",
-    evidenceChainTitle: "判断依据",
+    evidenceChainTitle: "本次参考的线索",
     firstReadTitle: "第一眼信号",
     openingLineTitle: "推荐开场",
     copyLineBtn: "复制话术",
@@ -180,7 +180,7 @@ const translations = {
     metricTagSlow: "宜慢不宜急",
     metricTagWarmup: "适合先铺垫",
     metricTagSpecific: "需要具体依据",
-    evidenceSummaryHint: "展开查看判断依据",
+    evidenceSummaryHint: "展开查看本次参考的线索",
     limitedEvidenceText: "当前线索有限",
     confidenceLabel: "置信度",
     disclaimerTitle: "免责声明",
@@ -399,16 +399,16 @@ const translations = {
     advancedSummary: "Improve Accuracy (Optional)",
     signatureLabel: "Personal Bio",
     signaturePlaceholder: "Enter a public bio, signature, or profile intro",
-    post1Label: "Social Post 1",
-    post1Placeholder: "If you upload screenshots, also paste key text to make the communication profile more accurate.",
-    post2Label: "Social Post 2",
-    post2Placeholder: "Add the second social post or key screenshot text",
-    post3Label: "Social Post 3",
-    post3Placeholder: "Add the third social post or key screenshot text",
-    screenshotLabel: "Social Screenshots / Public Visual Cues",
+    post1Label: "",
+    post1Placeholder: "",
+    post2Label: "",
+    post2Placeholder: "",
+    post3Label: "",
+    post3Placeholder: "",
+    screenshotLabel: "Social Screenshots / Public Signals",
     screenshotCount: "{count} / 6 uploaded",
     screenshotUploadTitle: "Click or drag to upload social screenshots",
-    screenshotUploadDesc: "Up to 6 images. Used for public text and visual cue analysis; screenshots stay local.",
+    screenshotUploadDesc: "Upload profile, post, or chat screenshots. No need to retype the text inside the image.",
     scenarioLabel: "Relationship Stage",
     scenarioDating: "Just Met",
     scenarioJustMet: "Just Met",
@@ -478,7 +478,7 @@ const translations = {
     communicationAdviceTitle: "What to Say",
     riskPointsTitle: "What to Avoid",
     approachStyleTitle: "Approach Style",
-    evidenceChainTitle: "Reasoning",
+    evidenceChainTitle: "Signals Referenced",
     firstReadTitle: "First Signal",
     openingLineTitle: "Recommended Opening",
     copyLineBtn: "Copy Line",
@@ -491,7 +491,7 @@ const translations = {
     metricTagSlow: "Go slower",
     metricTagWarmup: "Warm up first",
     metricTagSpecific: "Use specific context",
-    evidenceSummaryHint: "Expand reasoning",
+    evidenceSummaryHint: "Expand referenced signals",
     limitedEvidenceText: "Current clues are limited",
     confidenceLabel: "Confidence",
     disclaimerTitle: "Disclaimer",
@@ -1474,7 +1474,7 @@ function buildPrompt(data) {
     ? `【高级补充图片】用户已选择 ${data.screenshotCount} 张补充图片。但当前前端不会把图片内容发送给模型；除非用户在文本中描述，否则不要分析图片细节。`
     : "【高级补充图片】用户未提供补充图片。";
 
-  return `你是一名专业、谨慎、重证据的中文沟通画像分析助手。请基于照片中的公开呈现描述与用户补充问题，为「${displayName}」生成沟通画像。
+  return `你是一名专业、谨慎、重证据的关系信号解读助手。请基于用户提供的公开呈现、关系阶段、当前互动与补充问题，为「${displayName}」生成低压、尊重、可执行的靠近建议。
 
 重要：最终只输出严格 JSON。不要输出 Markdown，不要输出解释文字，不要使用代码块包裹 JSON。
 
@@ -1498,13 +1498,13 @@ ${normalizedQuestion}
 
 分析要求：
 0. 所有推荐开场、适合说的话、不建议说的话，都必须围绕“关系阶段 + 你想知道 + 当前互动”生成。
-1. 分析任务是：基于照片中的公开呈现描述与用户补充问题，生成沟通画像。
-2. Big Five 只能作为“倾向参考”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
+1. 分析任务是：先逐项检查头像/照片、个性签名/简介、社交截图/公开视觉线索、关系阶段、用户想知道的问题、当前互动状态和可选补充信息，再综合生成靠近建议。
+2. Big Five 只能作为“倾向参考”框架，不能写成测评结论，也不能变成人格判断。
 3. 所有结论都必须使用“可能、倾向、从照片呈现看、从补充信息看”等克制措辞。
-4. 如果只知道用户上传了照片，但没有获得照片内容，请明确降低置信度，主要基于用户问题和补充文字给出保守建议，不要假装看到了具体画面细节。
-5. 结果只聚焦：第一判断、沟通切入口、适合说的话、不建议说的话、判断依据。
+4. 如果只知道用户上传了照片或截图，但没有获得图片内容/OCR 文字，请明确降低置信度，写“当前线索有限”，不要假装看到了具体画面、截图文字或聊天内容。
+5. 结果只聚焦：第一眼信号、关系温度、推荐开场、适合说的话、不建议说的话、对方这样回你这样接、本次参考的线索。
 6. 所有分数必须是 0-100 的倾向分数。
-7. 每个关键结论必须回到用户提供的照片状态、补充问题、签名或补充文字。
+7. 每个关键结论必须回到用户提供的照片上传状态、截图数量、补充问题、签名或补充文字，并说明哪些线索强、哪些线索弱、哪些信息不足。
 8. 不得判断政治、宗教、健康、性取向、犯罪倾向、收入水平、招聘录用、能力高低或道德品质。
 9. 不得输出操控、PUA、歧视、筛选或伤害他人的建议。
 
