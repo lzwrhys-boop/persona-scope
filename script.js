@@ -22,29 +22,29 @@ const translations = {
     heroEyebrow: "FACE PHOTO · COMMUNICATION PROFILE",
     heroTitleLine1: "每一次展示",
     heroTitleLine2: "都是一种暗示",
-    heroDesc: "上传一张照片 让公开呈现变成可用的开场策略",
+    heroDesc: "上传一张照片\n读懂靠近的方式",
     heroPrimary: "开始解读线索",
     heroSecondary: "先看一次解读",
     previewKicker: "预览报告",
-    previewTitle: "沟通画像预览",
-    previewSummary: "基于公开呈现与可选补充信息，生成第一印象、沟通倾向、表达边界与自然开场建议。",
+    previewTitle: "关系信号预览",
+    previewSummary: "上传一张照片，结合你们当前关系阶段，生成靠近方式、开场建议、回复策略和避坑提醒。",
     previewTraitsTitle: "关键特征",
-    previewTagBoundary: "边界感清晰",
-    previewTagExpression: "表达克制",
-    previewTagExposure: "选择性展示",
-    previewTagObserve: "观察型沟通",
+    previewTagBoundary: "边界感",
+    previewTagExpression: "回应温度",
+    previewTagExposure: "靠近节奏",
+    previewTagObserve: "暧昧空间",
     previewDimensionsTitle: "核心维度",
-    previewMetricWarmth: "表达温度",
-    previewMetricBoundary: "边界清晰度",
-    previewMetricOpenness: "沟通开放度",
-    previewMetricPresentation: "自我呈现强度",
+    previewMetricWarmth: "靠近信号",
+    previewMetricBoundary: "回应温度",
+    previewMetricOpenness: "压迫风险",
+    previewMetricPresentation: "边界清晰度",
     previewMetricFriction: "",
     previewFrameworkTitle: "分析框架",
-    previewFrameworkBigFive: "场景目标",
-    previewFrameworkLanguage: "补充文本",
+    previewFrameworkBigFive: "当前互动",
+    previewFrameworkLanguage: "照片呈现",
     previewFrameworkPresentation: "",
-    previewFrameworkAvatar: "视觉呈现",
-    previewFrameworkSocial: "沟通建议",
+    previewFrameworkAvatar: "关系阶段",
+    previewFrameworkSocial: "开场建议",
     previewCurrentReadTitle: "",
     previewCurrentRead: "",
     previewStrategyTitle: "",
@@ -80,7 +80,7 @@ const translations = {
     nicknameLabel: "分析对象昵称",
     optionalLabel: "可选",
     optionalQuestionLabel: "选填",
-    nicknamePlaceholder: "例如：某位朋友 / 客户 A / 自我画像",
+    nicknamePlaceholder: "例如：某个人 / TA / 你想靠近的人",
     avatarLabel: "上传照片",
     removeAvatar: "删除当前照片",
     avatarUploadTitle: "点击上传照片",
@@ -98,27 +98,32 @@ const translations = {
     screenshotCount: "已上传 {count} / 6 张",
     screenshotUploadTitle: "点击或拖拽上传社交截图",
     screenshotUploadDesc: "最多 6 张；支持朋友圈、小红书、微博、LinkedIn 等截图；用于公开文本与视觉线索分析",
-    scenarioLabel: "分析场景",
-    scenarioDating: "亲密关系",
-    scenarioClient: "客户沟通",
-    scenarioWork: "职场协作",
-    scenarioFriend: "朋友社交",
-    scenarioSelf: "自我呈现",
-    goalLabel: "我想达成",
-    statusLabel: "当前状态",
+    scenarioLabel: "关系阶段",
+    scenarioDating: "刚认识",
+    scenarioJustMet: "刚认识",
+    scenarioTalked: "聊过几次",
+    scenarioFlirting: "暧昧中",
+    scenarioCooling: "变冷淡了",
+    scenarioReconnect: "想重新靠近",
+    scenarioClient: "聊过几次",
+    scenarioWork: "暧昧中",
+    scenarioFriend: "变冷淡了",
+    scenarioSelf: "想重新靠近",
+    goalLabel: "你想知道",
+    statusLabel: "当前互动",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
     generatePromptBtn: "开始分析",
     generatingBtn: "正在生成画像...",
     resetBtn: "清空当前内容",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
-    analysisPreviewTitle: "你的沟通建议会出现在这里",
-    analysisWaitingTitle: "你的沟通建议会出现在这里",
-    analysisWaitingCueLanguage: "第一感觉",
-    analysisWaitingCuePresentation: "沟通倾向",
+    analysisPreviewTitle: "你的靠近建议会出现在这里",
+    analysisWaitingTitle: "你的靠近建议会出现在这里",
+    analysisWaitingCueLanguage: "第一眼信号",
+    analysisWaitingCuePresentation: "关系温度",
     analysisWaitingCueStrategy: "开场建议",
-    loadingTitle: "正在生成你的沟通画像",
-    loadingDesc: "请稍等几秒，系统正在整理第一印象、沟通倾向与开场建议。",
+    loadingTitle: "正在生成你的靠近建议",
+    loadingDesc: "请稍等几秒，系统正在整理第一眼信号、关系温度与开场建议。",
     loadingStage1: "识别公开呈现",
     loadingStage2: "生成沟通倾向",
     loadingStage3: "输出开场建议",
@@ -129,7 +134,7 @@ const translations = {
     viewVisualReportBtn: "查看可视化报告",
     generatedPromptEyebrow: "DEVELOPER DEBUG",
     generatedPromptTitle: "开发者调试 Prompt",
-    promptStatusEmpty: "分析完成后，你会看到第一判断、开场话术、适合说的话和需要避开的表达。",
+    promptStatusEmpty: "分析完成后，你会看到第一眼信号、推荐开场、适合说的话和需要避开的表达。",
     promptStatusReady: "分析已完成。你可以查看右侧摘要，或进入完整可视化报告。",
     promptUsageNote: "当前为静态原型，主流程会先生成本地 mock 报告；下方 Prompt 仅作为无 API 备用调试材料。",
     promptOutputEmpty: "开始分析后，系统会在这里生成一段开发者调试 Prompt。",
@@ -137,8 +142,8 @@ const translations = {
     privacyInline: "当前前端会把分析请求发送到后端；照片文件本身仍仅用于本地预览，后端暂不读取图片内容。",
     saveHistoryBtn: "保存到历史记录",
     visualEyebrow: "VISUAL REPORT",
-    visualTitle: "沟通画像",
-    visualDesc: "分析完成后，系统将在这里展示第一印象、Big Five 倾向参考和可直接使用的沟通建议。",
+    visualTitle: "关系靠近面板",
+    visualDesc: "分析完成后，系统将在这里展示第一眼信号、关系温度、推荐开场和低压回复策略。",
     jsonPasteLabel: "手动导入报告数据",
     jsonHelper: "开发者调试模式：可导入结构化报告 JSON，系统会尽量自动识别兼容字段。",
     jsonPlaceholder: "可导入完整报告 JSON，例如包含 basicProfile、scores、bigFive、personaTags、avatarVisualCues、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。",
@@ -156,20 +161,20 @@ const translations = {
     waitingJsonTitle: "等待生成可视化报告",
     waitingJsonDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。也可以使用开发者调试模式手动导入报告数据。",
     chartBarTitle: "沟通风格维度图",
-    chartRadarTitle: "场景专业维度",
-    tagCloudTitle: "沟通标签",
+    chartRadarTitle: "关系温度",
+    tagCloudTitle: "关系信号",
     avatarVisualCuesTitle: "视觉呈现线索",
     communicationAdviceTitle: "适合说的话",
     riskPointsTitle: "不建议说的话",
-    approachStyleTitle: "沟通切入口",
+    approachStyleTitle: "靠近方式",
     evidenceChainTitle: "判断依据",
-    firstReadTitle: "第一判断",
-    openingLineTitle: "开场话术",
+    firstReadTitle: "第一眼信号",
+    openingLineTitle: "推荐开场",
     copyLineBtn: "复制话术",
     replyStrategyTitle: "对方这样回，你可以这样接",
-    replyNoResponse: "对方没回复",
-    replyShort: "对方回复很短，例如“嗯嗯 / 好的 / 再说”",
-    replyReject: "对方表达拒绝或暂时没兴趣",
+    replyNoResponse: "对方没有回复",
+    replyShort: "对方只回很短",
+    replyReject: "对方说最近忙或比较冷淡",
     recommendedReplyLabel: "推荐接话",
     replyReasonLabel: "为什么这样接",
     metricTagSlow: "宜慢不宜急",
@@ -217,19 +222,19 @@ const translations = {
     sampleCard10Desc: "报告只用于辅助理解表达风格和改善沟通，不应作为筛选、控制、关系判断或重大决策依据。真实互动仍需要持续验证。",
     theoryEyebrow: "FRAMEWORK",
     theoryTitle: "理论依据",
-    theoryDesc: "PersonaScope 采用视觉呈现沟通画像模型：照片视觉呈现 → Big Five 倾向参考 → 用户问题 → 沟通建议。",
+    theoryDesc: "PersonaScope 采用关系信号解读模型：公开呈现 → 关系阶段 → 当前互动 → 靠近建议。",
     theoryLanguageTitle: "补充信息：让建议更贴近场景",
     theoryLanguageDesc: "通过情绪词、自我指代、关系词、行动词、判断词与表达抽象度，观察公开文本中呈现出的沟通风格、情绪显性度、自我暴露程度与关系导向。",
-    theorySocialTitle: "自我呈现：识别 TA 想被如何看见",
+    theorySocialTitle: "关系信号：识别更舒服的靠近方式",
     theorySocialDesc: "照片和补充信息只用于观察视觉呈现与沟通场景，帮助生成更低压、更具体的沟通建议。",
     theoryBigFiveTitle: "Big Five：倾向参考",
     theoryBigFiveDesc: "Big Five 仅作为倾向参考框架，用于辅助整理画面可能带来的沟通感受。",
     theoryAvatarTitle: "画面呈现",
     theoryAvatarDesc: "照片仅用于整理画面中的公开呈现，结论只能作为沟通参考。",
     theoryStrategyTitle: "综合沟通策略：从分析到可执行建议",
-    theoryStrategyDesc: "系统会综合视觉呈现和用户问题，输出更适合的开场方式、沟通节奏、表达避坑与互动建议。建议仅用于提升沟通理解，不用于操控他人。",
+    theoryStrategyDesc: "系统会综合公开线索、关系阶段、当前互动与补充问题，输出更适合的开场方式、靠近节奏、避坑提醒与回复建议。建议仅用于低压沟通参考，不用于操控他人。",
     principleTitle: "边界原则",
-    principleDesc: "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象与沟通风格倾向，仅供沟通参考。",
+    principleDesc: "PersonaScope 仅基于用户提供的公开呈现与补充信息生成关系靠近建议，用于辅助理解第一眼信号与互动节奏，仅供沟通参考。",
     historyEyebrow: "LOCAL HISTORY",
     historyTitle: "最近分析",
     historyDesc: "最近生成的报告会暂存在本机浏览器，方便你回来查看。",
@@ -332,25 +337,25 @@ const translations = {
     heroPrimary: "Decode the Signal",
     heroSecondary: "View a Reading",
     previewKicker: "PREVIEW REPORT",
-    previewTitle: "Communication Profile Preview",
-    previewSummary: "Based on visual presentation and optional context, the report highlights possible first impressions, communication style tendencies, and natural ways to start.",
+    previewTitle: "Relationship Signal Preview",
+    previewSummary: "Upload one photo and combine it with the current relationship stage to generate approach style, opening lines, reply strategy, and risk alerts.",
     previewTraitsTitle: "KEY TRAITS",
-    previewTagBoundary: "Boundary-Aware",
-    previewTagExpression: "Controlled Expression",
-    previewTagExposure: "Selective Exposure",
-    previewTagObserve: "Observational Style",
+    previewTagBoundary: "Boundaries",
+    previewTagExpression: "Response Warmth",
+    previewTagExposure: "Approach Pace",
+    previewTagObserve: "Flirt Space",
     previewDimensionsTitle: "CORE DIMENSIONS",
-    previewMetricWarmth: "Expression Warmth",
-    previewMetricBoundary: "Boundary Clarity",
-    previewMetricOpenness: "Communication Openness",
-    previewMetricPresentation: "Self-Presentation Strength",
+    previewMetricWarmth: "Approach Signal",
+    previewMetricBoundary: "Response Warmth",
+    previewMetricOpenness: "Pressure Risk",
+    previewMetricPresentation: "Boundary Clarity",
     previewMetricFriction: "",
     previewFrameworkTitle: "ANALYSIS FRAMEWORK",
-    previewFrameworkBigFive: "Scenario Goal",
-    previewFrameworkLanguage: "Supplemental Text",
+    previewFrameworkBigFive: "Current Interaction",
+    previewFrameworkLanguage: "Photo Presentation",
     previewFrameworkPresentation: "",
-    previewFrameworkAvatar: "Visual Presentation",
-    previewFrameworkSocial: "Communication Advice",
+    previewFrameworkAvatar: "Relationship Stage",
+    previewFrameworkSocial: "Opening Advice",
     previewCurrentReadTitle: "",
     previewCurrentRead: "",
     previewStrategyTitle: "",
@@ -386,7 +391,7 @@ const translations = {
     nicknameLabel: "Profile nickname",
     optionalLabel: "Optional",
     optionalQuestionLabel: "Optional",
-    nicknamePlaceholder: "Example: a friend / client A / self profile",
+    nicknamePlaceholder: "Example: someone / them / the person you want to approach",
     avatarLabel: "Upload Photo",
     removeAvatar: "Remove photo",
     avatarUploadTitle: "Click to Upload a Photo",
@@ -404,38 +409,43 @@ const translations = {
     screenshotCount: "{count} / 6 uploaded",
     screenshotUploadTitle: "Click or drag to upload social screenshots",
     screenshotUploadDesc: "Up to 6 images. Used for public text and visual cue analysis; screenshots stay local.",
-    scenarioLabel: "Scenario",
-    scenarioDating: "Relationship",
-    scenarioClient: "Client Communication",
-    scenarioWork: "Workplace Collaboration",
-    scenarioFriend: "Friends",
-    scenarioSelf: "Self Presentation",
-    goalLabel: "Goal",
-    statusLabel: "Current Status",
+    scenarioLabel: "Relationship Stage",
+    scenarioDating: "Just Met",
+    scenarioJustMet: "Just Met",
+    scenarioTalked: "Talked a Few Times",
+    scenarioFlirting: "Flirting",
+    scenarioCooling: "Cooling Off",
+    scenarioReconnect: "Want to Reconnect",
+    scenarioClient: "Talked a Few Times",
+    scenarioWork: "Flirting",
+    scenarioFriend: "Cooling Off",
+    scenarioSelf: "Want to Reconnect",
+    goalLabel: "What You Want to Know",
+    statusLabel: "Current Interaction",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
     generatePromptBtn: "Start Analysis",
     generatingBtn: "Generating profile...",
     resetBtn: "Clear Current Input",
     analysisPreviewEyebrow: "ANALYSIS PREVIEW",
-    analysisPreviewTitle: "Your communication suggestions will appear here",
-    analysisWaitingTitle: "Your communication suggestions will appear here",
-    analysisWaitingCueLanguage: "First feeling",
-    analysisWaitingCuePresentation: "Communication tendency",
+    analysisPreviewTitle: "Your approach suggestions will appear here",
+    analysisWaitingTitle: "Your approach suggestions will appear here",
+    analysisWaitingCueLanguage: "First Signal",
+    analysisWaitingCuePresentation: "Relationship Temperature",
     analysisWaitingCueStrategy: "Opening advice",
-    loadingTitle: "Generating your communication profile",
-    loadingDesc: "Please wait a few seconds while the system organizes first impressions, communication tendencies, and opening advice.",
+    loadingTitle: "Generating your approach suggestions",
+    loadingDesc: "Please wait a few seconds while the system organizes first signals, relationship temperature, and opening advice.",
     loadingStage1: "Reading public presentation",
     loadingStage2: "Generating communication tendency",
     loadingStage3: "Creating opening advice",
-    analysisSummaryTitle: "Communication Profile Summary",
+    analysisSummaryTitle: "Relationship Signal Summary",
     analysisDimensionsTitle: "Key Dimensions",
     analysisTagsTitle: "Key Tags",
     analysisAdviceTitle: "Initial Guidance",
     viewVisualReportBtn: "View Visual Report",
     generatedPromptEyebrow: "DEVELOPER DEBUG",
     generatedPromptTitle: "Developer Debug Prompt",
-    promptStatusEmpty: "After analysis, you’ll see the first read, opening lines, useful phrases, and expressions to avoid.",
+    promptStatusEmpty: "After analysis, you’ll see the first signal, opening line, useful phrases, and expressions to avoid.",
     promptStatusReady: "Analysis complete. You can review the summary here or open the full visual report.",
     promptUsageNote: "This static prototype currently generates a local mock report. The prompt below is only a fallback for developer debugging.",
     promptOutputEmpty: "After analysis starts, a developer debug prompt will appear here.",
@@ -443,8 +453,8 @@ const translations = {
     privacyInline: "The frontend sends analysis requests to the backend. Photo files are still local previews only; the backend does not read image content yet.",
     saveHistoryBtn: "Save to History",
     visualEyebrow: "VISUAL REPORT",
-    visualTitle: "Communication Profile",
-    visualDesc: "Once analysis is complete, this area shows the first impression, Big Five tendency reference, and ready-to-use communication advice.",
+    visualTitle: "Relationship Approach Panel",
+    visualDesc: "Once analysis is complete, this area shows the first signal, relationship temperature, recommended opening, and low-pressure reply strategy.",
     jsonPasteLabel: "Import Report Data Manually",
     jsonHelper: "Developer debug mode: import structured report JSON and the system will try to recognize compatible fields.",
     jsonPlaceholder: "Import complete report JSON, such as fields including basicProfile, scores, bigFive, personaTags, avatarVisualCues, communicationAdvice, riskPoints, approachStyle, evidenceChain, and disclaimer.",
@@ -462,20 +472,20 @@ const translations = {
     waitingJsonTitle: "Waiting for Visual Report",
     waitingJsonDesc: "Once analysis is complete, the system will generate a visual communication profile report here. Developer debug mode can also import report data manually.",
     chartBarTitle: "Communication Style Dimensions",
-    chartRadarTitle: "Scenario Dimensions",
-    tagCloudTitle: "Communication Tags",
+    chartRadarTitle: "Relationship Temperature",
+    tagCloudTitle: "Relationship Signals",
     avatarVisualCuesTitle: "Visual Presentation Cues",
     communicationAdviceTitle: "What to Say",
     riskPointsTitle: "What to Avoid",
-    approachStyleTitle: "Opening Angle",
+    approachStyleTitle: "Approach Style",
     evidenceChainTitle: "Reasoning",
-    firstReadTitle: "First Read",
-    openingLineTitle: "Opening Line",
+    firstReadTitle: "First Signal",
+    openingLineTitle: "Recommended Opening",
     copyLineBtn: "Copy Line",
     replyStrategyTitle: "If They Reply Like This",
     replyNoResponse: "They do not reply",
-    replyShort: "They reply briefly, such as “Mm / OK / Maybe later”",
-    replyReject: "They decline or are not interested for now",
+    replyShort: "They reply briefly",
+    replyReject: "They say they are busy or feel distant",
     recommendedReplyLabel: "Recommended reply",
     replyReasonLabel: "Why this works",
     metricTagSlow: "Go slower",
@@ -499,7 +509,7 @@ const translations = {
     fallbackPersonaSummary: "No profile summary provided",
     fallbackConfidenceReason: "No confidence explanation provided",
     sampleEyebrow: "SAMPLE REPORT",
-    sampleTitle: "PersonaScope Sample Report: Public Social Clue Communication Profile",
+    sampleTitle: "PersonaScope Sample Report: Relationship Signal Reading",
     sampleDesc: "This sample shows the structure and writing style of a report. The current static prototype simulates analysis with local sample data.",
     sampleCard1Title: "One-Sentence Profile",
     sampleCard1Desc: "This person appears to value expressive quality, personal rhythm, and being understood as independent with aesthetic judgment.",
@@ -523,19 +533,19 @@ const translations = {
     sampleCard10Desc: "Use the report only to understand expression style and improve communication. It should not be used for diagnosis, screening, control, relationship judgment, or major decisions.",
     theoryEyebrow: "FRAMEWORK",
     theoryTitle: "Framework",
-    theoryDesc: "PersonaScope uses a public social signal communication-profile model: linguistic cues → self-presentation → Big Five tendency reference → avatar visual cues → communication strategy.",
+    theoryDesc: "PersonaScope uses a relationship-signal reading model: public presentation → relationship stage → current interaction → approach advice.",
     theoryLanguageTitle: "Linguistic Cues: Inferring Communication Style from Expression Patterns",
     theoryLanguageDesc: "Analyzes emotional words, self-references, relational terms, action verbs, judgment words, and abstraction level to infer communication style, emotional visibility, self-disclosure, and relational orientation from public text.",
-    theorySocialTitle: "Self-Presentation: Understanding How a Person Wants to Be Seen",
+    theorySocialTitle: "Relationship Signals: Finding a More Comfortable Way to Approach",
     theorySocialDesc: "Social media content is not equivalent to the whole person; it is a form of public impression management. The system observes avatar, bio, posts, and visual choices to identify presentation strategy, boundary awareness, selective exposure, and public persona.",
     theoryBigFiveTitle: "Big Five: Personality Tendency Reference in Public Expression",
     theoryBigFiveDesc: "Big Five is used only as a tendency reference in public expression, helping observe cues related to openness, conscientiousness, extraversion, agreeableness, and emotional stability. It is not a formal personality assessment or a definitive personality judgment.",
     theoryAvatarTitle: "Avatar Visual Cues: Public Image and Visual Distance",
     theoryAvatarDesc: "Avatar analysis is limited to visual self-presentation cues, such as human/non-human representation, visual distance, color tone, editing style, professionalism, and approachability. It cannot be used alone to judge personality, ability, morality, or relationship tendencies.",
     theoryStrategyTitle: "Communication Strategy: From Analysis to Actionable Guidance",
-    theoryStrategyDesc: "The system combines linguistic cues, self-presentation, Big Five tendency references, and avatar visual cues to suggest suitable openings, communication rhythm, interaction risks, and engagement strategies. Recommendations are for better understanding, not manipulation.",
+    theoryStrategyDesc: "The system combines public signals, relationship stage, current interaction, and optional context to suggest openings, approach pace, risk alerts, and reply strategies. Recommendations are for low-pressure communication reference only.",
     principleTitle: "Boundary Principle",
-    principleDesc: "PersonaScope generates communication profiles only from user-provided public social signals. It is intended to support understanding of expression style and interaction patterns, and does not constitute medical diagnosis, definitive personality judgment, relationship judgment, or a basis for major decisions.",
+    principleDesc: "PersonaScope generates relationship approach suggestions only from user-provided public signals and optional context. It does not diagnose, judge personality, predict relationship outcomes, or support major decisions.",
     historyEyebrow: "LOCAL HISTORY",
     historyTitle: "Recent Analyses",
     historyDesc: "Recent reports are temporarily saved in this browser for quick review.",
@@ -673,25 +683,45 @@ const MAX_HISTORY_RECORDS = 20;
 const MAX_HISTORY_RAW_JSON_LENGTH = 12000;
 const MAX_HISTORY_PROMPT_LENGTH = 12000;
 const SCENE_CONFIG = {
+  刚认识: {
+    theory: "本报告参考成人依恋、社会渗透、关系边界与低压靠近相关框架，仅用于沟通参考，不判断关系结果。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
+  },
+  聊过几次: {
+    theory: "本报告参考社会渗透、互动节奏与关系边界相关框架，仅用于沟通参考，不判断对方真实心意。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
+  },
+  暧昧中: {
+    theory: "本报告参考情绪表达、关系推进节奏与边界协商相关框架，仅用于沟通参考，不做关系定论。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
+  },
+  变冷淡了: {
+    theory: "本报告参考互动降温、低压修复与边界尊重相关框架，仅用于沟通参考，不判断是否会回来。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
+  },
+  想重新靠近: {
+    theory: "本报告参考关系重启、低压试探与回应空间相关框架，仅用于沟通参考，不鼓励纠缠或连续追问。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
+  },
   客户沟通: {
-    theory: "本报告参考信任形成模型、风险感知、关系销售与沟通适配相关框架，仅用于沟通准备，不构成定论。",
-    dimensions: ["信任建立路径", "风险敏感度", "价值沟通偏好", "决策理性倾向", "推进节奏", "关系维护偏好"],
+    theory: "本报告参考关系靠近、互动节奏与边界尊重相关框架，仅用于沟通参考。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
   },
   职场协作: {
-    theory: "本报告参考 Big Five、心理安全感、反馈接受与协作风格相关框架，仅用于沟通准备，不构成定论。",
-    dimensions: ["可信呈现感", "责任边界感", "协作开放度", "反馈接受方式", "沟通直接度", "压力下表达"],
+    theory: "本报告参考关系靠近、互动节奏与边界尊重相关框架，仅用于沟通参考。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
   },
   亲密关系: {
-    theory: "本报告参考成人依恋、社会渗透、关系边界与情绪表达相关框架，仅用于沟通准备，不判断关系结果。",
-    dimensions: ["关系稳定表达", "投入表达方式", "回应主动性", "情绪表达度", "边界清晰度", "亲密推进节奏"],
+    theory: "本报告参考成人依恋、社会渗透、关系边界与低压靠近相关框架，仅用于沟通参考，不判断关系结果。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
   },
   朋友社交: {
-    theory: "本报告参考不确定性降低、社会渗透与对话风格适配相关框架，仅用于沟通准备，不构成定论。",
-    dimensions: ["破冰难度", "话题开放度", "幽默接受度", "距离感", "相处节奏", "情绪松弛度"],
+    theory: "本报告参考关系靠近、互动节奏与边界尊重相关框架，仅用于沟通参考。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
   },
   自我呈现: {
-    theory: "本报告参考印象管理、自我呈现与 Big Five 外显线索相关框架，仅用于沟通准备，不构成定论。",
-    dimensions: ["第一印象一致性", "专业感呈现", "亲和力呈现", "表达记忆点", "边界感", "社交可接近度"],
+    theory: "本报告参考关系靠近、互动节奏与边界尊重相关框架，仅用于沟通参考。",
+    dimensions: ["靠近信号", "回应温度", "主动节奏", "边界感", "压迫风险", "暧昧空间"],
   },
   自我画像: {
     theory: "本报告参考印象管理、自我呈现与 Big Five 外显线索相关框架，仅用于沟通准备，不构成定论。",
@@ -699,30 +729,50 @@ const SCENE_CONFIG = {
   },
 };
 const SCENE_GOALS = {
-  客户沟通: ["预约见面", "推进合作", "维护关系", "唤醒沉默客户", "处理异议"],
-  职场协作: ["提需求", "汇报进展", "请求支持", "表达不同意见", "化解尴尬"],
-  亲密关系: ["自然开场", "表达好感", "恢复聊天", "推进关系", "降低压力"],
-  朋友社交: ["轻松破冰", "找话题", "拉近关系", "避免尴尬", "保持联系"],
-  自我呈现: ["优化头像印象", "优化个人介绍", "提升专业感", "提升亲和力", "增强记忆点"],
-  自我画像: ["优化头像印象", "优化个人介绍", "提升专业感", "提升亲和力", "增强记忆点"],
+  刚认识: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  聊过几次: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  暧昧中: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  变冷淡了: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  想重新靠近: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  亲密关系: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  客户沟通: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  职场协作: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  朋友社交: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  自我呈现: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
+  自我画像: ["怎么开口", "怎么回复", "对方什么意思", "还能不能推进", "要不要主动一点"],
 };
 const SCENE_STATUSES = {
-  客户沟通: ["刚认识", "聊过但没推进", "之前答应过但没下文", "正在犹豫", "已经合作过"],
-  职场协作: ["第一次沟通", "对方比较强势", "对方比较忙", "之前有分歧", "需要对方支持"],
-  亲密关系: ["刚认识", "聊过几次", "关系变冷", "有点暧昧", "想重新开启"],
-  朋友社交: ["第一次认识", "不太熟", "偶尔聊天", "有点尴尬", "想拉近关系"],
-  自我呈现: ["用于社交平台", "用于职场展示", "用于认识新朋友", "用于客户沟通", "用于个人介绍"],
-  自我画像: ["用于社交平台", "用于职场展示", "用于认识新朋友", "用于客户沟通", "用于个人介绍"],
+  刚认识: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  聊过几次: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  暧昧中: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  变冷淡了: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  想重新靠近: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  亲密关系: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  客户沟通: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  职场协作: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  朋友社交: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  自我呈现: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
+  自我画像: ["对方回复正常", "对方回复变慢", "对方比较冷淡", "对方偶尔主动", "很久没联系"],
 };
 const SCENE_LABELS = {
-  亲密关系: { zh: "亲密关系", en: "Relationship" },
-  客户沟通: { zh: "客户沟通", en: "Client Communication" },
-  职场协作: { zh: "职场协作", en: "Workplace Collaboration" },
-  朋友社交: { zh: "朋友社交", en: "Friends" },
-  自我呈现: { zh: "自我呈现", en: "Self Presentation" },
-  自我画像: { zh: "自我呈现", en: "Self Presentation" },
+  刚认识: { zh: "刚认识", en: "Just Met" },
+  聊过几次: { zh: "聊过几次", en: "Talked a Few Times" },
+  暧昧中: { zh: "暧昧中", en: "Flirting" },
+  变冷淡了: { zh: "变冷淡了", en: "Cooling Off" },
+  想重新靠近: { zh: "想重新靠近", en: "Want to Reconnect" },
+  亲密关系: { zh: "刚认识", en: "Just Met" },
+  客户沟通: { zh: "聊过几次", en: "Talked a Few Times" },
+  职场协作: { zh: "暧昧中", en: "Flirting" },
+  朋友社交: { zh: "变冷淡了", en: "Cooling Off" },
+  自我呈现: { zh: "想重新靠近", en: "Want to Reconnect" },
+  自我画像: { zh: "想重新靠近", en: "Want to Reconnect" },
 };
 const GOAL_LABELS = {
+  怎么开口: { zh: "怎么开口", en: "How to Start" },
+  怎么回复: { zh: "怎么回复", en: "How to Reply" },
+  对方什么意思: { zh: "对方什么意思", en: "What They Might Mean" },
+  还能不能推进: { zh: "还能不能推进", en: "Whether to Move Closer" },
+  要不要主动一点: { zh: "要不要主动一点", en: "Whether to Be More Active" },
   预约见面: { zh: "预约见面", en: "Book a Meeting" },
   推进合作: { zh: "推进合作", en: "Move Collaboration Forward" },
   维护关系: { zh: "维护关系", en: "Maintain the Relationship" },
@@ -750,6 +800,11 @@ const GOAL_LABELS = {
   增强记忆点: { zh: "增强记忆点", en: "Make It More Memorable" },
 };
 const STATUS_LABELS = {
+  对方回复正常: { zh: "对方回复正常", en: "Replies Normally" },
+  对方回复变慢: { zh: "对方回复变慢", en: "Replies Slower" },
+  对方比较冷淡: { zh: "对方比较冷淡", en: "Feels Distant" },
+  对方偶尔主动: { zh: "对方偶尔主动", en: "Sometimes Initiates" },
+  很久没联系: { zh: "很久没联系", en: "Long Time No Contact" },
   刚认识: { zh: "刚认识", en: "Just Met" },
   聊过但没推进: { zh: "聊过但没推进", en: "Talked, No Progress Yet" },
   之前答应过但没下文: { zh: "之前答应过但没下文", en: "Previously Agreed, No Follow-up" },
@@ -1205,15 +1260,15 @@ function truncateText(value, length = 64) {
 
 function getSelectedScenario() {
   const selected = document.querySelector('input[name="scenario"]:checked');
-  return selected ? selected.value : "亲密关系";
+  return selected ? selected.value : "刚认识";
 }
 
 function getGoalsForScenario(scenario) {
-  return SCENE_GOALS[scenario] || SCENE_GOALS["亲密关系"];
+  return SCENE_GOALS[scenario] || SCENE_GOALS["刚认识"];
 }
 
 function getStatusesForScenario(scenario) {
-  return SCENE_STATUSES[scenario] || SCENE_STATUSES["亲密关系"];
+  return SCENE_STATUSES[scenario] || SCENE_STATUSES["刚认识"];
 }
 
 function getLocalizedLabel(labels, fallback = "") {
@@ -1410,7 +1465,7 @@ function buildAnalysisPayload(input) {
 function buildPrompt(data) {
   const displayName = data.nickname || "这张照片";
   const normalizedSignature = data.signature || "未提供";
-  const normalizedQuestion = data.question || "未提供，请根据分析场景自行给出最有价值的沟通建议。";
+  const normalizedQuestion = data.question || "未提供，请根据关系阶段自行给出最有价值的靠近建议。";
   const normalizedPosts = data.posts.map((post, index) => `${index + 1}. ${post || "未提供"}`).join("\n");
   const photoMaterial = data.hasAvatar
     ? "【照片】用户已上传照片。但当前前端只发送是否上传的状态，未把图片像素传给模型；如果没有额外视觉描述，不得编造画面细节。"
@@ -1425,9 +1480,9 @@ function buildPrompt(data) {
 
 用户输入资料：
 - 分析对象昵称：${displayName}
-- 分析场景：${data.scenario}
-- 我想达成：${data.selectedGoal || "未指定"}
-- 当前状态：${data.selectedStatus || "未指定"}
+- 关系阶段：${data.scenario}
+- 你想知道：${data.selectedGoal || "未指定"}
+- 当前互动：${data.selectedStatus || "未指定"}
 - ${photoMaterial}
 - ${screenshotMaterial}
 - 调试说明：本 Prompt 仅作为开发者调试或备用方案。当前链路没有把照片像素发送给模型，也不做 OCR 或图像识别。
@@ -1442,7 +1497,7 @@ ${normalizedPosts}
 ${normalizedQuestion}
 
 分析要求：
-0. 所有沟通切入口、适合说的话、不建议说的话，都必须围绕“分析场景 + 我想达成 + 当前状态”生成。
+0. 所有推荐开场、适合说的话、不建议说的话，都必须围绕“关系阶段 + 你想知道 + 当前互动”生成。
 1. 分析任务是：基于照片中的公开呈现描述与用户补充问题，生成沟通画像。
 2. Big Five 只能作为“倾向参考”框架，用来描述照片和补充信息可能带来的沟通印象，不能写成测评结论。
 3. 所有结论都必须使用“可能、倾向、从照片呈现看、从补充信息看”等克制措辞。
@@ -1495,18 +1550,18 @@ function mockAnalysis(payload) {
   const reportData = JSON.parse(JSON.stringify(SAMPLE_REPORT_DATA));
   const input = payload.input || {};
   const displayName = input.nickname || translations.zh.unnamedObject;
-  const goalText = input.selectedGoal || "自然开场";
-  const statusText = input.selectedStatus || "刚认识";
+  const goalText = input.selectedGoal || "怎么开口";
+  const statusText = input.selectedStatus || "对方回复正常";
   const filledPosts = (input.posts || []).filter(Boolean).length;
   const hasVisualClues = input.hasAvatar || input.screenshotCount > 0;
 
-  reportData.basicProfile.oneSentence = `${displayName}在“${input.scenario || "当前场景"} / ${goalText} / ${statusText}”里，当前更适合做低压、具体、可选择的开场。`;
-  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前场景"}中的视觉呈现状态、沟通目标、当前状态和补充信息，报告会把第一印象转化为更容易执行的沟通建议。当前前端 mock 不读取照片内容，因此不会描述具体画面细节。`;
+  reportData.basicProfile.oneSentence = `${displayName}在“${input.scenario || "当前关系阶段"} / ${goalText} / ${statusText}”里，更适合先用轻松、低压、可退一步的方式靠近。`;
+  reportData.basicProfile.personaSummary = `基于${input.scenario || "当前关系阶段"}中的公开呈现、你想知道的问题、当前互动和补充信息，报告会把线索转化为更自然的靠近建议。当前前端 mock 不读取照片内容，因此不会描述具体画面细节。`;
   reportData.basicProfile.confidenceReason = `样例分析参考了${hasVisualClues ? "照片/补充图片上传状态、" : ""}可选问题和 ${filledPosts} 条高级补充文字；由于 mock 模式不读取图片内容，结论仅用于演示新版流程。`;
   reportData.evidenceChain = [
     {
-      conclusion: `当前更适合围绕“${goalText} / ${statusText}”用低压、具体的方式开场`,
-      evidence: input.question || `用户选择了“${input.scenario || "当前场景"} / ${goalText} / ${statusText}”，因此先给出对应状态下的低压开场建议。`,
+      conclusion: `当前更适合围绕“${goalText} / ${statusText}”用低压、自然的方式试探靠近`,
+      evidence: input.question || `用户选择了“${input.scenario || "当前关系阶段"} / ${goalText} / ${statusText}”，因此先给出对应状态下的低压开场建议。`,
       source: "用户问题"
     },
     {
@@ -1707,7 +1762,7 @@ function handleReset() {
   facePreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
   renderScreenshotGrid();
-  const defaultScenario = document.querySelector('input[name="scenario"][value="亲密关系"]');
+  const defaultScenario = document.querySelector('input[name="scenario"][value="刚认识"]');
   if (defaultScenario) defaultScenario.checked = true;
   selectedGoal = "";
   selectedStatus = "";
@@ -1944,7 +1999,7 @@ function normalizeReportData(data) {
 }
 
 function getSceneConfig(scenario) {
-  return SCENE_CONFIG[scenario] || SCENE_CONFIG[getSelectedScenario()] || SCENE_CONFIG["亲密关系"];
+  return SCENE_CONFIG[scenario] || SCENE_CONFIG[getSelectedScenario()] || SCENE_CONFIG["刚认识"];
 }
 
 function normalizeSceneMetrics(value) {
