@@ -929,9 +929,6 @@ let avatarFileSize = 0;
 let socialScreenshots = [];
 let selectedGoal = "";
 let selectedStatus = "";
-let userSelectedRelationshipStage = false;
-let userSelectedGoal = false;
-let userSelectedStatus = false;
 let generatedPrompt = "";
 let generatedRecordDraft = null;
 let expandedHistoryId = "";
@@ -1364,9 +1361,9 @@ function getClueCompleteness() {
   const socialImageScore = socialScreenshots.length >= 3 ? 25 : socialScreenshots.length === 2 ? 20 : socialScreenshots.length === 1 ? 12 : 0;
   const total = [
     Boolean(avatarDataUrl) ? 20 : 0,
-    userSelectedRelationshipStage && Boolean(getSelectedScenario()) ? 10 : 0,
-    userSelectedGoal && Boolean(getSelectedGoal()) ? 10 : 0,
-    userSelectedStatus && Boolean(getSelectedStatus()) ? 10 : 0,
+    Boolean(getSelectedScenario()) ? 10 : 0,
+    Boolean(getSelectedGoal()) ? 10 : 0,
+    Boolean(getSelectedStatus()) ? 10 : 0,
     hasValidQuestionInput() ? 10 : 0,
     hasAnyTextInput(nicknameInput) ? 5 : 0,
     hasValidLongTextInput(signatureInput) ? 10 : 0,
@@ -1898,9 +1895,6 @@ function handleReset() {
   if (defaultScenario) defaultScenario.checked = true;
   selectedGoal = "";
   selectedStatus = "";
-  userSelectedRelationshipStage = false;
-  userSelectedGoal = false;
-  userSelectedStatus = false;
   renderGoalOptions();
   renderStatusOptions();
   updateClueCompleteness();
@@ -2844,15 +2838,11 @@ bindDropZone(faceUploadZone, (files) => handleFacePhotoFile(files && files[0]));
 bindDropZone(screenshotDropZone, addScreenshotFiles);
 document.querySelectorAll('input[name="scenario"]').forEach((input) => {
   input.addEventListener("click", () => {
-    userSelectedRelationshipStage = true;
     updateClueCompleteness();
   });
   input.addEventListener("change", () => {
     selectedGoal = "";
     selectedStatus = "";
-    userSelectedRelationshipStage = true;
-    userSelectedGoal = false;
-    userSelectedStatus = false;
     renderGoalOptions();
     renderStatusOptions();
     updateClueCompleteness();
@@ -2863,7 +2853,6 @@ if (goalOptions) {
     const button = event.target.closest("[data-goal]");
     if (!button) return;
     selectedGoal = button.dataset.goal;
-    userSelectedGoal = true;
     renderGoalOptions();
     updateClueCompleteness();
   });
@@ -2873,7 +2862,6 @@ if (statusOptions) {
     const button = event.target.closest("[data-status]");
     if (!button) return;
     selectedStatus = button.dataset.status;
-    userSelectedStatus = true;
     renderStatusOptions();
     updateClueCompleteness();
   });
