@@ -77,10 +77,10 @@ const translations = {
     analyzeEyebrow: "START ANALYSIS",
     analyzeTitle: "从一张照片开始",
     analyzeDesc: "基于画面中的公开呈现，生成一份沟通画像。",
-    nicknameLabel: "分析对象昵称",
+    nicknameLabel: "对方昵称或账号名",
     optionalLabel: "可选",
     optionalQuestionLabel: "选填",
-    nicknamePlaceholder: "例如：某个人 / TA / 你想靠近的人",
+    nicknamePlaceholder: "例如：微信名 小红书昵称 Instagram账号 备注名",
     avatarLabel: "上传照片",
     removeAvatar: "删除当前照片",
     avatarUploadTitle: "点击上传照片",
@@ -116,7 +116,10 @@ const translations = {
     clueCompletenessInitial: "可初步解读",
     clueCompletenessEnough: "线索较充分",
     clueCompletenessDeep: "适合深度建议",
-    clueCompletenessHint: "当前线索越完整，生成的开场建议越具体",
+    clueCompletenessHint: "建议至少上传一张照片并选择当前关系阶段",
+    clueCompletenessHintInitial: "可以生成基础建议，补充截图后会更具体",
+    clueCompletenessHintEnough: "已具备较完整的关系线索，建议会更贴近当前互动",
+    clueCompletenessHintDeep: "当前线索完整，生成的开场建议会更具体",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
     generatePromptBtn: "开始分析",
@@ -394,10 +397,10 @@ const translations = {
     analyzeEyebrow: "START ANALYSIS",
     analyzeTitle: "Start with one photo",
     analyzeDesc: "Generate a communication profile from the public presentation in the image.",
-    nicknameLabel: "Profile nickname",
+    nicknameLabel: "Their Name or Account",
     optionalLabel: "Optional",
     optionalQuestionLabel: "Optional",
-    nicknamePlaceholder: "Example: someone / them / the person you want to approach",
+    nicknamePlaceholder: "For example WeChat name Xiaohongshu handle Instagram account or saved contact name",
     avatarLabel: "Upload Photo",
     removeAvatar: "Remove photo",
     avatarUploadTitle: "Click to Upload a Photo",
@@ -433,7 +436,10 @@ const translations = {
     clueCompletenessInitial: "Ready for an initial read",
     clueCompletenessEnough: "Clues are fairly complete",
     clueCompletenessDeep: "Ready for deeper suggestions",
-    clueCompletenessHint: "More complete clues lead to more specific opening suggestions",
+    clueCompletenessHint: "Add at least one photo and choose the current relationship stage",
+    clueCompletenessHintInitial: "Basic suggestions are ready. Screenshots will make them more specific",
+    clueCompletenessHintEnough: "The relationship clues are fairly complete, so suggestions can fit the current interaction better",
+    clueCompletenessHintDeep: "The current clues are complete enough for more specific opening suggestions",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
     generatePromptBtn: "Start Analysis",
@@ -664,6 +670,7 @@ const clueCompleteness = document.querySelector("#clueCompleteness");
 const clueCompletenessPercent = document.querySelector("#clueCompletenessPercent");
 const clueCompletenessBar = document.querySelector("#clueCompletenessBar");
 const clueCompletenessStatus = document.querySelector("#clueCompletenessStatus");
+const clueCompletenessHint = clueCompleteness?.querySelector("[data-i18n='clueCompletenessHint']");
 const promptOutput = document.querySelector("#promptOutput");
 const promptStatus = document.querySelector("#promptStatus");
 const analysisPreview = document.querySelector("#analysisPreview");
@@ -922,6 +929,9 @@ let avatarFileSize = 0;
 let socialScreenshots = [];
 let selectedGoal = "";
 let selectedStatus = "";
+let userSelectedRelationshipStage = false;
+let userSelectedGoal = false;
+let userSelectedStatus = false;
 let generatedPrompt = "";
 let generatedRecordDraft = null;
 let expandedHistoryId = "";
@@ -1063,6 +1073,7 @@ function applyLanguage() {
   updateDebugPromptVisibility();
   renderGoalOptions();
   renderStatusOptions();
+  updateClueCompleteness();
   updateGeneratedState(generatedPrompt, generatedRecordDraft);
   renderScreenshotGrid();
   if (renderedReportData) {
@@ -1350,21 +1361,38 @@ function renderStatusOptions() {
 }
 
 function getClueCompleteness() {
-  const items = [
-    { ready: Boolean(avatarDataUrl), weight: 25 },
-    { ready: Boolean(getSelectedScenario()), weight: 20 },
-    { ready: Boolean(getSelectedStatus()), weight: 20 },
-    { ready: Boolean(questionInput?.value.trim()), weight: 15 },
-    { ready: socialScreenshots.length > 0, weight: 20 },
-  ];
-  return items.reduce((total, item) => total + (item.ready ? item.weight : 0), 0);
+  const socialImageScore = socialScreenshots.length >= 2 ? 20 : socialScreenshots.length === 1 ? 12 : 0;
+  const total = [
+    Boolean(avatarDataUrl) ? 25 : 0,
+    userSelectedRelationshipStage && Boolean(getSelectedScenario()) ? 15 : 0,
+    userSelectedGoal && Boolean(getSelectedGoal()) ? 15 : 0,
+    userSelectedStatus && Boolean(getSelectedStatus()) ? 15 : 0,
+    socialImageScore,
+    hasValidQuestionInput() ? 10 : 0,
+  ].reduce((sum, score) => sum + score, 0);
+  return Math.min(100, total);
+}
+
+function hasValidQuestionInput() {
+  const value = String(questionInput?.value || "").replace(/\s+/g, "");
+  if (!value) return false;
+  const cjkCount = (value.match(/[\u3400-\u9fff]/g) || []).length;
+  const englishCount = (value.match(/[A-Za-z]/g) || []).length;
+  return cjkCount >= 6 || englishCount >= 12;
 }
 
 function getClueCompletenessStatus(percent) {
-  if (percent >= 85) return t("clueCompletenessDeep");
-  if (percent >= 65) return t("clueCompletenessEnough");
-  if (percent >= 40) return t("clueCompletenessInitial");
+  if (percent >= 81) return t("clueCompletenessDeep");
+  if (percent >= 56) return t("clueCompletenessEnough");
+  if (percent >= 31) return t("clueCompletenessInitial");
   return t("clueCompletenessLow");
+}
+
+function getClueCompletenessHint(percent) {
+  if (percent >= 81) return t("clueCompletenessHintDeep");
+  if (percent >= 56) return t("clueCompletenessHintEnough");
+  if (percent >= 31) return t("clueCompletenessHintInitial");
+  return t("clueCompletenessHint");
 }
 
 function updateClueCompleteness() {
@@ -1373,7 +1401,8 @@ function updateClueCompleteness() {
   clueCompletenessPercent.textContent = `${percent}%`;
   clueCompletenessBar.style.width = `${percent}%`;
   clueCompletenessStatus.textContent = getClueCompletenessStatus(percent);
-  clueCompleteness.dataset.level = percent >= 85 ? "deep" : percent >= 65 ? "enough" : percent >= 40 ? "initial" : "low";
+  if (clueCompletenessHint) clueCompletenessHint.textContent = getClueCompletenessHint(percent);
+  clueCompleteness.dataset.level = percent >= 81 ? "deep" : percent >= 56 ? "enough" : percent >= 31 ? "initial" : "low";
 }
 
 function isSupportedImage(file) {
@@ -1855,6 +1884,9 @@ function handleReset() {
   if (defaultScenario) defaultScenario.checked = true;
   selectedGoal = "";
   selectedStatus = "";
+  userSelectedRelationshipStage = false;
+  userSelectedGoal = false;
+  userSelectedStatus = false;
   renderGoalOptions();
   renderStatusOptions();
   updateClueCompleteness();
@@ -2797,9 +2829,16 @@ screenshotGrid.addEventListener("click", (event) => {
 bindDropZone(faceUploadZone, (files) => handleFacePhotoFile(files && files[0]));
 bindDropZone(screenshotDropZone, addScreenshotFiles);
 document.querySelectorAll('input[name="scenario"]').forEach((input) => {
+  input.addEventListener("click", () => {
+    userSelectedRelationshipStage = true;
+    updateClueCompleteness();
+  });
   input.addEventListener("change", () => {
     selectedGoal = "";
     selectedStatus = "";
+    userSelectedRelationshipStage = true;
+    userSelectedGoal = false;
+    userSelectedStatus = false;
     renderGoalOptions();
     renderStatusOptions();
     updateClueCompleteness();
@@ -2810,6 +2849,7 @@ if (goalOptions) {
     const button = event.target.closest("[data-goal]");
     if (!button) return;
     selectedGoal = button.dataset.goal;
+    userSelectedGoal = true;
     renderGoalOptions();
     updateClueCompleteness();
   });
@@ -2819,6 +2859,7 @@ if (statusOptions) {
     const button = event.target.closest("[data-status]");
     if (!button) return;
     selectedStatus = button.dataset.status;
+    userSelectedStatus = true;
     renderStatusOptions();
     updateClueCompleteness();
   });
