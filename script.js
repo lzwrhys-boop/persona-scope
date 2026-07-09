@@ -664,6 +664,7 @@ const nicknameInput = document.querySelector("#nicknameInput");
 const signatureInput = document.querySelector("#signatureInput");
 const postInputs = Array.from(document.querySelectorAll(".post-input"));
 const questionInput = document.querySelector("#questionInput");
+const scenarioGroup = document.querySelector(".scenario-group");
 const goalOptions = document.querySelector("#goalOptions");
 const statusOptions = document.querySelector("#statusOptions");
 const clueCompleteness = document.querySelector("#clueCompleteness");
@@ -927,8 +928,8 @@ const SAMPLE_REPORT_DATA = {
 let avatarDataUrl = "";
 let avatarFileSize = 0;
 let socialScreenshots = [];
-let selectedGoal = "";
-let selectedStatus = "";
+let selectedGoals = [];
+let selectedStatuses = [];
 let generatedPrompt = "";
 let generatedRecordDraft = null;
 let expandedHistoryId = "";
@@ -1287,15 +1288,15 @@ function truncateText(value, length = 64) {
 
 function getSelectedScenario() {
   const selected = document.querySelector('input[name="scenario"]:checked');
-  return selected ? selected.value : "刚认识";
+  return selected ? selected.value : "";
 }
 
 function getGoalsForScenario(scenario) {
-  return SCENE_GOALS[scenario] || SCENE_GOALS["刚认识"];
+  return SCENE_GOALS[scenario] || SCENE_GOALS[Object.keys(SCENE_GOALS)[0]] || [];
 }
 
 function getStatusesForScenario(scenario) {
-  return SCENE_STATUSES[scenario] || SCENE_STATUSES["刚认识"];
+  return SCENE_STATUSES[scenario] || SCENE_STATUSES[Object.keys(SCENE_STATUSES)[0]] || [];
 }
 
 function getLocalizedLabel(labels, fallback = "") {
@@ -1331,45 +1332,59 @@ function translateConfidence(value) {
 
 function getSelectedGoal() {
   const goals = getGoalsForScenario(getSelectedScenario());
-  return goals.includes(selectedGoal) ? selectedGoal : goals[0];
+  return selectedGoals.filter((goal) => goals.includes(goal)).join("、");
 }
 
 function getSelectedStatus() {
   const statuses = getStatusesForScenario(getSelectedScenario());
-  return statuses.includes(selectedStatus) ? selectedStatus : statuses[0];
+  return selectedStatuses.filter((status) => statuses.includes(status)).join("、");
 }
 
 function renderGoalOptions() {
   if (!goalOptions) return;
   const goals = getGoalsForScenario(getSelectedScenario());
-  if (!goals.includes(selectedGoal)) selectedGoal = goals[0];
+  selectedGoals = selectedGoals.filter((goal) => goals.includes(goal));
   goalOptions.innerHTML = goals.map((goal) => (
-    `<button class="goal-pill${goal === selectedGoal ? " active" : ""}" type="button" data-goal="${escapeHtml(goal)}">${escapeHtml(translateGoal(goal))}</button>`
+    `<button class="goal-pill${selectedGoals.includes(goal) ? " active" : ""}" type="button" data-goal="${escapeHtml(goal)}">${escapeHtml(translateGoal(goal))}</button>`
   )).join("");
 }
 
 function renderStatusOptions() {
   if (!statusOptions) return;
   const statuses = getStatusesForScenario(getSelectedScenario());
-  if (!statuses.includes(selectedStatus)) selectedStatus = statuses[0];
+  selectedStatuses = selectedStatuses.filter((status) => statuses.includes(status));
   statusOptions.innerHTML = statuses.map((status) => (
-    `<button class="goal-pill status-pill${status === selectedStatus ? " active" : ""}" type="button" data-status="${escapeHtml(status)}">${escapeHtml(translateStatus(status))}</button>`
+    `<button class="goal-pill status-pill${selectedStatuses.includes(status) ? " active" : ""}" type="button" data-status="${escapeHtml(status)}">${escapeHtml(translateStatus(status))}</button>`
   )).join("");
 }
 
 function getClueCompleteness() {
   const socialImageScore = socialScreenshots.length >= 3 ? 25 : socialScreenshots.length === 2 ? 20 : socialScreenshots.length === 1 ? 12 : 0;
+  const goalCount = getSelectedGoalCount();
+  const statusCount = getSelectedStatusCount();
+  const goalScore = goalCount >= 2 ? 10 : goalCount === 1 ? 6 : 0;
+  const statusScore = statusCount >= 2 ? 10 : statusCount === 1 ? 6 : 0;
   const total = [
     Boolean(avatarDataUrl) ? 20 : 0,
     Boolean(getSelectedScenario()) ? 10 : 0,
-    Boolean(getSelectedGoal()) ? 10 : 0,
-    Boolean(getSelectedStatus()) ? 10 : 0,
+    goalScore,
+    statusScore,
     hasValidQuestionInput() ? 10 : 0,
     hasAnyTextInput(nicknameInput) ? 5 : 0,
     hasValidLongTextInput(signatureInput) ? 10 : 0,
     socialImageScore,
   ].reduce((sum, score) => sum + score, 0);
   return Math.min(100, total);
+}
+
+function getSelectedGoalCount() {
+  const goals = getGoalsForScenario(getSelectedScenario());
+  return selectedGoals.filter((goal) => goals.includes(goal)).length;
+}
+
+function getSelectedStatusCount() {
+  const statuses = getStatusesForScenario(getSelectedScenario());
+  return selectedStatuses.filter((status) => statuses.includes(status)).length;
 }
 
 function getCompactInputValue(input) {
@@ -1891,10 +1906,11 @@ function handleReset() {
   facePreview.innerHTML = "+";
   removeAvatarBtn.hidden = true;
   renderScreenshotGrid();
-  const defaultScenario = document.querySelector('input[name="scenario"][value="刚认识"]');
-  if (defaultScenario) defaultScenario.checked = true;
-  selectedGoal = "";
-  selectedStatus = "";
+  document.querySelectorAll('input[name="scenario"]').forEach((input) => {
+    input.checked = false;
+  });
+  selectedGoals = [];
+  selectedStatuses = [];
   renderGoalOptions();
   renderStatusOptions();
   updateClueCompleteness();
@@ -2836,13 +2852,28 @@ screenshotGrid.addEventListener("click", (event) => {
 });
 bindDropZone(faceUploadZone, (files) => handleFacePhotoFile(files && files[0]));
 bindDropZone(screenshotDropZone, addScreenshotFiles);
+if (scenarioGroup) {
+  scenarioGroup.addEventListener("pointerdown", (event) => {
+    const label = event.target.closest("label");
+    const input = label?.querySelector('input[name="scenario"]');
+    if (!input) return;
+    const selectedScenario = document.querySelector('input[name="scenario"]:checked');
+    input.dataset.wasChecked = String(Boolean(selectedScenario && selectedScenario.value === input.value));
+  });
+}
 document.querySelectorAll('input[name="scenario"]').forEach((input) => {
+  input.addEventListener("pointerdown", () => {
+    input.dataset.wasChecked = String(input.checked);
+  });
   input.addEventListener("click", () => {
+    if (input.dataset.wasChecked === "true") {
+      input.checked = false;
+    }
+    renderGoalOptions();
+    renderStatusOptions();
     updateClueCompleteness();
   });
   input.addEventListener("change", () => {
-    selectedGoal = "";
-    selectedStatus = "";
     renderGoalOptions();
     renderStatusOptions();
     updateClueCompleteness();
@@ -2852,7 +2883,10 @@ if (goalOptions) {
   goalOptions.addEventListener("click", (event) => {
     const button = event.target.closest("[data-goal]");
     if (!button) return;
-    selectedGoal = button.dataset.goal;
+    const goal = button.dataset.goal;
+    selectedGoals = selectedGoals.includes(goal)
+      ? selectedGoals.filter((item) => item !== goal)
+      : [...selectedGoals, goal];
     renderGoalOptions();
     updateClueCompleteness();
   });
@@ -2861,7 +2895,10 @@ if (statusOptions) {
   statusOptions.addEventListener("click", (event) => {
     const button = event.target.closest("[data-status]");
     if (!button) return;
-    selectedStatus = button.dataset.status;
+    const status = button.dataset.status;
+    selectedStatuses = selectedStatuses.includes(status)
+      ? selectedStatuses.filter((item) => item !== status)
+      : [...selectedStatuses, status];
     renderStatusOptions();
     updateClueCompleteness();
   });
@@ -2899,6 +2936,12 @@ window.addEventListener("load", () => {
 });
 
 UnicornBackground();
+document.querySelectorAll('input[name="scenario"]').forEach((input) => {
+  input.checked = false;
+  delete input.dataset.wasChecked;
+});
+selectedGoals = [];
+selectedStatuses = [];
 applyLanguage();
 renderGoalOptions();
 renderStatusOptions();
