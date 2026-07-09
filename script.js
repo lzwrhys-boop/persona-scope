@@ -1361,24 +1361,38 @@ function renderStatusOptions() {
 }
 
 function getClueCompleteness() {
-  const socialImageScore = socialScreenshots.length >= 2 ? 20 : socialScreenshots.length === 1 ? 12 : 0;
+  const socialImageScore = socialScreenshots.length >= 3 ? 25 : socialScreenshots.length === 2 ? 20 : socialScreenshots.length === 1 ? 12 : 0;
   const total = [
-    Boolean(avatarDataUrl) ? 25 : 0,
-    userSelectedRelationshipStage && Boolean(getSelectedScenario()) ? 15 : 0,
-    userSelectedGoal && Boolean(getSelectedGoal()) ? 15 : 0,
-    userSelectedStatus && Boolean(getSelectedStatus()) ? 15 : 0,
-    socialImageScore,
+    Boolean(avatarDataUrl) ? 20 : 0,
+    userSelectedRelationshipStage && Boolean(getSelectedScenario()) ? 10 : 0,
+    userSelectedGoal && Boolean(getSelectedGoal()) ? 10 : 0,
+    userSelectedStatus && Boolean(getSelectedStatus()) ? 10 : 0,
     hasValidQuestionInput() ? 10 : 0,
+    hasAnyTextInput(nicknameInput) ? 5 : 0,
+    hasValidLongTextInput(signatureInput) ? 10 : 0,
+    socialImageScore,
   ].reduce((sum, score) => sum + score, 0);
   return Math.min(100, total);
 }
 
-function hasValidQuestionInput() {
-  const value = String(questionInput?.value || "").replace(/\s+/g, "");
+function getCompactInputValue(input) {
+  return String(input?.value || "").replace(/\s+/g, "");
+}
+
+function hasAnyTextInput(input) {
+  return getCompactInputValue(input).length >= 1;
+}
+
+function hasValidLongTextInput(input) {
+  const value = getCompactInputValue(input);
   if (!value) return false;
   const cjkCount = (value.match(/[\u3400-\u9fff]/g) || []).length;
   const englishCount = (value.match(/[A-Za-z]/g) || []).length;
-  return cjkCount >= 6 || englishCount >= 12;
+  return cjkCount >= 4 || englishCount >= 8;
+}
+
+function hasValidQuestionInput() {
+  return hasValidLongTextInput(questionInput);
 }
 
 function getClueCompletenessStatus(percent) {
@@ -2880,6 +2894,8 @@ if (heroExampleLink) heroExampleLink.addEventListener("click", handleHeroExample
 if (languageToggle) languageToggle.addEventListener("click", toggleLanguage);
 if (logoutButton) logoutButton.addEventListener("click", handleLogout);
 if (questionInput) questionInput.addEventListener("input", updateClueCompleteness);
+if (nicknameInput) nicknameInput.addEventListener("input", updateClueCompleteness);
+if (signatureInput) signatureInput.addEventListener("input", updateClueCompleteness);
 
 menuToggle.addEventListener("click", () => {
   const isOpen = mainNav.classList.toggle("open");
