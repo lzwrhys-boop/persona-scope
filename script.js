@@ -139,13 +139,25 @@ const translations = {
     analysisPreviewTitle: "你的靠近建议会出现在这里",
     analysisWaitingTitle: "你的靠近建议会出现在这里",
     analysisWaitingCueLanguage: "第一眼信号",
-    analysisWaitingCuePresentation: "关系温度",
+    analysisWaitingCuePresentation: "????",
     analysisWaitingCueStrategy: "开场建议",
     loadingTitle: "正在生成你的靠近建议",
-    loadingDesc: "请稍等几秒，系统正在整理第一眼信号、关系温度与开场建议。",
+    loadingDesc: "????????????????????????????",
     loadingStage1: "识别公开呈现",
     loadingStage2: "生成沟通倾向",
     loadingStage3: "输出开场建议",
+    analysisProgressStage1: "读取上传内容",
+    analysisProgressStage2: "识别公开呈现",
+    analysisProgressStage3: "提取关系线索",
+    analysisProgressStage4: "生成靠近策略",
+    analysisProgressStage5: "整理开场建议",
+    analysisProgressStageLong: "图片内容较多 正在继续整理",
+    progressComplete: "生成完成",
+    followupProgressStage1: "理解对方回复",
+    followupProgressStage2: "匹配当前关系语境",
+    followupProgressStage3: "生成下一句接法",
+    followupProgressStage4: "检查语气是否自然",
+    followupProgressStageLong: "正在收尾",
     analysisSummaryTitle: "沟通画像摘要",
     analysisDimensionsTitle: "核心维度",
     analysisTagsTitle: "关键标签",
@@ -162,7 +174,7 @@ const translations = {
     saveHistoryBtn: "保存到历史记录",
     visualEyebrow: "VISUAL REPORT",
     visualTitle: "关系靠近面板",
-    visualDesc: "分析完成后，系统将在这里展示第一眼信号、关系温度、推荐开场和低压回复策略。",
+    visualDesc: "?????????????????????????????????????",
     jsonPasteLabel: "手动导入报告数据",
     jsonHelper: "开发者调试模式：可导入结构化报告 JSON，系统会尽量自动识别兼容字段。",
     jsonPlaceholder: "可导入完整报告 JSON，例如包含 basicProfile、scores、bigFive、personaTags、avatarVisualCues、communicationAdvice、riskPoints、approachStyle、evidenceChain、disclaimer 等字段。",
@@ -180,12 +192,25 @@ const translations = {
     waitingJsonTitle: "等待生成可视化报告",
     waitingJsonDesc: "分析完成后，系统将在这里生成可视化沟通画像报告。也可以使用开发者调试模式手动导入报告数据。",
     chartBarTitle: "沟通风格维度图",
-    chartRadarTitle: "关系温度",
+    chartRadarTitle: "靠近信号",
     tagCloudTitle: "关系信号",
     avatarVisualCuesTitle: "视觉呈现线索",
     communicationAdviceTitle: "适合说的话",
     riskPointsTitle: "不建议说的话",
     approachStyleTitle: "靠近方式",
+    copyableScriptsTitle: "可复制话术",
+    tabOpening: "开场",
+    tabReply: "接话",
+    tabAvoid: "避坑",
+    priorityReplyBadge: "当前优先推荐",
+    priorityAvoidBadge: "高风险",
+    expandMoreReplies: "还有 {count} 条可选接法",
+    collapseMoreReplies: "收起更多接法",
+    expandMoreAvoids: "还有 {count} 条不建议说的话",
+    collapseMoreAvoids: "收起更多避坑",
+    avoidReasonFallback: "这类表达容易显得太急、太认真或太有压迫感。",
+    approachSignalSummary: "展开查看靠近信号",
+    collapseApproachSignals: "收起靠近信号",
     evidenceChainTitle: "本次参考的线索",
     firstReadTitle: "第一眼信号",
     openingLineTitle: "推荐开场",
@@ -324,7 +349,7 @@ const translations = {
     errorApiRequestFailed: "分析 API 请求失败",
     errorAccessCodeInvalid: "访问码不正确",
     errorAnalysisFailed: "分析失败，请稍后重试",
-    errorFollowupFailed: "暂时生成失败，可以稍后再试。",
+    errorFollowupFailed: "暂时生成失败 可以稍后再试",
     followupTitle: "对方回复了什么",
     followupDesc: "粘贴对方刚刚回复的话，我帮你生成下一句接法。",
     followupPlaceholder: "例如：哈哈哈 / 最近有点忙 / 你怎么突然问这个 / 没事啦",
@@ -483,13 +508,25 @@ const translations = {
     analysisPreviewTitle: "Your approach suggestions will appear here",
     analysisWaitingTitle: "Your approach suggestions will appear here",
     analysisWaitingCueLanguage: "First Signal",
-    analysisWaitingCuePresentation: "Relationship Temperature",
+    analysisWaitingCuePresentation: "Approach Signals",
     analysisWaitingCueStrategy: "Opening advice",
     loadingTitle: "Generating your approach suggestions",
-    loadingDesc: "Please wait a few seconds while the system organizes first signals, relationship temperature, and opening advice.",
+    loadingDesc: "Please wait a few seconds while the system organizes first signals, approach signals, and opening advice.",
     loadingStage1: "Reading public presentation",
     loadingStage2: "Generating communication tendency",
     loadingStage3: "Creating opening advice",
+    analysisProgressStage1: "Reading uploaded content",
+    analysisProgressStage2: "Reading public presentation",
+    analysisProgressStage3: "Extracting relationship clues",
+    analysisProgressStage4: "Generating approach strategy",
+    analysisProgressStage5: "Organizing opening suggestions",
+    analysisProgressStageLong: "More image content is being organized",
+    progressComplete: "Complete",
+    followupProgressStage1: "Understanding their reply",
+    followupProgressStage2: "Matching relationship context",
+    followupProgressStage3: "Generating the next line",
+    followupProgressStage4: "Checking natural tone",
+    followupProgressStageLong: "Wrapping up",
     analysisSummaryTitle: "Relationship Signal Summary",
     analysisDimensionsTitle: "Key Dimensions",
     analysisTagsTitle: "Key Tags",
@@ -524,12 +561,25 @@ const translations = {
     waitingJsonTitle: "Waiting for Visual Report",
     waitingJsonDesc: "Once analysis is complete, the system will generate a visual communication profile report here. Developer debug mode can also import report data manually.",
     chartBarTitle: "Communication Style Dimensions",
-    chartRadarTitle: "Relationship Temperature",
+    chartRadarTitle: "Approach Signals",
     tagCloudTitle: "Relationship Signals",
     avatarVisualCuesTitle: "Visual Presentation Cues",
     communicationAdviceTitle: "What to Say",
     riskPointsTitle: "What to Avoid",
     approachStyleTitle: "Approach Style",
+    copyableScriptsTitle: "Copyable Lines",
+    tabOpening: "Opening",
+    tabReply: "Reply",
+    tabAvoid: "Avoid",
+    priorityReplyBadge: "Most Steady",
+    priorityAvoidBadge: "High Risk",
+    expandMoreReplies: "{count} more reply options",
+    collapseMoreReplies: "Collapse replies",
+    expandMoreAvoids: "{count} more things to avoid",
+    collapseMoreAvoids: "Collapse avoid list",
+    avoidReasonFallback: "This can feel too urgent, too serious, or too pressuring.",
+    approachSignalSummary: "Expand approach signals",
+    collapseApproachSignals: "Collapse approach signals",
     evidenceChainTitle: "Signals Referenced",
     firstReadTitle: "First Signal",
     openingLineTitle: "Recommended Opening",
@@ -989,6 +1039,8 @@ let unicornSdkPromise = null;
 let currentLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY) === "en" ? "en" : "zh";
 let renderedReportData = null;
 let loadingStageTimer = null;
+let analysisProgressController = null;
+let followupProgressController = null;
 
 function t(key, replacements = {}) {
   const value = translations[currentLanguage]?.[key] ?? translations.zh[key] ?? key;
@@ -1053,8 +1105,35 @@ function getAnalysisWaitingHtml() {
   `;
 }
 
-function getAnalysisLoadingHtml(stageText = t("loadingStage1")) {
-  const stages = [t("loadingStage1"), t("loadingStage2"), t("loadingStage3")];
+function getProgressStage(progress, stages) {
+  return stages.find((stage) => progress <= stage.max)?.text || stages[stages.length - 1]?.text || "";
+}
+
+function getAnalysisStages() {
+  return [
+    { max: 15, text: t("analysisProgressStage1") },
+    { max: 35, text: t("analysisProgressStage2") },
+    { max: 55, text: t("analysisProgressStage3") },
+    { max: 75, text: t("analysisProgressStage4") },
+    { max: 92, text: t("analysisProgressStage5") },
+    { max: 99, text: t("analysisProgressStageLong") },
+    { max: 100, text: t("progressComplete") },
+  ];
+}
+
+function getFollowupStages() {
+  return [
+    { max: 25, text: t("followupProgressStage1") },
+    { max: 50, text: t("followupProgressStage2") },
+    { max: 75, text: t("followupProgressStage3") },
+    { max: 92, text: t("followupProgressStage4") },
+    { max: 99, text: t("followupProgressStageLong") },
+    { max: 100, text: t("progressComplete") },
+  ];
+}
+
+function getAnalysisLoadingHtml(progress = 0) {
+  const stageText = getProgressStage(progress, getAnalysisStages());
   return `
     <div class="analysis-loading">
       <div class="signal-pulse" aria-hidden="true">
@@ -1065,13 +1144,56 @@ function getAnalysisLoadingHtml(stageText = t("loadingStage1")) {
       </div>
       <h4>${t("loadingTitle")}</h4>
       <p>${t("loadingDesc")}</p>
-      <div class="loading-progress" aria-hidden="true"><span></span></div>
-      <div class="loading-stage-list">
-        ${stages.map((stage, index) => `<span class="${stage === stageText || index === 0 ? "active" : ""}">${escapeHtml(stage)}</span>`).join("")}
+      <div class="staged-progress-meta">
+        <small id="loadingStageText">${escapeHtml(stageText)}</small>
+        <strong id="loadingProgressPercent">${progress}%</strong>
       </div>
-      <small id="loadingStageText">${escapeHtml(stageText)}</small>
+      <div class="loading-progress staged-progress" aria-hidden="true"><span id="loadingProgressBar" style="width: ${progress}%"></span></div>
     </div>
   `;
+}
+
+function renderStagedProgress(container, progress, stages, stageOverride = "") {
+  if (!container) return;
+  const safeProgress = Math.max(0, Math.min(100, Math.round(progress)));
+  const stageText = stageOverride || getProgressStage(safeProgress, stages);
+  const stageNode = container.querySelector("[data-progress-stage], #loadingStageText");
+  const percentNode = container.querySelector("[data-progress-percent], #loadingProgressPercent");
+  const barNode = container.querySelector("[data-progress-bar], #loadingProgressBar");
+  if (stageNode) stageNode.textContent = stageText;
+  if (percentNode) percentNode.textContent = `${safeProgress}%`;
+  if (barNode) barNode.style.width = `${safeProgress}%`;
+}
+
+function startStagedProgress({ container, stages, initial = 0, maxBeforeDone = 92, longAfterMs = 15000 }) {
+  let progress = initial;
+  const startedAt = Date.now();
+  let timer = null;
+  const tick = () => {
+    const elapsed = Date.now() - startedAt;
+    const step = elapsed < 2500 ? 3 : elapsed < 8000 ? 2 : 1;
+    progress = Math.min(maxBeforeDone, progress + step);
+    const longStageText = elapsed >= longAfterMs ? getProgressStage(99, stages) : "";
+    renderStagedProgress(container, progress, stages, longStageText);
+  };
+  renderStagedProgress(container, progress, stages);
+  timer = window.setInterval(tick, 420);
+  return {
+    finish() {
+      window.clearInterval(timer);
+      renderStagedProgress(container, 100, stages);
+    },
+    fail(message) {
+      window.clearInterval(timer);
+      if (message) {
+        const stageNode = container?.querySelector("[data-progress-stage], #loadingStageText");
+        if (stageNode) stageNode.textContent = message;
+      }
+    },
+    stop() {
+      window.clearInterval(timer);
+    },
+  };
 }
 
 function setSubmitLoading(isLoading) {
@@ -1082,25 +1204,41 @@ function setSubmitLoading(isLoading) {
 }
 
 function startAnalysisLoading() {
-  const stages = [t("loadingStage1"), t("loadingStage2"), t("loadingStage3")];
-  let stageIndex = 0;
   window.clearInterval(loadingStageTimer);
+  analysisProgressController?.stop();
   setSubmitLoading(true);
   promptStatus.textContent = t("loadingDesc");
-  analysisPreview.innerHTML = getAnalysisLoadingHtml(stages[stageIndex]);
-  loadingStageTimer = window.setInterval(() => {
-    stageIndex = Math.min(stageIndex + 1, stages.length - 1);
-    const stageNode = document.querySelector("#loadingStageText");
-    if (stageNode) stageNode.textContent = stages[stageIndex];
-    document.querySelectorAll(".loading-stage-list span").forEach((node, index) => {
-      node.classList.toggle("active", index <= stageIndex);
-    });
-  }, 1300);
+  analysisPreview.innerHTML = getAnalysisLoadingHtml(0);
+  analysisProgressController = startStagedProgress({
+    container: analysisPreview.querySelector(".analysis-loading"),
+    stages: getAnalysisStages(),
+  });
 }
 
-function stopAnalysisLoading() {
+function getFollowupProgressHtml(progress = 0) {
+  const stageText = getProgressStage(progress, getFollowupStages());
+  return `
+    <div class="followup-progress" role="status" aria-live="polite">
+      <div class="staged-progress-meta">
+        <small data-progress-stage>${escapeHtml(stageText)}</small>
+        <strong data-progress-percent>${progress}%</strong>
+      </div>
+      <div class="loading-progress staged-progress" aria-hidden="true"><span data-progress-bar style="width: ${progress}%"></span></div>
+    </div>
+  `;
+}
+
+function stopAnalysisLoading({ complete = false, errorMessage = "" } = {}) {
   window.clearInterval(loadingStageTimer);
   loadingStageTimer = null;
+  if (complete) {
+    analysisProgressController?.finish();
+  } else if (errorMessage) {
+    analysisProgressController?.fail(errorMessage);
+  } else {
+    analysisProgressController?.stop();
+  }
+  analysisProgressController = null;
   setSubmitLoading(false);
 }
 
@@ -2048,17 +2186,19 @@ async function handleSubmit(event) {
     reportData.selectedGoal = data.selectedGoal;
     reportData.selectedStatus = data.selectedStatus;
     reportData.relationshipContext = buildRelationshipContext(data, reportData);
-    stopAnalysisLoading();
+    stopAnalysisLoading({ complete: true });
     const savedRecord = saveAnalysisHistory(reportData, JSON.stringify(reportData, null, 2), reportData.relationshipContext);
     if (savedRecord) reportData._historyRecordId = savedRecord.id;
-    renderVisualReport(reportData);
-    renderAnalysisPreview(reportData);
-    promptStatus.textContent = t("promptStatusReady");
-    jsonError.textContent = "";
-    showToast(MOCK_MODE ? t("toastAnalysisMockSuccess") : t("toastAnalysisSuccess"));
+    window.setTimeout(() => {
+      renderVisualReport(reportData);
+      renderAnalysisPreview(reportData);
+      promptStatus.textContent = t("promptStatusReady");
+      jsonError.textContent = "";
+      showToast(MOCK_MODE ? t("toastAnalysisMockSuccess") : t("toastAnalysisSuccess"));
+    }, 450);
   } catch (error) {
     console.warn("分析流程失败。", error);
-    stopAnalysisLoading();
+    stopAnalysisLoading({ errorMessage: getFriendlyAnalysisError(error) });
     analysisPreview.innerHTML = getAnalysisWaitingHtml();
     promptStatus.textContent = t("promptStatusEmpty");
     showToast(getFriendlyAnalysisError(error));
@@ -2563,17 +2703,14 @@ function renderSceneMetrics(data) {
     : buildFallbackSceneMetrics(data, scenario);
   return `
     <div class="scene-framework-note">${escapeHtml(config.theory)}</div>
-    <div class="scene-metric-list">
+    <div class="scene-metric-dashboard">
       ${metrics.slice(0, 6).map((item) => {
         const score = clampScore(item.score);
         const tag = score >= 76 ? t("metricTagSpecific") : score >= 62 ? t("metricTagWarmup") : t("metricTagSlow");
         return `
-        <div class="scene-metric-row">
-          <div class="metric-heading">
-            <span>${escapeHtml(item.label)}</span>
-            <strong>${score}</strong>
-          </div>
-          <div class="bar-track"><span style="width: ${score}%"></span></div>
+        <div class="scene-metric-tile">
+          <span>${escapeHtml(item.label)}</span>
+          <strong>${score}</strong>
           <em>${escapeHtml(tag)}</em>
           <p>${escapeHtml(item.suggestion || item.basis)}</p>
         </div>
@@ -2623,6 +2760,109 @@ function renderRiskList(title, items, emptyText) {
       </div>
     </article>
   `;
+}
+
+function renderScriptReplyItem(item, index) {
+  return `
+    <div class="script-compact-item ${index === 0 ? "priority-item" : ""}">
+      <div class="script-item-heading">
+        <strong>${escapeHtml(item.label)}</strong>
+        ${index === 0 ? `<span>${t("priorityReplyBadge")}</span>` : ""}
+      </div>
+      <small>${t("recommendedReplyLabel")}</small>
+      <p>${escapeHtml(item.reply)}</p>
+      <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(item.reply)}">${t("copyLineBtn")}</button>
+      <small>${t("replyReasonLabel")}</small>
+      <p>${escapeHtml(item.reason)}</p>
+    </div>
+  `;
+}
+
+function renderScriptRiskItem(item, index) {
+  return `
+    <div class="script-compact-item risk-compact-item ${index === 0 ? "priority-item" : ""}">
+      <div class="script-item-heading">
+        <strong>${escapeHtml(item)}</strong>
+        ${index === 0 ? `<span>${t("priorityAvoidBadge")}</span>` : ""}
+      </div>
+      <small>${escapeHtml(t("avoidReasonFallback"))}</small>
+    </div>
+  `;
+}
+
+function renderCollapsibleScriptList({ id, items, renderItem, expandKey, collapseKey }) {
+  const visibleItem = items[0];
+  const hiddenItems = items.slice(1);
+  return `
+    <div class="script-collapsible-list">
+      ${renderItem(visibleItem, 0)}
+      ${hiddenItems.length ? `
+        <input class="collapsible-toggle" type="checkbox" id="${id}">
+        <div class="collapsible-extra">
+          ${hiddenItems.map((item, index) => renderItem(item, index + 1)).join("")}
+        </div>
+        <label class="inline-expand" for="${id}">
+          <span class="show-more">${t(expandKey).replace("{count}", hiddenItems.length)}</span>
+          <span class="show-less">${t(collapseKey)}</span>
+        </label>
+      ` : ""}
+    </div>
+  `;
+}
+
+function renderCopyableScripts(communicationAdvice, approachStyle, riskPoints, scenario) {
+  const openingItems = normalizeStringArray(communicationAdvice).length
+    ? normalizeStringArray(communicationAdvice)
+    : [t("emptyAdvice")];
+  const replyItems = buildReplyStrategies(scenario, approachStyle);
+  const riskItems = normalizeStringArray(riskPoints).length
+    ? normalizeStringArray(riskPoints)
+    : [t("emptyRisks")];
+  return `
+    <article class="dashboard-card glass-card script-tabs-card">
+      <h3>${t("copyableScriptsTitle")}</h3>
+      <div class="script-tabs">
+        <input type="radio" id="script-tab-opening" name="script-tabs" checked>
+        <input type="radio" id="script-tab-reply" name="script-tabs">
+        <input type="radio" id="script-tab-avoid" name="script-tabs">
+        <div class="script-tab-labels">
+          <label for="script-tab-opening">${t("tabOpening")}</label>
+          <label for="script-tab-reply">${t("tabReply")}</label>
+          <label for="script-tab-avoid">${t("tabAvoid")}</label>
+        </div>
+        <div class="script-tab-panels">
+          <div class="script-tab-panel script-panel-opening">
+            <div class="action-line-list">
+              ${openingItems.slice(0, 3).map((item) => renderCopyableLine(item)).join("")}
+            </div>
+          </div>
+          <div class="script-tab-panel script-panel-reply">
+            ${renderCollapsibleScriptList({
+              id: "script-reply-more",
+              items: replyItems,
+              renderItem: renderScriptReplyItem,
+              expandKey: "expandMoreReplies",
+              collapseKey: "collapseMoreReplies",
+            })}
+          </div>
+          <div class="script-tab-panel script-panel-avoid">
+            ${renderCollapsibleScriptList({
+              id: "script-avoid-more",
+              items: riskItems.slice(0, 3),
+              renderItem: renderScriptRiskItem,
+              expandKey: "expandMoreAvoids",
+              collapseKey: "collapseMoreAvoids",
+            })}
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function getOpeningReason(data, evidenceItems) {
+  const firstEvidence = evidenceItems.find((item) => item.evidence || item.conclusion);
+  return firstEvidence?.evidence || data.basicProfile?.confidenceReason || data.basicProfile?.personaSummary || t("limitedEvidenceText");
 }
 
 function getReplyFallbacks(scenario) {
@@ -2786,6 +3026,7 @@ function renderVisualReport(data) {
   const evidenceChain = normalizeEvidenceChain(Array.isArray(data.evidenceChain) ? data.evidenceChain : []);
   const openingLine = getOpeningLine(approachStyle, communicationAdvice);
   const evidenceItems = evidenceChain.length ? evidenceChain : [{ conclusion: t("limitedEvidenceText"), evidence: t("emptyEvidenceDesc"), source: t("emptySource") }];
+  const openingReason = getOpeningReason(data, evidenceItems);
 
   visualReportOutput.innerHTML = `
     <div class="dashboard-grid">
@@ -2803,16 +3044,19 @@ function renderVisualReport(data) {
       <article class="dashboard-card glass-card opening-card">
         <h3>${t("openingLineTitle")}</h3>
         ${renderCopyableLine(openingLine, true)}
+        <p class="opening-reason">${escapeHtml(openingReason)}</p>
       </article>
 
-      ${renderActionList(t("communicationAdviceTitle"), communicationAdvice, t("emptyAdvice"))}
-      ${renderReplyStrategies(scenario, approachStyle)}
-      ${renderRiskList(t("riskPointsTitle"), riskPoints, t("emptyRisks"))}
+      ${renderFollowupPanel(data)}
 
-      <article class="dashboard-card glass-card metrics-card">
-        <h3>${escapeHtml(translateScenario(scenario))} · ${t("chartRadarTitle")}</h3>
+      ${renderCopyableScripts(communicationAdvice, approachStyle, riskPoints, scenario)}
+
+      <details class="dashboard-card glass-card metrics-card collapsible-card">
+        <summary>${t("approachSignalSummary")}</summary>
+        <h3>${t("chartRadarTitle")}</h3>
         ${renderSceneMetrics(data)}
-      </article>
+        <button class="inline-collapse collapse-details-btn" type="button">${t("collapseApproachSignals")}</button>
+      </details>
 
       <details class="dashboard-card glass-card evidence-card">
         <summary>${t("evidenceSummaryHint")}</summary>
@@ -2828,7 +3072,6 @@ function renderVisualReport(data) {
         </div>
       </details>
 
-      ${renderFollowupPanel(data)}
     </div>
   `;
 }
@@ -2843,11 +3086,20 @@ async function handleFollowupGenerate(button) {
     return;
   }
   const relationshipContext = compactRelationshipContext(renderedReportData?.relationshipContext || buildRelationshipContext({}, renderedReportData || {}));
+  followupProgressController?.stop();
   button.disabled = true;
   const originalText = button.textContent;
   button.textContent = t("followupLoading");
+  if (output) {
+    output.innerHTML = getFollowupProgressHtml(0);
+    followupProgressController = startStagedProgress({
+      container: output.querySelector(".followup-progress"),
+      stages: getFollowupStages(),
+    });
+  }
   try {
     const result = await runFollowup(relationshipContext, latestReply);
+    followupProgressController?.finish();
     const followupItem = {
       id: createId(),
       createdAt: new Date().toISOString(),
@@ -2856,13 +3108,16 @@ async function handleFollowupGenerate(button) {
     };
     renderedReportData.followups = normalizeFollowupHistory([followupItem, ...(renderedReportData.followups || [])]);
     appendFollowupToHistory(card?.dataset.recordId, relationshipContext, followupItem);
+    await new Promise((resolve) => window.setTimeout(resolve, 420));
     if (output) output.innerHTML = renderFollowupHistory(renderedReportData.followups);
     input.value = "";
     showToast(t("toastFollowupSuccess"));
   } catch (error) {
     console.warn("Followup generation failed:", error);
-    showToast(error?.message || t("errorFollowupFailed"));
+    followupProgressController?.fail(t("errorFollowupFailed"));
+    showToast(t("errorFollowupFailed"));
   } finally {
+    followupProgressController = null;
     button.disabled = false;
     button.textContent = originalText;
   }
@@ -3221,6 +3476,12 @@ visualReportOutput.addEventListener("click", (event) => {
   const followupButton = event.target.closest("#followupGenerateBtn");
   if (followupButton) {
     handleFollowupGenerate(followupButton);
+    return;
+  }
+  const collapseButton = event.target.closest(".collapse-details-btn");
+  if (collapseButton) {
+    const details = collapseButton.closest("details");
+    if (details) details.open = false;
     return;
   }
   const button = event.target.closest("[data-copy-text]");
