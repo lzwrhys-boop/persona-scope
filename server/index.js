@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const express = require("express");
 const { validateReport } = require("./schema");
 const { checkSensitiveRequest } = require("./safety");
-const { ModelClientError, callModel, getModelRuntimeInfo, shouldUseMockModel } = require("./modelClient");
+const { ModelClientError, callFollowup, callModel, getModelRuntimeInfo, shouldUseMockModel } = require("./modelClient");
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -17,6 +17,7 @@ const MAX_TEXT_LENGTHS = {
 };
 const MAX_SOCIAL_IMAGES = 6;
 const MAX_IMAGE_DATA_URL_LENGTH = 4 * 1024 * 1024;
+const MAX_CONTEXT_TEXT_LENGTH = 2400;
 
 function getAllowedOrigins() {
   return String(process.env.ALLOWED_ORIGIN || "")
@@ -117,6 +118,14 @@ function safeText(value, maxLength) {
   return value.trim().slice(0, maxLength);
 }
 
+function safeContextText(value, maxLength) {
+  if (value === undefined || value === null) return "";
+  if (typeof value === "string") return value.trim().slice(0, maxLength);
+  if (typeof value === "number" || typeof value === "boolean") return String(value).slice(0, maxLength);
+  if (Array.isArray(value) || typeof value === "object") return JSON.stringify(value).slice(0, maxLength);
+  return "";
+}
+
 function validateImageDataUrl(value, fieldName) {
   if (!value) return "";
   if (typeof value !== "string") throw new Error(`${fieldName} 图片格式错误`);
@@ -178,6 +187,31 @@ function normalizeInput(body) {
   if (!hasMeaningfulInput) throw new Error("请至少上传照片或填写一个问题");
 
   return input;
+}
+
+function normalizeFollowupInput(body) {
+  const source = body && typeof body === "object" ? body : {};
+  const latestReply = safeText(source.latestReply, 1000);
+  if (!latestReply) throw new Error("请先粘贴对方刚刚回复的话");
+  const rawContext = source.relationshipContext && typeof source.relationshipContext === "object" && !Array.isArray(source.relationshipContext)
+    ? source.relationshipContext
+    : {};
+  return {
+    latestReply,
+    relationshipContext: {
+      targetName: safeText(rawContext.targetName, 120),
+      relationshipStage: safeText(rawContext.relationshipStage, 120),
+      selectedGoals: safeText(rawContext.selectedGoals, 240),
+      selectedStatuses: safeText(rawContext.selectedStatuses, 240),
+      userQuestion: safeText(rawContext.userQuestion, 500),
+      signature: safeText(rawContext.signature, 800),
+      imageInsights: safeText(rawContext.imageInsights, MAX_CONTEXT_TEXT_LENGTH),
+      reportSummary: safeText(rawContext.reportSummary, MAX_CONTEXT_TEXT_LENGTH),
+      evidenceChain: safeContextText(rawContext.evidenceChain, MAX_CONTEXT_TEXT_LENGTH),
+      recommendedTone: safeText(rawContext.recommendedTone, 240),
+      avoidTone: safeText(rawContext.avoidTone, 240),
+    },
+  };
 }
 
 function createMockReport(input) {
@@ -280,6 +314,30 @@ app.post("/api/analyze", requireLogin, async (req, res) => {
     return res.json({ ok: true, data: report, meta: { mockModel: modelResult.useMock } });
   } catch (error) {
     console.warn("Analyze request failed:", error.message);
+    if (error instanceof ModelClientError) {
+      return res.status(502).json({
+        ok: false,
+        code: error.code,
+        message: error.message,
+      });
+    }
+    return res.status(400).json({
+      ok: false,
+      code: "BAD_REQUEST",
+      message: error.message || "请求参数无效",
+    });
+  }
+});
+
+app.post("/api/followup", requireLogin, async (req, res) => {
+  try {
+    console.log("POST /api/followup received", new Date().toISOString());
+    const input = normalizeFollowupInput(req.body);
+    console.log("followup context received:", Boolean(Object.values(input.relationshipContext).some(Boolean)));
+    const modelResult = await callFollowup(input);
+    return res.json({ ok: true, data: modelResult.data, meta: { mockModel: modelResult.useMock } });
+  } catch (error) {
+    console.warn("Followup request failed:", error.message);
     if (error instanceof ModelClientError) {
       return res.status(502).json({
         ok: false,

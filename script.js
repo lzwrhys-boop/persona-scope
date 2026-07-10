@@ -324,6 +324,20 @@ const translations = {
     errorApiRequestFailed: "分析 API 请求失败",
     errorAccessCodeInvalid: "访问码不正确",
     errorAnalysisFailed: "分析失败，请稍后重试",
+    errorFollowupFailed: "暂时生成失败，可以稍后再试。",
+    followupTitle: "对方回复了什么",
+    followupDesc: "粘贴对方刚刚回复的话，我帮你生成下一句接法。",
+    followupPlaceholder: "例如：哈哈哈 / 最近有点忙 / 你怎么突然问这个 / 没事啦",
+    followupButton: "生成下一句",
+    followupLoading: "正在生成...",
+    followupEmptyToast: "请先粘贴对方刚刚回复的话。",
+    followupRecommended: "推荐回复",
+    followupAlternatives: "备选回复",
+    followupWhy: "为什么这样接",
+    followupAvoid: "不建议这样回",
+    continueFollowup: "继续接话",
+    previousFollowups: "之前生成过的接话建议",
+    toastFollowupSuccess: "下一句已生成",
     errorImportJsonFirst: "请先导入报告 JSON 数据。",
     errorJsonParseFailed: "JSON 格式仍无法解析。请检查是否缺少逗号、引号或括号；也可以点击“生成示例报告”对照格式。",
     errorNoJsonObject: "没有检测到 JSON 对象。请导入以 { 开头的 JSON，或直接点击“生成示例报告”查看格式。",
@@ -654,6 +668,20 @@ const translations = {
     errorApiRequestFailed: "Analysis API request failed",
     errorAccessCodeInvalid: "Incorrect access code",
     errorAnalysisFailed: "Analysis failed. Please try again later.",
+    errorFollowupFailed: "Could not generate a reply right now. Please try again later.",
+    followupTitle: "What did they reply?",
+    followupDesc: "Paste their latest reply and I’ll suggest your next line.",
+    followupPlaceholder: "For example: haha / a bit busy lately / why ask this suddenly / it’s fine",
+    followupButton: "Generate Next Line",
+    followupLoading: "Generating...",
+    followupEmptyToast: "Please paste their latest reply first.",
+    followupRecommended: "Recommended Reply",
+    followupAlternatives: "Alternatives",
+    followupWhy: "Why this works",
+    followupAvoid: "What to avoid",
+    continueFollowup: "Continue Chat",
+    previousFollowups: "Previous follow-up suggestions",
+    toastFollowupSuccess: "Next line generated",
     errorImportJsonFirst: "Please import report JSON data first.",
     errorJsonParseFailed: "JSON still cannot be parsed. Check for missing commas, quotes, or brackets, or use the sample report as a reference.",
     errorNoJsonObject: "No JSON object detected. Import JSON starting with {, or generate a sample report.",
@@ -721,6 +749,7 @@ const UNICORN_SDK_URL = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstud
 const MOCK_MODE = false;
 const API_ENDPOINT = "https://persona-scope-api.onrender.com/api/analyze";
 const API_LOGIN_ENDPOINT = "https://persona-scope-api.onrender.com/api/login";
+const API_FOLLOWUP_ENDPOINT = "https://persona-scope-api.onrender.com/api/followup";
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_TOTAL_IMAGE_BYTES = 20 * 1024 * 1024;
 const MAX_SCREENSHOT_COUNT = 6;
@@ -1278,7 +1307,76 @@ function compactReportRecord(record) {
     bigFive: record.bigFive || reportData?.bigFive,
     rawJson: rawJson.length > MAX_HISTORY_RAW_JSON_LENGTH ? fallbackJson : rawJson,
     reportData,
+    relationshipContext: compactRelationshipContext(record.relationshipContext || reportData?.relationshipContext || buildRelationshipContext({}, reportData || {})),
+    followups: normalizeFollowupHistory(record.followups),
   };
+}
+
+function compactRelationshipContext(context) {
+  const evidence = Array.isArray(context?.evidenceChain) ? context.evidenceChain : [];
+  return {
+    targetName: truncateText(context?.targetName || "", 120),
+    relationshipStage: truncateText(context?.relationshipStage || "", 120),
+    selectedGoals: truncateText(context?.selectedGoals || "", 240),
+    selectedStatuses: truncateText(context?.selectedStatuses || "", 240),
+    userQuestion: truncateText(context?.userQuestion || "", 500),
+    signature: truncateText(context?.signature || "", 800),
+    imageInsights: truncateText(context?.imageInsights || "", 1200),
+    reportSummary: truncateText(context?.reportSummary || "", 1200),
+    evidenceChain: evidence.length ? evidence.slice(0, 6).map((item) => ({
+      conclusion: truncateText(item.conclusion || "", 240),
+      evidence: truncateText(item.evidence || "", 500),
+      source: truncateText(item.source || "", 120),
+    })) : truncateText(context?.evidenceChain || "", 1200),
+    recommendedTone: truncateText(context?.recommendedTone || "轻松、低压、暧昧但不油腻", 240),
+    avoidTone: truncateText(context?.avoidTone || "查岗、逼问、表白、连续追问", 240),
+  };
+}
+
+function normalizeFollowupHistory(items) {
+  return (Array.isArray(items) ? items : []).slice(0, 8).map((item) => ({
+    id: item.id || createId(),
+    createdAt: item.createdAt || new Date().toISOString(),
+    latestReply: truncateText(item.latestReply || "", 500),
+    result: normalizeFollowupResult(item.result || item),
+  })).filter((item) => item.result.recommendedReply);
+}
+
+function normalizeFollowupResult(data) {
+  const alternatives = Array.isArray(data?.alternativeReplies) ? data.alternativeReplies : [];
+  return {
+    recommendedReply: String(data?.recommendedReply || "").trim(),
+    alternativeReplies: alternatives.slice(0, 2).map((item, index) => ({
+      label: String(item?.label || (index === 0 ? "轻松一点" : "暧昧一点")).trim(),
+      text: String(item?.text || "").trim(),
+    })).filter((item) => item.text),
+    whyThisWorks: String(data?.whyThisWorks || "").trim(),
+    avoidReply: {
+      text: String(data?.avoidReply?.text || "").trim(),
+      reason: String(data?.avoidReply?.reason || "").trim(),
+    },
+  };
+}
+
+function buildRelationshipContext(input = {}, reportData = {}) {
+  const evidenceChain = normalizeEvidenceChain(reportData.evidenceChain || []);
+  const imageInsights = normalizeStringArray(reportData.avatarVisualCues || []).join("；");
+  return compactRelationshipContext({
+    targetName: input.nickname || "",
+    relationshipStage: input.scenario || reportData.scenario || "",
+    selectedGoals: input.selectedGoal || reportData.selectedGoal || "",
+    selectedStatuses: input.selectedStatus || reportData.selectedStatus || "",
+    userQuestion: input.question || "",
+    signature: input.signature || "",
+    imageInsights,
+    reportSummary: [
+      reportData.basicProfile?.oneSentence,
+      reportData.basicProfile?.personaSummary,
+    ].filter(Boolean).join(" "),
+    evidenceChain,
+    recommendedTone: "轻松、低压、暧昧但不油腻",
+    avoidTone: "查岗、逼问、表白、连续追问",
+  });
 }
 
 function escapeHtml(value) {
@@ -1795,6 +1893,44 @@ async function runAnalysis(payload) {
   return normalizeReportData(result.data);
 }
 
+async function runFollowup(relationshipContext, latestReply) {
+  if (MOCK_MODE) {
+    return normalizeFollowupResult({
+      recommendedReply: "哈哈，你这句回得有点轻，我反而想继续问了",
+      alternativeReplies: [
+        { label: "轻松一点", text: "哈哈行，那我先不追问，留点悬念也挺好" },
+        { label: "暧昧一点", text: "你这样回，我会默认你是在给我留下一句的空间" },
+      ],
+      whyThisWorks: "这句既接住了对方，又没有把聊天推得太紧。",
+      avoidReply: { text: "你到底什么意思？", reason: "这会显得太急，也容易让对方有压力。" },
+    });
+  }
+
+  let response = null;
+  try {
+    response = await fetch(API_FOLLOWUP_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+      body: JSON.stringify({ relationshipContext, latestReply }),
+    });
+  } catch (error) {
+    throw new Error(t("errorFollowupFailed"));
+  }
+
+  const result = await response.json().catch(() => null);
+  if (!response.ok || !result?.ok) {
+    if (response.status === 401) {
+      showLogin(t("errorLoginExpired"));
+      throw new Error(t("errorLoginExpired"));
+    }
+    throw new Error(result?.message || result?.error || t("errorFollowupFailed"));
+  }
+  return normalizeFollowupResult(result.data);
+}
+
 function getFriendlyAnalysisError(error) {
   const message = String(error?.message || "");
   if (/Failed to fetch|NetworkError|Load failed|fetch/i.test(message)) {
@@ -1911,11 +2047,13 @@ async function handleSubmit(event) {
     reportData.scenario = data.scenario;
     reportData.selectedGoal = data.selectedGoal;
     reportData.selectedStatus = data.selectedStatus;
+    reportData.relationshipContext = buildRelationshipContext(data, reportData);
     stopAnalysisLoading();
+    const savedRecord = saveAnalysisHistory(reportData, JSON.stringify(reportData, null, 2), reportData.relationshipContext);
+    if (savedRecord) reportData._historyRecordId = savedRecord.id;
     renderVisualReport(reportData);
     renderAnalysisPreview(reportData);
     promptStatus.textContent = t("promptStatusReady");
-    saveAnalysisHistory(reportData, JSON.stringify(reportData, null, 2));
     jsonError.textContent = "";
     showToast(MOCK_MODE ? t("toastAnalysisMockSuccess") : t("toastAnalysisSuccess"));
   } catch (error) {
@@ -2574,6 +2712,71 @@ function renderReplyStrategies(scenario, approachStyle) {
   `;
 }
 
+function renderFollowupResult(result) {
+  const data = normalizeFollowupResult(result);
+  if (!data.recommendedReply) return "";
+  return `
+    <div class="followup-result">
+      <section>
+        <h4>${t("followupRecommended")}</h4>
+        ${renderCopyableLine(data.recommendedReply, true)}
+      </section>
+      <section>
+        <h4>${t("followupAlternatives")}</h4>
+        <div class="followup-alt-list">
+          ${data.alternativeReplies.map((item) => `
+            <div>
+              <strong>${escapeHtml(item.label)}</strong>
+              <p>${escapeHtml(item.text)}</p>
+              <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(item.text)}">${t("copyLineBtn")}</button>
+            </div>
+          `).join("")}
+        </div>
+      </section>
+      <section>
+        <h4>${t("followupWhy")}</h4>
+        <p>${escapeHtml(data.whyThisWorks)}</p>
+      </section>
+      <section>
+        <h4>${t("followupAvoid")}</h4>
+        <p>${escapeHtml(data.avoidReply.text)}</p>
+        <small>${escapeHtml(data.avoidReply.reason)}</small>
+      </section>
+    </div>
+  `;
+}
+
+function renderFollowupHistory(followups) {
+  const items = normalizeFollowupHistory(followups);
+  if (!items.length) return "";
+  return `
+    <details class="followup-history" open>
+      <summary>${t("previousFollowups")}</summary>
+      ${items.map((item) => `
+        <div class="followup-history-item">
+          <p>${escapeHtml(item.latestReply)}</p>
+          ${renderFollowupResult(item.result)}
+        </div>
+      `).join("")}
+    </details>
+  `;
+}
+
+function renderFollowupPanel(data) {
+  const recordId = data._historyRecordId || "";
+  return `
+    <article class="dashboard-card glass-card followup-card" id="followupCard" data-record-id="${escapeHtml(recordId)}">
+      <h3>${t("followupTitle")}</h3>
+      <p>${t("followupDesc")}</p>
+      <textarea id="followupInput" rows="3" placeholder="${escapeHtml(t("followupPlaceholder"))}"></textarea>
+      <button class="button primary" type="button" id="followupGenerateBtn">${t("followupButton")}</button>
+      <div id="followupOutput">
+        ${renderFollowupHistory(data.followups)}
+      </div>
+    </article>
+  `;
+}
+
 function renderVisualReport(data) {
   renderedReportData = data;
   const scenario = getReportScenario(data);
@@ -2624,12 +2827,65 @@ function renderVisualReport(data) {
           `).join("")}
         </div>
       </details>
+
+      ${renderFollowupPanel(data)}
     </div>
   `;
 }
 
-function saveReportRecord(data, rawJson) {
+async function handleFollowupGenerate(button) {
+  const card = button.closest("#followupCard");
+  const input = card?.querySelector("#followupInput");
+  const output = card?.querySelector("#followupOutput");
+  const latestReply = input?.value.trim() || "";
+  if (!latestReply) {
+    showToast(t("followupEmptyToast"));
+    return;
+  }
+  const relationshipContext = compactRelationshipContext(renderedReportData?.relationshipContext || buildRelationshipContext({}, renderedReportData || {}));
+  button.disabled = true;
+  const originalText = button.textContent;
+  button.textContent = t("followupLoading");
+  try {
+    const result = await runFollowup(relationshipContext, latestReply);
+    const followupItem = {
+      id: createId(),
+      createdAt: new Date().toISOString(),
+      latestReply,
+      result,
+    };
+    renderedReportData.followups = normalizeFollowupHistory([followupItem, ...(renderedReportData.followups || [])]);
+    appendFollowupToHistory(card?.dataset.recordId, relationshipContext, followupItem);
+    if (output) output.innerHTML = renderFollowupHistory(renderedReportData.followups);
+    input.value = "";
+    showToast(t("toastFollowupSuccess"));
+  } catch (error) {
+    console.warn("Followup generation failed:", error);
+    showToast(error?.message || t("errorFollowupFailed"));
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+function appendFollowupToHistory(recordId, relationshipContext, followupItem) {
+  if (!recordId) return;
+  const records = getHistory();
+  const index = records.findIndex((record) => record.id === recordId);
+  if (index === -1) return;
+  const record = records[index];
+  records[index] = {
+    ...record,
+    relationshipContext: compactRelationshipContext(record.relationshipContext || relationshipContext),
+    followups: normalizeFollowupHistory([followupItem, ...(record.followups || [])]),
+  };
+  saveHistory(records);
+  renderHistory();
+}
+
+function saveReportRecord(data, rawJson, relationshipContext = null) {
   const compactData = compactReportData(data);
+  const context = compactRelationshipContext(relationshipContext || data.relationshipContext || buildRelationshipContext({}, data));
   const record = {
     id: createId(),
     type: "report",
@@ -2640,14 +2896,16 @@ function saveReportRecord(data, rawJson) {
     bigFive: data.bigFive,
     rawJson,
     reportData: compactData,
+    relationshipContext: context,
+    followups: normalizeFollowupHistory(data.followups),
   };
   const saved = saveHistory([record, ...getHistory()].slice(0, MAX_HISTORY_RECORDS));
   renderHistory();
-  return saved;
+  return saved ? record : null;
 }
 
-function saveAnalysisHistory(reportData, rawJson) {
-  return saveReportRecord(reportData, rawJson);
+function saveAnalysisHistory(reportData, rawJson, relationshipContext = null) {
+  return saveReportRecord(reportData, rawJson, relationshipContext);
 }
 
 function handleRenderReport() {
@@ -2655,8 +2913,9 @@ function handleRenderReport() {
     jsonError.textContent = "";
     const { data, rawJson } = parseReportJson();
     const normalizedData = normalizeReportData(data);
-    renderVisualReport(normalizedData);
     const saved = saveAnalysisHistory(normalizedData, rawJson);
+    if (saved) normalizedData._historyRecordId = saved.id;
+    renderVisualReport(normalizedData);
     showToast(saved ? t("toastReportImportedSaved") : t("toastReportImportedNoHistory"));
   } catch (error) {
     jsonError.textContent = error.message;
@@ -2669,8 +2928,9 @@ function fillExampleJson() {
   const rawJson = JSON.stringify(normalizedData, null, 2);
   jsonInput.value = rawJson;
   jsonError.textContent = "";
-  renderVisualReport(normalizedData);
   const saved = saveAnalysisHistory(normalizedData, rawJson);
+  if (saved) normalizedData._historyRecordId = saved.id;
+  renderVisualReport(normalizedData);
   showToast(saved ? t("toastSampleSaved") : t("toastSampleNoHistory"));
 }
 
@@ -2748,6 +3008,7 @@ function renderReportHistoryCard(record, date) {
       </ul>
       <div class="history-actions">
         <button class="button small view-report-history" type="button" data-id="${escapeHtml(record.id)}">${t("viewReport")}</button>
+        <button class="button small continue-followup-history" type="button" data-id="${escapeHtml(record.id)}">${t("continueFollowup")}</button>
         <button class="button small danger delete-history" type="button" data-id="${escapeHtml(record.id)}">${t("deleteRecord")}</button>
       </div>
     </article>
@@ -2789,8 +3050,23 @@ function handleHistoryClick(event) {
     return;
   }
   if (button.classList.contains("view-report-history")) {
-    renderVisualReport(record.reportData || normalizeReportData(JSON.parse(record.rawJson)));
+    const reportData = record.reportData || normalizeReportData(JSON.parse(record.rawJson));
+    reportData._historyRecordId = record.id;
+    reportData.relationshipContext = record.relationshipContext || buildRelationshipContext({}, reportData);
+    reportData.followups = normalizeFollowupHistory(record.followups);
+    renderVisualReport(reportData);
     document.querySelector("#visual-report").scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+  if (button.classList.contains("continue-followup-history")) {
+    const reportData = record.reportData || normalizeReportData(JSON.parse(record.rawJson));
+    reportData._historyRecordId = record.id;
+    reportData.relationshipContext = record.relationshipContext || buildRelationshipContext({}, reportData);
+    reportData.followups = normalizeFollowupHistory(record.followups);
+    renderVisualReport(reportData);
+    const followupCard = document.querySelector("#followupCard");
+    followupCard?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => document.querySelector("#followupInput")?.focus(), 250);
     return;
   }
   if (button.classList.contains("copy-json-history")) {
@@ -2942,6 +3218,11 @@ clearJsonBtn.addEventListener("click", clearJsonReport);
 clearHistoryBtn.addEventListener("click", clearAllHistory);
 historyList.addEventListener("click", handleHistoryClick);
 visualReportOutput.addEventListener("click", (event) => {
+  const followupButton = event.target.closest("#followupGenerateBtn");
+  if (followupButton) {
+    handleFollowupGenerate(followupButton);
+    return;
+  }
   const button = event.target.closest("[data-copy-text]");
   if (!button) return;
   copyText(button.dataset.copyText || "");

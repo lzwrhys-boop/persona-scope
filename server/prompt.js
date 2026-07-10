@@ -150,6 +150,47 @@ function buildModelMessages(input, options = {}) {
   };
 }
 
+function buildFollowupMessages(input) {
+  const relationshipContext = input.relationshipContext || {};
+  const latestReply = input.latestReply || "";
+  return {
+    system: [
+      "你是 PersonaScope 的继续接话助手，专门基于已有关系分析上下文和对方最新回复，生成下一句自然、低压、有接话空间的回复。",
+      "你的任务不是重新做关系判断，也不是判断对方是否喜欢用户，而是给出用户下一句可以怎么回。",
+      "回复必须像真实微信聊天：短一点、自然一点、有一点情绪价值和好奇心，可以轻微暧昧但不要油腻。",
+      "禁止：PUA、操控、跪舔、表白、查岗、连续追问、把关系说死、心理诊断、面相、命运、忠诚度、专一度、真心程度。",
+      "只返回一个合法 JSON 对象。不要返回 Markdown。不要返回代码块。不要返回解释文字。",
+    ].join("\n"),
+    developer: [
+      "输出 JSON 结构必须严格为：",
+      JSON.stringify({
+        recommendedReply: "最推荐的一句话，不超过 80 个中文字符",
+        alternativeReplies: [
+          { label: "轻松一点", text: "一条更轻松的回复" },
+          { label: "暧昧一点", text: "一条轻微暧昧但不油腻的回复" },
+        ],
+        whyThisWorks: "一句话解释为什么这样接",
+        avoidReply: {
+          text: "不建议这样回的示例",
+          reason: "为什么不建议",
+        },
+      }, null, 2),
+      "recommendedReply 必须适合直接发送，不超过 80 个中文字符。",
+      "alternativeReplies 必须正好 2 条，label 分别是“轻松一点”和“暧昧一点”。",
+      "whyThisWorks 只能一句话，不要长篇大论。",
+      "avoidReply 要指出一种容易太急、太认真、太像查岗、太暴露需求感或连续追问的回复方式。",
+      "如果对方回复很短，例如“哈哈哈 / 嗯嗯 / 好的 / 再说”，建议用轻松承接，不要追问太多。",
+      "如果对方说最近忙或比较冷淡，建议降压、留空间，不要逼问。",
+      "如果上下文线索有限，也要保持自然和低压，不要编造不存在的截图内容。",
+    ].join("\n"),
+    user: {
+      relationshipContext,
+      latestReply,
+    },
+  };
+}
+
 module.exports = {
   buildModelMessages,
+  buildFollowupMessages,
 };

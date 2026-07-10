@@ -2071,6 +2071,73 @@ textarea:focus {
   color: rgba(200, 250, 255, 0.72);
 }
 
+.followup-card {
+  display: grid;
+  gap: 12px;
+}
+
+.followup-card > p {
+  margin: -4px 0 2px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.followup-card textarea {
+  width: 100%;
+  min-height: 86px;
+  resize: vertical;
+}
+
+.followup-result,
+.followup-history {
+  display: grid;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.followup-result section,
+.followup-history-item {
+  padding: 12px;
+  border: 1px solid rgba(159, 181, 232, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.followup-result h4 {
+  margin: 0 0 8px;
+  color: rgba(245, 248, 255, 0.9);
+  font-size: 13px;
+}
+
+.followup-result p,
+.followup-result small,
+.followup-history-item > p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.followup-alt-list {
+  display: grid;
+  gap: 10px;
+}
+
+.followup-alt-list div {
+  display: grid;
+  gap: 7px;
+}
+
+.followup-alt-list strong {
+  color: rgba(200, 250, 255, 0.82);
+  font-size: 12px;
+}
+
+.followup-history summary {
+  cursor: pointer;
+  color: var(--muted-strong);
+  font-size: 13px;
+}
+
 .result-header {
   position: relative;
   margin-bottom: 20px;
