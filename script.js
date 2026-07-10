@@ -2695,28 +2695,84 @@ function renderBigFiveBars(bigFive) {
   `;
 }
 
-function renderSceneMetrics(data) {
+function compactText(text, maxLength = 72) {
+  const value = String(text || "").trim();
+  return value.length > maxLength ? `${value.slice(0, maxLength)}...` : value;
+}
+
+function getResolvedSceneMetrics(data) {
   const scenario = getReportScenario(data);
   const config = getSceneConfig(scenario);
   const metrics = normalizeSceneMetrics(data.sceneMetrics).length
     ? normalizeSceneMetrics(data.sceneMetrics)
     : buildFallbackSceneMetrics(data, scenario);
+  return { config, metrics };
+}
+
+function getMetricTag(score) {
+  return score >= 76 ? t("metricTagSpecific") : score >= 62 ? t("metricTagWarmup") : t("metricTagSlow");
+}
+
+function renderSceneMetricTiles(metrics, limit = metrics.length, compact = false) {
   return `
-    <div class="scene-framework-note">${escapeHtml(config.theory)}</div>
-    <div class="scene-metric-dashboard">
-      ${metrics.slice(0, 6).map((item) => {
+    <div class="${compact ? "core-signal-grid" : "scene-metric-dashboard"}">
+      ${metrics.slice(0, limit).map((item) => {
         const score = clampScore(item.score);
-        const tag = score >= 76 ? t("metricTagSpecific") : score >= 62 ? t("metricTagWarmup") : t("metricTagSlow");
+        const tag = getMetricTag(score);
         return `
         <div class="scene-metric-tile">
           <span>${escapeHtml(item.label)}</span>
           <strong>${score}</strong>
           <em>${escapeHtml(tag)}</em>
-          <p>${escapeHtml(item.suggestion || item.basis)}</p>
+          <p>${escapeHtml(compact ? compactText(item.suggestion || item.basis, 54) : item.suggestion || item.basis)}</p>
         </div>
       `;
       }).join("")}
     </div>
+  `;
+}
+
+function renderSceneMetrics(data) {
+  const { config, metrics } = getResolvedSceneMetrics(data);
+  return `
+    <div class="scene-framework-note">${escapeHtml(config.theory)}</div>
+    ${renderSceneMetricTiles(metrics, 6)}
+  `;
+}
+
+function renderUnifiedDisclosure({ title, summary, meta, children, className = "" }) {
+  return `
+    <details class="unified-disclosure ${className}">
+      <summary>
+        <span>
+          <strong>${escapeHtml(title)}</strong>
+          <small>${escapeHtml(summary)}</small>
+        </span>
+        ${meta ? `<em>${escapeHtml(meta)}</em>` : ""}
+      </summary>
+      <div class="disclosure-content">
+        ${children}
+      </div>
+    </details>
+  `;
+}
+
+function renderCoreSignals(data) {
+  const { metrics } = getResolvedSceneMetrics(data);
+  const count = Math.min(metrics.length, 4);
+  return `
+    <article class="dashboard-card glass-card signal-summary-card">
+      <h3>${t("chartRadarTitle")}</h3>
+      <p class="card-summary">${currentLanguage === "en" ? "Key approach signals stay visible first; full context is folded below." : "先展示最关键的靠近信号，完整指标与依据收在下方。"}</p>
+      ${renderSceneMetricTiles(metrics, count, true)}
+      ${metrics.length > count ? renderUnifiedDisclosure({
+        title: t("approachSignalSummary"),
+        summary: currentLanguage === "en" ? "Complete signal dimensions and references" : "完整指标、说明与参考框架",
+        meta: currentLanguage === "en" ? `${metrics.length} signals` : `${metrics.length} 项`,
+        children: renderSceneMetrics(data),
+        className: "metrics-disclosure",
+      }) : ""}
+    </article>
   `;
 }
 
@@ -2793,19 +2849,26 @@ function renderScriptRiskItem(item, index) {
 function renderCollapsibleScriptList({ id, items, renderItem, expandKey, collapseKey }) {
   const visibleItem = items[0];
   const hiddenItems = items.slice(1);
+  const expandText = expandKey
+    ? t(expandKey).replace("{count}", hiddenItems.length)
+    : currentLanguage === "en"
+      ? `${hiddenItems.length} more lines`
+      : `还有 ${hiddenItems.length} 条可选话术`;
+  const collapseText = collapseKey
+    ? t(collapseKey)
+    : currentLanguage === "en"
+      ? "Collapse lines"
+      : "收起更多话术";
   return `
     <div class="script-collapsible-list">
       ${renderItem(visibleItem, 0)}
-      ${hiddenItems.length ? `
-        <input class="collapsible-toggle" type="checkbox" id="${id}">
-        <div class="collapsible-extra">
-          ${hiddenItems.map((item, index) => renderItem(item, index + 1)).join("")}
-        </div>
-        <label class="inline-expand" for="${id}">
-          <span class="show-more">${t(expandKey).replace("{count}", hiddenItems.length)}</span>
-          <span class="show-less">${t(collapseKey)}</span>
-        </label>
-      ` : ""}
+      ${hiddenItems.length ? renderUnifiedDisclosure({
+        title: expandText,
+        summary: collapseText,
+        meta: currentLanguage === "en" ? `${hiddenItems.length} hidden` : `${hiddenItems.length} 条`,
+        children: hiddenItems.map((item, index) => renderItem(item, index + 1)).join(""),
+        className: "script-more-disclosure",
+      }) : ""}
     </div>
   `;
 }
@@ -2832,9 +2895,11 @@ function renderCopyableScripts(communicationAdvice, approachStyle, riskPoints, s
         </div>
         <div class="script-tab-panels">
           <div class="script-tab-panel script-panel-opening">
-            <div class="action-line-list">
-              ${openingItems.slice(0, 3).map((item) => renderCopyableLine(item)).join("")}
-            </div>
+            ${renderCollapsibleScriptList({
+              id: "script-opening-more",
+              items: openingItems.slice(0, 3),
+              renderItem: (item) => renderCopyableLine(item),
+            })}
           </div>
           <div class="script-tab-panel script-panel-reply">
             ${renderCollapsibleScriptList({
@@ -2989,17 +3054,18 @@ function renderFollowupResult(result) {
 function renderFollowupHistory(followups) {
   const items = normalizeFollowupHistory(followups);
   if (!items.length) return "";
-  return `
-    <details class="followup-history" open>
-      <summary>${t("previousFollowups")}</summary>
-      ${items.map((item) => `
+  return renderUnifiedDisclosure({
+    title: t("previousFollowups"),
+    summary: currentLanguage === "en" ? "Earlier generated next-line suggestions" : "之前生成过的接话建议",
+    meta: currentLanguage === "en" ? `${items.length} items` : `${items.length} 条`,
+    className: "followup-history",
+    children: items.map((item) => `
         <div class="followup-history-item">
           <p>${escapeHtml(item.latestReply)}</p>
           ${renderFollowupResult(item.result)}
         </div>
-      `).join("")}
-    </details>
-  `;
+      `).join(""),
+  });
 }
 
 function renderFollowupPanel(data) {
@@ -3017,6 +3083,40 @@ function renderFollowupPanel(data) {
   `;
 }
 
+function renderReferenceSummary(data, evidenceItems) {
+  const confidenceText = translateConfidence(data.basicProfile.confidence);
+  const firstEvidence = evidenceItems[0] || {};
+  const summary = firstEvidence.conclusion || firstEvidence.evidence || data.basicProfile.confidenceReason || t("limitedEvidenceText");
+  return `
+    <article class="dashboard-card glass-card reference-card">
+      <h3>${currentLanguage === "en" ? "Clue Sufficiency" : "线索充分度"}</h3>
+      <div class="confidence-strip compact">
+        <span>${t("confidenceLabel")}：${escapeHtml(confidenceText)}</span>
+        <p>${escapeHtml(data.basicProfile.confidenceReason || summary)}</p>
+      </div>
+      ${renderUnifiedDisclosure({
+        title: t("evidenceSummaryHint"),
+        summary,
+        meta: currentLanguage === "en" ? `${evidenceItems.length} refs` : `${evidenceItems.length} 条`,
+        className: "evidence-disclosure",
+        children: `
+          <h3>${t("evidenceChainTitle")}</h3>
+          <div class="evidence-list">
+            ${evidenceItems.map((item) => `
+              <div>
+                <strong>${escapeHtml(item.conclusion || t("emptyConclusion"))}</strong>
+                <p>${escapeHtml(item.evidence || t("emptyEvidence"))}</p>
+                <span>${escapeHtml(item.source || t("emptySource"))}</span>
+              </div>
+            `).join("")}
+          </div>
+        `,
+      })}
+      <p class="report-disclaimer">${escapeHtml(data.disclaimer || t("footerCompliance"))}</p>
+    </article>
+  `;
+}
+
 function renderVisualReport(data) {
   renderedReportData = data;
   const scenario = getReportScenario(data);
@@ -3030,48 +3130,42 @@ function renderVisualReport(data) {
 
   visualReportOutput.innerHTML = `
     <div class="dashboard-grid">
-      <article class="summary-card glass-card">
-        <p class="eyebrow">${t("firstReadTitle")}</p>
-        <h3>${escapeHtml(data.basicProfile.oneSentence)}</h3>
-        <p>${escapeHtml(data.basicProfile.personaSummary)}</p>
-        <div class="confidence-strip">
-          <span>${t("confidenceLabel")}：${escapeHtml(translateConfidence(data.basicProfile.confidence))}</span>
-          <p>${escapeHtml(data.basicProfile.confidenceReason)}</p>
+      <div class="report-top-grid">
+        <div class="report-main-col">
+          <article class="summary-card glass-card">
+            <p class="eyebrow">${t("firstReadTitle")}</p>
+            <h3>${escapeHtml(data.basicProfile.oneSentence)}</h3>
+            ${renderUnifiedDisclosure({
+              title: currentLanguage === "en" ? "Read the relationship note" : "展开关系判断说明",
+              summary: compactText(data.basicProfile.personaSummary, 82),
+              meta: currentLanguage === "en" ? "details" : "说明",
+              className: "summary-disclosure",
+              children: `<p>${escapeHtml(data.basicProfile.personaSummary)}</p>`,
+            })}
+          </article>
+
+          <article class="dashboard-card glass-card opening-card">
+            <h3>${t("openingLineTitle")}</h3>
+            ${renderCopyableLine(openingLine, true)}
+            ${renderUnifiedDisclosure({
+              title: currentLanguage === "en" ? "Why this opening" : "为什么这样开场",
+              summary: compactText(openingReason, 86),
+              meta: currentLanguage === "en" ? "reason" : "依据",
+              className: "opening-reason-disclosure",
+              children: `<p class="opening-reason">${escapeHtml(openingReason)}</p>`,
+            })}
+          </article>
+
+          ${renderCoreSignals(data)}
         </div>
-        <p class="report-disclaimer">${escapeHtml(data.disclaimer || t("footerCompliance"))}</p>
-      </article>
 
-      <article class="dashboard-card glass-card opening-card">
-        <h3>${t("openingLineTitle")}</h3>
-        ${renderCopyableLine(openingLine, true)}
-        <p class="opening-reason">${escapeHtml(openingReason)}</p>
-      </article>
-
-      ${renderFollowupPanel(data)}
+        <aside class="report-side-col">
+          ${renderFollowupPanel(data)}
+          ${renderReferenceSummary(data, evidenceItems)}
+        </aside>
+      </div>
 
       ${renderCopyableScripts(communicationAdvice, approachStyle, riskPoints, scenario)}
-
-      <details class="dashboard-card glass-card metrics-card collapsible-card">
-        <summary>${t("approachSignalSummary")}</summary>
-        <h3>${t("chartRadarTitle")}</h3>
-        ${renderSceneMetrics(data)}
-        <button class="inline-collapse collapse-details-btn" type="button">${t("collapseApproachSignals")}</button>
-      </details>
-
-      <details class="dashboard-card glass-card evidence-card">
-        <summary>${t("evidenceSummaryHint")}</summary>
-        <h3>${t("evidenceChainTitle")}</h3>
-        <div class="evidence-list">
-          ${evidenceItems.slice(0, 4).map((item) => `
-            <div>
-              <strong>${escapeHtml(item.conclusion || t("emptyConclusion"))}</strong>
-              <p>${escapeHtml(item.evidence || t("emptyEvidence"))}</p>
-              <span>${escapeHtml(item.source || t("emptySource"))}</span>
-            </div>
-          `).join("")}
-        </div>
-      </details>
-
     </div>
   `;
 }
