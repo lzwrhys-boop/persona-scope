@@ -111,6 +111,10 @@ const translations = {
     scenarioSelf: "想重新靠近",
     goalLabel: "你想知道",
     statusLabel: "当前互动",
+    scenarioHelper: "你们现在处在什么关系位置",
+    goalHelper: "这次你最想解决的问题",
+    statusHelper: "最近你们的互动状态",
+    multiSelectHint: "可多选",
     clueCompletenessLabel: "线索完整度",
     clueCompletenessLow: "线索较少",
     clueCompletenessInitial: "可初步解读",
@@ -120,6 +124,12 @@ const translations = {
     clueCompletenessHintInitial: "可以生成基础建议，补充截图后会更具体",
     clueCompletenessHintEnough: "已具备较完整的关系线索，建议会更贴近当前互动",
     clueCompletenessHintDeep: "当前线索完整，生成的开场建议会更具体",
+    clueMissingPhoto: "补充一张清晰照片 可提升第一眼判断",
+    clueMissingScreenshot: "补充社交截图 可让开场建议更贴近真实内容",
+    clueMissingQuestion: "写下你最想知道的问题 建议会更聚焦",
+    clueMissingSignature: "补充个性签名 可帮助判断表达风格",
+    clueMissingNickname: "补充昵称或账号名 可让报告更贴近具体对象",
+    clueMissingComplete: "当前线索较完整 可以生成更具体的靠近建议",
     questionLabel: "你想了解什么？",
     questionPlaceholder: "比如“我该怎么自然开场？”",
     generatePromptBtn: "开始分析",
@@ -431,6 +441,10 @@ const translations = {
     scenarioSelf: "Want to Reconnect",
     goalLabel: "What You Want to Know",
     statusLabel: "Current Interaction",
+    scenarioHelper: "Where the relationship stands right now",
+    goalHelper: "The question you most want to solve",
+    statusHelper: "How the interaction has felt recently",
+    multiSelectHint: "Multi-select",
     clueCompletenessLabel: "Clue Completeness",
     clueCompletenessLow: "Limited clues",
     clueCompletenessInitial: "Ready for an initial read",
@@ -440,6 +454,12 @@ const translations = {
     clueCompletenessHintInitial: "Basic suggestions are ready. Screenshots will make them more specific",
     clueCompletenessHintEnough: "The relationship clues are fairly complete, so suggestions can fit the current interaction better",
     clueCompletenessHintDeep: "The current clues are complete enough for more specific opening suggestions",
+    clueMissingPhoto: "Add a clear photo to improve the first read",
+    clueMissingScreenshot: "Add social screenshots to make opening lines fit the real context",
+    clueMissingQuestion: "Write the question you care about most for sharper suggestions",
+    clueMissingSignature: "Add a bio or signature to clarify expression style",
+    clueMissingNickname: "Add a name or account to make the report feel more specific",
+    clueMissingComplete: "The clues are fairly complete and ready for more specific suggestions",
     questionLabel: "What do you want to understand?",
     questionPlaceholder: "For example: “How can I start naturally?”",
     generatePromptBtn: "Start Analysis",
@@ -672,6 +692,7 @@ const clueCompletenessPercent = document.querySelector("#clueCompletenessPercent
 const clueCompletenessBar = document.querySelector("#clueCompletenessBar");
 const clueCompletenessStatus = document.querySelector("#clueCompletenessStatus");
 const clueCompletenessHint = clueCompleteness?.querySelector("[data-i18n='clueCompletenessHint']");
+const clueMissingHint = document.querySelector("#clueMissingHint");
 const promptOutput = document.querySelector("#promptOutput");
 const promptStatus = document.querySelector("#promptStatus");
 const analysisPreview = document.querySelector("#analysisPreview");
@@ -1421,6 +1442,15 @@ function getClueCompletenessHint(percent) {
   return t("clueCompletenessHint");
 }
 
+function getMissingClueHint() {
+  if (!avatarDataUrl) return t("clueMissingPhoto");
+  if (!socialScreenshots.length) return t("clueMissingScreenshot");
+  if (!hasValidQuestionInput()) return t("clueMissingQuestion");
+  if (!hasValidLongTextInput(signatureInput)) return t("clueMissingSignature");
+  if (!hasAnyTextInput(nicknameInput)) return t("clueMissingNickname");
+  return t("clueMissingComplete");
+}
+
 function updateClueCompleteness() {
   if (!clueCompleteness || !clueCompletenessPercent || !clueCompletenessBar || !clueCompletenessStatus) return;
   const percent = getClueCompleteness();
@@ -1428,6 +1458,7 @@ function updateClueCompleteness() {
   clueCompletenessBar.style.width = `${percent}%`;
   clueCompletenessStatus.textContent = getClueCompletenessStatus(percent);
   if (clueCompletenessHint) clueCompletenessHint.textContent = getClueCompletenessHint(percent);
+  if (clueMissingHint) clueMissingHint.textContent = getMissingClueHint();
   clueCompleteness.dataset.level = percent >= 81 ? "deep" : percent >= 56 ? "enough" : percent >= 31 ? "initial" : "low";
 }
 

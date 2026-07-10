@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="PersonaScope 是一个基于画面公开呈现的沟通画像生成器。">
   <title>PersonaScope | 沟通画像生成器</title>
-  <link rel="stylesheet" href="style.css?v=bg3">
+  <link rel="stylesheet" href="style.css?v=clue-panel1">
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -223,6 +223,7 @@
 
           <fieldset class="scenario-group">
             <legend data-i18n="scenarioLabel">关系阶段</legend>
+            <p class="selection-helper" data-i18n="scenarioHelper">你们现在处在什么关系位置</p>
             <label><input type="radio" name="scenario" value="刚认识"><span data-i18n="scenarioJustMet">刚认识</span></label>
             <label><input type="radio" name="scenario" value="聊过几次"><span data-i18n="scenarioTalked">聊过几次</span></label>
             <label><input type="radio" name="scenario" value="暧昧中"><span data-i18n="scenarioFlirting">暧昧中</span></label>
@@ -231,12 +232,14 @@
           </fieldset>
 
           <fieldset class="goal-group">
-            <legend data-i18n="goalLabel">你想知道</legend>
+            <legend><span data-i18n="goalLabel">你想知道</span><small data-i18n="multiSelectHint">可多选</small></legend>
+            <p class="selection-helper" data-i18n="goalHelper">这次你最想解决的问题</p>
             <div class="goal-options" id="goalOptions" aria-live="polite"></div>
           </fieldset>
 
           <fieldset class="goal-group status-group">
-            <legend data-i18n="statusLabel">当前互动</legend>
+            <legend><span data-i18n="statusLabel">当前互动</span><small data-i18n="multiSelectHint">可多选</small></legend>
+            <p class="selection-helper" data-i18n="statusHelper">最近你们的互动状态</p>
             <div class="goal-options status-options" id="statusOptions" aria-live="polite"></div>
           </fieldset>
 
@@ -252,6 +255,7 @@
               <strong id="clueCompletenessStatus" data-i18n="clueCompletenessLow">线索较少</strong>
               <span data-i18n="clueCompletenessHint">建议至少上传一张照片并选择当前关系阶段</span>
             </p>
+            <p class="clue-missing-hint" id="clueMissingHint">补充一张清晰照片 可提升第一眼判断</p>
           </div>
 
           <label>
@@ -499,6 +503,6 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="script.js?v=clue5"></script>
+  <script src="script.js?v=clue-panel1"></script>
 </body>
 </html>
