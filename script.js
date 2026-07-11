@@ -211,7 +211,7 @@ const translations = {
     collapseMoreAvoids: "收起更多避坑",
     avoidReasonFallback: "这类表达容易显得太急、太认真或太有压迫感。",
     approachSignalSummary: "展开查看靠近信号",
-    collapseApproachSignals: "收起靠近信号",
+    collapseApproachSignals: "收起至核心指标",
     evidenceChainTitle: "本次参考的线索",
     firstReadTitle: "第一眼信号",
     openingLineTitle: "推荐开场",
@@ -603,7 +603,7 @@ const translations = {
     collapseMoreAvoids: "Collapse avoid list",
     avoidReasonFallback: "This can feel too urgent, too serious, or too pressuring.",
     approachSignalSummary: "Expand approach signals",
-    collapseApproachSignals: "Collapse approach signals",
+    collapseApproachSignals: "Show core signals",
     evidenceChainTitle: "Signals Referenced",
     firstReadTitle: "First Signal",
     openingLineTitle: "Recommended Opening",
@@ -2961,11 +2961,11 @@ function getMetricTag(score) {
 function renderSceneMetricTiles(metrics, limit = metrics.length, compact = false) {
   return `
     <div class="${compact ? "core-signal-grid" : "scene-metric-dashboard"}">
-      ${metrics.slice(0, limit).map((item) => {
+      ${metrics.slice(0, limit).map((item, index) => {
         const score = clampScore(item.score);
         const tag = getMetricTag(score);
         return `
-        <div class="scene-metric-tile">
+        <div class="scene-metric-tile${compact && index >= 4 ? " extra-signal-tile" : ""}">
           <span>${escapeHtml(item.label)}</span>
           <strong>${score}</strong>
           <em>${escapeHtml(tag)}</em>
@@ -3009,14 +3009,16 @@ function renderCoreSignals(data) {
     <article class="dashboard-card glass-card signal-summary-card">
       <h3>${t("chartRadarTitle")}</h3>
       <p class="card-summary">${currentLanguage === "en" ? "Key approach signals stay visible first; full context is folded below." : "先展示最关键的靠近信号，完整指标与依据收在下方。"}</p>
-      ${renderSceneMetricTiles(metrics, count, true)}
-      ${metrics.length > count ? renderUnifiedDisclosure({
-        title: t("approachSignalSummary"),
-        summary: currentLanguage === "en" ? "Complete signal dimensions and references" : "完整指标、说明与参考框架",
-        meta: currentLanguage === "en" ? `${metrics.length} signals` : `${metrics.length} 项`,
-        children: renderSceneMetrics(data),
-        className: "metrics-disclosure",
-      }) : ""}
+      ${metrics.length > count ? `
+        <input class="signal-toggle" type="checkbox" id="approachSignalToggle">
+      ` : ""}
+      ${renderSceneMetricTiles(metrics, Math.min(metrics.length, 6), true)}
+      ${metrics.length > count ? `
+        <label class="inline-expand signal-toggle-label" for="approachSignalToggle">
+          <span class="show-more">${currentLanguage === "en" ? `Expand all ${Math.min(metrics.length, 6)} signals` : `展开全部 ${Math.min(metrics.length, 6)} 项`}</span>
+          <span class="show-less">${t("collapseApproachSignals")}</span>
+        </label>
+      ` : ""}
     </article>
   `;
 }

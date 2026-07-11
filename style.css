@@ -2844,6 +2844,40 @@ pre {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.signal-toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.core-signal-grid .extra-signal-tile {
+  display: none;
+}
+
+.signal-toggle:checked + .core-signal-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.signal-toggle:checked + .core-signal-grid .extra-signal-tile {
+  display: grid;
+}
+
+.signal-toggle-label {
+  margin-top: 2px;
+}
+
+.signal-toggle-label .show-less {
+  display: none;
+}
+
+.signal-toggle:checked ~ .signal-toggle-label .show-more {
+  display: none;
+}
+
+.signal-toggle:checked ~ .signal-toggle-label .show-less {
+  display: inline;
+}
+
 .scene-metric-tile {
   display: grid;
   gap: 7px;
@@ -3489,14 +3523,6 @@ pre {
   width: 100%;
 }
 
-.metrics-disclosure .scene-framework-note {
-  margin-bottom: 0;
-}
-
-.metrics-disclosure .scene-metric-dashboard {
-  margin-top: 0;
-}
-
 .evidence-disclosure h3 {
   margin: 0;
   font-size: 16px;
@@ -4069,6 +4095,10 @@ pre {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .signal-toggle:checked + .core-signal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .copy-line-btn {
     justify-self: start;
   }
@@ -4180,6 +4210,10 @@ pre {
   }
 
   .core-signal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .signal-toggle:checked + .core-signal-grid {
     grid-template-columns: 1fr;
   }
 
