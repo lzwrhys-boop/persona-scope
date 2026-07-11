@@ -2090,6 +2090,97 @@ textarea:focus {
   resize: vertical;
 }
 
+.latest-followup-block,
+.followup-history-compact,
+.followup-summary-list {
+  display: grid;
+  gap: 12px;
+}
+
+.latest-followup-block {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(159, 181, 232, 0.1);
+}
+
+.latest-followup-block h4,
+.followup-history-compact h4 {
+  margin: 0;
+  color: rgba(245, 248, 255, 0.9);
+  font-size: 13px;
+}
+
+.followup-latest-reply {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(159, 181, 232, 0.1);
+  border-radius: 12px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.followup-summary-item {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(159, 181, 232, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.024);
+}
+
+.followup-summary-item.expanded {
+  border-color: rgba(95, 244, 255, 0.2);
+  background: rgba(95, 244, 255, 0.035);
+}
+
+.followup-summary-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: rgba(154, 168, 197, 0.74);
+  font-size: 11px;
+}
+
+.followup-summary-head span {
+  color: rgba(200, 250, 255, 0.74);
+  white-space: nowrap;
+}
+
+.followup-reply-summary,
+.followup-recommend-summary {
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.followup-reply-summary {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.followup-recommend-summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.followup-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.followup-summary-detail {
+  display: grid;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(159, 181, 232, 0.1);
+}
+
 .followup-result,
 .followup-history {
   display: grid;
@@ -2644,6 +2735,23 @@ pre {
 
 .report-side-col {
   grid-column: span 4;
+  position: sticky;
+  top: 92px;
+  max-height: calc(100vh - 112px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(95, 244, 255, 0.26) transparent;
+}
+
+.report-side-col::-webkit-scrollbar {
+  width: 6px;
+}
+
+.report-side-col::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(95, 244, 255, 0.24);
 }
 
 .summary-card,
@@ -3750,6 +3858,13 @@ pre {
   .report-main-col,
   .report-side-col {
     grid-column: auto;
+  }
+
+  .report-side-col {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
   }
 
   .hero {

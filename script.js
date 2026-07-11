@@ -373,6 +373,17 @@ const translations = {
     followupAlternatives: "备选回复",
     followupWhy: "为什么这样接",
     followupAvoid: "不建议这样回",
+    latestFollowupTitle: "最近一次接话结果",
+    followupHistoryTitle: "历史接话记录",
+    followupViewDetail: "查看详情",
+    followupCollapseDetail: "收起详情",
+    followupDeleteOne: "删除本条",
+    followupShowAll: "查看全部接话记录（{count}）",
+    followupShowLess: "收起到最近 3 条",
+    followupCopiedState: "已复制",
+    followupUsedState: "已使用",
+    followupUsefulState: "有用",
+    followupUnsuitableState: "不太适合",
     continueFollowup: "继续接话",
     previousFollowups: "之前生成过的接话建议",
     toastFollowupSuccess: "下一句已生成",
@@ -754,6 +765,17 @@ const translations = {
     followupAlternatives: "Alternatives",
     followupWhy: "Why this works",
     followupAvoid: "What to avoid",
+    latestFollowupTitle: "Latest Next-Line Result",
+    followupHistoryTitle: "Reply History",
+    followupViewDetail: "View Detail",
+    followupCollapseDetail: "Collapse",
+    followupDeleteOne: "Delete",
+    followupShowAll: "View All Reply Records ({count})",
+    followupShowLess: "Show Recent 3",
+    followupCopiedState: "Copied",
+    followupUsedState: "Used",
+    followupUsefulState: "Useful",
+    followupUnsuitableState: "Not quite",
     continueFollowup: "Continue Chat",
     previousFollowups: "Previous follow-up suggestions",
     toastFollowupSuccess: "Next line generated",
@@ -1066,6 +1088,8 @@ let renderedReportData = null;
 let loadingStageTimer = null;
 let analysisProgressController = null;
 let followupProgressController = null;
+let expandedFollowupId = "";
+let visibleFollowupCount = 3;
 
 function t(key, replacements = {}) {
   const value = translations[currentLanguage]?.[key] ?? translations.zh[key] ?? key;
@@ -1387,7 +1411,16 @@ async function UnicornBackground() {
 function getHistory() {
   try {
     const records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    return Array.isArray(records) ? records : [];
+    if (!Array.isArray(records)) return [];
+    const compactRecords = records.map(compactHistoryRecord).slice(0, MAX_HISTORY_RECORDS);
+    if (JSON.stringify(records) !== JSON.stringify(compactRecords)) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(compactRecords));
+      } catch (migrationError) {
+        console.warn("历史记录迁移保存失败，将继续使用内存中的精简记录。", migrationError);
+      }
+    }
+    return compactRecords;
   } catch (error) {
     console.warn("历史记录解析失败，已重置。", error);
     localStorage.removeItem(STORAGE_KEY);
@@ -1499,12 +1532,22 @@ function compactRelationshipContext(context) {
 }
 
 function normalizeFollowupHistory(items) {
-  return (Array.isArray(items) ? items : []).slice(0, 8).map((item) => ({
-    id: item.id || createId(),
-    createdAt: item.createdAt || new Date().toISOString(),
-    latestReply: truncateText(item.latestReply || "", 500),
-    result: normalizeFollowupResult(item.result || item),
-  })).filter((item) => item.result.recommendedReply);
+  return (Array.isArray(items) ? items : []).slice(0, 30).map((item, index) => {
+    const result = normalizeFollowupResult(item.result || item);
+    const normalized = {
+      id: item.id || createId(),
+      createdAt: item.createdAt || new Date().toISOString(),
+      latestReply: truncateText(item.latestReply || "", index < 10 ? 500 : 180),
+      recommendedReply: truncateText(item.recommendedReply || result.recommendedReply || "", index < 10 ? 500 : 180),
+      alternativeReplies: index < 10 ? result.alternativeReplies : [],
+      whyThisWorks: index < 10 ? truncateText(item.whyThisWorks || result.whyThisWorks || "", 500) : "",
+      avoidReply: index < 10 ? normalizeFollowupResult({ avoidReply: item.avoidReply || result.avoidReply }).avoidReply : { text: "", reason: "" },
+      feedback: ["useful", "unsuitable", "used"].includes(item.feedback) ? item.feedback : "",
+      copiedAt: item.copiedAt || "",
+      usedAt: item.usedAt || "",
+    };
+    return normalized;
+  }).filter((item) => item.recommendedReply);
 }
 
 function normalizeFollowupResult(data) {
@@ -1626,6 +1669,46 @@ function recordScriptCopy(text, sourceType) {
   }, "copiedCount");
 }
 
+function updateCurrentFollowup(followupId, patch = {}) {
+  if (!renderedReportData || !followupId) return;
+  renderedReportData.followups = normalizeFollowupHistory(renderedReportData.followups).map((item) => (
+    item.id === followupId ? { ...item, ...patch } : item
+  ));
+  const recordId = renderedReportData._historyRecordId;
+  if (!recordId) return;
+  const records = getHistory();
+  const index = records.findIndex((record) => record.id === recordId);
+  if (index === -1) return;
+  records[index] = {
+    ...records[index],
+    followups: renderedReportData.followups,
+  };
+  saveHistory(records);
+  renderHistory();
+}
+
+function deleteCurrentFollowup(followupId) {
+  if (!renderedReportData || !followupId) return;
+  renderedReportData.followups = normalizeFollowupHistory(renderedReportData.followups).filter((item) => item.id !== followupId);
+  if (expandedFollowupId === followupId) expandedFollowupId = "";
+  updateCurrentFollowupStorage();
+  renderVisualReport(renderedReportData);
+}
+
+function updateCurrentFollowupStorage() {
+  const recordId = renderedReportData?._historyRecordId;
+  if (!recordId) return;
+  const records = getHistory();
+  const index = records.findIndex((record) => record.id === recordId);
+  if (index === -1) return;
+  records[index] = {
+    ...records[index],
+    followups: normalizeFollowupHistory(renderedReportData.followups),
+  };
+  saveHistory(records);
+  renderHistory();
+}
+
 function recordScriptFeedback(text, sourceType, feedback) {
   const existing = getScriptFeedbackEntry(text, sourceType);
   const now = new Date().toISOString();
@@ -1653,7 +1736,8 @@ function getFeedbackPayloadFromElement(element) {
   const root = element.closest(".script-feedback") || element.closest("[data-script-source-type]");
   const text = root?.dataset.scriptText || element.dataset.copyText || "";
   const sourceType = root?.dataset.scriptSourceType || element.dataset.scriptSourceType || "suggestion";
-  return { text, sourceType };
+  const followupId = root?.dataset.followupId || element.dataset.followupId || "";
+  return { text, sourceType, followupId };
 }
 
 function buildRelationshipContext(input = {}, reportData = {}) {
@@ -2942,14 +3026,14 @@ function getOpeningLine(approachStyle, communicationAdvice) {
   return candidates.find((item) => /“|”|"|「|」|可以|建议|先|Hi|Hello|你好|我/.test(item)) || candidates[0] || t("emptyApproach");
 }
 
-function renderScriptFeedbackControls(line, sourceType) {
+function renderScriptFeedbackControls(line, sourceType, options = {}) {
   if (!sourceType) return "";
   const entry = getScriptFeedbackEntry(line, sourceType);
   const id = getScriptFeedbackId(sourceType, line);
   const feedback = entry?.feedback || "";
   const followup = entry?.followupResult;
   return `
-    <div class="script-feedback" data-script-id="${escapeHtml(id)}" data-script-source-type="${escapeHtml(sourceType)}" data-script-text="${escapeHtml(line)}">
+    <div class="script-feedback" data-script-id="${escapeHtml(id)}" data-script-source-type="${escapeHtml(sourceType)}" data-script-text="${escapeHtml(line)}" data-followup-id="${escapeHtml(options.followupId || "")}">
       <div class="script-feedback-actions" aria-label="${currentLanguage === "en" ? "Line feedback" : "话术反馈"}">
         ${entry?.copiedAt ? `<span class="script-feedback-status">${t("feedbackCopied")}</span>` : ""}
         <button class="feedback-chip ${feedback === "useful" ? "active" : ""}" type="button" data-feedback-value="useful">${t("feedbackUseful")}</button>
@@ -2977,11 +3061,12 @@ function renderScriptFeedbackControls(line, sourceType) {
 
 function renderCopyableLine(line, prominent = false, options = {}) {
   const sourceType = options.sourceType || "";
+  const followupId = options.followupId || "";
   return `
     <div class="${prominent ? "opening-line-box" : "copyable-line"}">
       <p>${escapeHtml(line)}</p>
-      <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(line)}" data-script-source-type="${escapeHtml(sourceType)}">${t("copyLineBtn")}</button>
-      ${options.withFeedback === false ? "" : renderScriptFeedbackControls(line, sourceType)}
+      <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(line)}" data-script-source-type="${escapeHtml(sourceType)}" data-followup-id="${escapeHtml(followupId)}">${t("copyLineBtn")}</button>
+      ${options.withFeedback === false ? "" : renderScriptFeedbackControls(line, sourceType, { followupId })}
     </div>
   `;
 }
@@ -3216,12 +3301,13 @@ function renderReplyStrategies(scenario, approachStyle) {
 function renderFollowupResult(result, options = {}) {
   const data = normalizeFollowupResult(result);
   const withFeedback = options.withFeedback !== false;
+  const followupId = options.followupId || "";
   if (!data.recommendedReply) return "";
   return `
     <div class="followup-result">
       <section>
         <h4>${t("followupRecommended")}</h4>
-        ${renderCopyableLine(data.recommendedReply, true, { sourceType: "followup", withFeedback })}
+        ${renderCopyableLine(data.recommendedReply, true, { sourceType: "followup", withFeedback, followupId })}
       </section>
       <section>
         <h4>${t("followupAlternatives")}</h4>
@@ -3229,7 +3315,7 @@ function renderFollowupResult(result, options = {}) {
           ${data.alternativeReplies.map((item) => `
             <div>
               <strong>${escapeHtml(item.label)}</strong>
-              ${renderCopyableLine(item.text, false, { sourceType: "followup", withFeedback })}
+              ${renderCopyableLine(item.text, false, { sourceType: "followup", withFeedback, followupId })}
             </div>
           `).join("")}
         </div>
@@ -3250,18 +3336,58 @@ function renderFollowupResult(result, options = {}) {
 function renderFollowupHistory(followups) {
   const items = normalizeFollowupHistory(followups);
   if (!items.length) return "";
-  return renderUnifiedDisclosure({
-    title: t("previousFollowups"),
-    summary: currentLanguage === "en" ? "Earlier generated next-line suggestions" : "之前生成过的接话建议",
-    meta: currentLanguage === "en" ? `${items.length} items` : `${items.length} 条`,
-    className: "followup-history",
-    children: items.map((item) => `
-        <div class="followup-history-item">
-          <p>${escapeHtml(item.latestReply)}</p>
-          ${renderFollowupResult(item.result)}
+  const latest = items[0];
+  const historyItems = items.slice(1);
+  const visibleItems = historyItems.slice(0, visibleFollowupCount);
+  return `
+    <div class="latest-followup-block">
+      <h4>${t("latestFollowupTitle")}</h4>
+      <p class="followup-latest-reply">${t("usedReplyLatest")}：${escapeHtml(latest.latestReply)}</p>
+      ${renderFollowupResult(latest, { followupId: latest.id })}
+    </div>
+    ${historyItems.length ? `
+      <div class="followup-history-compact">
+        <h4>${t("followupHistoryTitle")}</h4>
+        <div class="followup-summary-list">
+          ${visibleItems.map(renderFollowupSummaryItem).join("")}
         </div>
-      `).join(""),
-  });
+        ${historyItems.length > 3 ? `
+          <button class="inline-expand followup-show-more" type="button" data-followup-toggle-more="true">
+            ${visibleFollowupCount >= historyItems.length ? t("followupShowLess") : t("followupShowAll", { count: historyItems.length })}
+          </button>
+        ` : ""}
+      </div>
+    ` : ""}
+  `;
+}
+
+function getFollowupStatusLabels(item) {
+  return [
+    item.copiedAt ? t("followupCopiedState") : "",
+    item.usedAt || item.feedback === "used" ? t("followupUsedState") : "",
+    item.feedback === "useful" ? t("followupUsefulState") : "",
+    item.feedback === "unsuitable" ? t("followupUnsuitableState") : "",
+  ].filter(Boolean);
+}
+
+function renderFollowupSummaryItem(item) {
+  const isExpanded = expandedFollowupId === item.id;
+  const statusLabels = getFollowupStatusLabels(item);
+  return `
+    <article class="followup-summary-item ${isExpanded ? "expanded" : ""}" data-followup-id="${escapeHtml(item.id)}">
+      <div class="followup-summary-head">
+        <time datetime="${escapeHtml(item.createdAt)}">${new Date(item.createdAt).toLocaleString(currentLanguage === "en" ? "en-US" : "zh-CN")}</time>
+        ${statusLabels.length ? `<span>${escapeHtml(statusLabels.join(" · "))}</span>` : ""}
+      </div>
+      <p class="followup-reply-summary">${escapeHtml(item.latestReply)}</p>
+      <p class="followup-recommend-summary">${escapeHtml(item.recommendedReply)}</p>
+      <div class="followup-summary-actions">
+        <button class="button small followup-detail-btn" type="button" data-followup-id="${escapeHtml(item.id)}">${isExpanded ? t("followupCollapseDetail") : t("followupViewDetail")}</button>
+        <button class="button small danger followup-delete-btn" type="button" data-followup-id="${escapeHtml(item.id)}">${t("followupDeleteOne")}</button>
+      </div>
+      ${isExpanded ? `<div class="followup-summary-detail">${renderFollowupResult(item, { followupId: item.id })}</div>` : ""}
+    </article>
+  `;
 }
 
 function renderFollowupPanel(data) {
@@ -3394,9 +3520,11 @@ async function handleFollowupGenerate(button) {
       id: createId(),
       createdAt: new Date().toISOString(),
       latestReply,
-      result,
+      ...normalizeFollowupResult(result),
     };
     renderedReportData.followups = normalizeFollowupHistory([followupItem, ...(renderedReportData.followups || [])]);
+    expandedFollowupId = "";
+    visibleFollowupCount = 3;
     appendFollowupToHistory(card?.dataset.recordId, relationshipContext, followupItem);
     incrementFeedbackStat("followupCount");
     await new Promise((resolve) => window.setTimeout(resolve, 420));
@@ -3831,6 +3959,25 @@ visualReportOutput.addEventListener("click", (event) => {
     handleFollowupGenerate(followupButton);
     return;
   }
+  const followupMoreButton = event.target.closest("[data-followup-toggle-more]");
+  if (followupMoreButton) {
+    const count = Math.max(0, normalizeFollowupHistory(renderedReportData?.followups).length - 1);
+    visibleFollowupCount = visibleFollowupCount >= count ? 3 : Math.min(count, visibleFollowupCount + 5);
+    renderVisualReport(renderedReportData);
+    return;
+  }
+  const followupDetailButton = event.target.closest(".followup-detail-btn");
+  if (followupDetailButton) {
+    const id = followupDetailButton.dataset.followupId || "";
+    expandedFollowupId = expandedFollowupId === id ? "" : id;
+    renderVisualReport(renderedReportData);
+    return;
+  }
+  const followupDeleteButton = event.target.closest(".followup-delete-btn");
+  if (followupDeleteButton) {
+    deleteCurrentFollowup(followupDeleteButton.dataset.followupId || "");
+    return;
+  }
   const usedReplyButton = event.target.closest(".used-reply-btn");
   if (usedReplyButton) {
     handleUsedReplyGenerate(usedReplyButton);
@@ -3838,9 +3985,16 @@ visualReportOutput.addEventListener("click", (event) => {
   }
   const feedbackButton = event.target.closest("[data-feedback-value]");
   if (feedbackButton) {
-    const { text, sourceType } = getFeedbackPayloadFromElement(feedbackButton);
+    const { text, sourceType, followupId } = getFeedbackPayloadFromElement(feedbackButton);
     if (text) {
-      recordScriptFeedback(text, sourceType, feedbackButton.dataset.feedbackValue);
+      const feedback = feedbackButton.dataset.feedbackValue;
+      recordScriptFeedback(text, sourceType, feedback);
+      if (followupId) {
+        updateCurrentFollowup(followupId, {
+          feedback,
+          usedAt: feedback === "used" ? new Date().toISOString() : getScriptFeedbackEntry(text, sourceType)?.usedAt || "",
+        });
+      }
       renderVisualReport(renderedReportData);
     }
     return;
@@ -3855,6 +4009,7 @@ visualReportOutput.addEventListener("click", (event) => {
   if (!button) return;
   if (button.dataset.scriptSourceType) {
     recordScriptCopy(button.dataset.copyText || "", button.dataset.scriptSourceType);
+    if (button.dataset.followupId) updateCurrentFollowup(button.dataset.followupId, { copiedAt: new Date().toISOString() });
     renderVisualReport(renderedReportData);
   }
   copyText(button.dataset.copyText || "");
