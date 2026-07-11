@@ -3975,20 +3975,33 @@ pre {
   }
 
   .site-header {
+    gap: 10px;
     padding: 16px 0;
   }
 
   .brand {
+    min-width: 0;
+    flex: 1 1 auto;
     font-size: 16px;
+  }
+
+  .brand span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .menu-toggle {
     display: inline-flex;
     align-items: center;
+    min-height: 38px;
+    padding: 0 10px;
   }
 
   .header-actions {
-    gap: 8px;
+    flex: 0 1 auto;
+    min-width: 0;
+    gap: 6px;
   }
 
   .main-nav {
@@ -4015,10 +4028,16 @@ pre {
   }
 
   .language-toggle {
-    min-width: 92px;
-    min-height: 40px;
-    padding: 0 12px;
-    font-size: 13px;
+    min-width: 84px;
+    min-height: 38px;
+    padding: 0 9px;
+    font-size: 12px;
+  }
+
+  .logout-button {
+    min-height: 38px;
+    padding: 0 6px;
+    font-size: 12px;
   }
 
   .section-panel {
