@@ -299,6 +299,29 @@ const translations = {
     noHistoryEyebrow: "NO HISTORY",
     noHistoryTitle: "还没有保存任何记录",
     noHistoryDesc: "开始分析或生成可视化报告后，会在这里看到最近记录。",
+    objectProfileRecord: "对象档案",
+    profileArchiveTitle: "对象档案",
+    profileCurrentStage: "关系阶段",
+    profileCurrentStatus: "当前互动",
+    profileUpdatedAt: "最近更新",
+    profileAnalysisCount: "分析",
+    profileFollowupCount: "接话",
+    profileView: "查看档案",
+    profileDelete: "删除档案",
+    profileLatestRead: "最新判断",
+    profileLatestOpening: "推荐开场",
+    profileCoreSignals: "核心靠近信号",
+    profileTimeline: "历史进展",
+    profileTimelineEmpty: "还没有更多历史进展。",
+    profileAnalysisTimeline: "分析摘要",
+    profileFollowupTimeline: "接话记录",
+    profileFeedbackTimeline: "话术反馈",
+    profileUnnamedPrefix: "未命名对象",
+    profileUpdateConfirm: "已找到这个对象的历史档案。点击“确定”继续更新原档案，点击“取消”新建同名档案。",
+    profileNamePrompt: "给这个对象档案起个名字，方便之后继续接话。",
+    profileFoundToast: "已更新这个对象的历史档案",
+    profileCreatedToast: "已创建对象档案",
+    profileMigratedToast: "旧历史已整理为对象档案",
     goAnalyzeBtn: "去开始分析",
     promptRecord: "调试 Prompt 记录",
     reportRecord: "可视化报告记录",
@@ -691,6 +714,29 @@ const translations = {
     noHistoryEyebrow: "NO HISTORY",
     noHistoryTitle: "No History Yet",
     noHistoryDesc: "After starting AI analysis or generating a visual report, recent records will appear here.",
+    objectProfileRecord: "Object Profile",
+    profileArchiveTitle: "Object Profiles",
+    profileCurrentStage: "Relationship Stage",
+    profileCurrentStatus: "Current Interaction",
+    profileUpdatedAt: "Updated",
+    profileAnalysisCount: "Analyses",
+    profileFollowupCount: "Followups",
+    profileView: "View Profile",
+    profileDelete: "Delete Profile",
+    profileLatestRead: "Latest Read",
+    profileLatestOpening: "Recommended Opening",
+    profileCoreSignals: "Core Signals",
+    profileTimeline: "Progress History",
+    profileTimelineEmpty: "No additional progress yet.",
+    profileAnalysisTimeline: "Analysis Summary",
+    profileFollowupTimeline: "Reply Record",
+    profileFeedbackTimeline: "Phrase Feedback",
+    profileUnnamedPrefix: "Unnamed Object",
+    profileUpdateConfirm: "A profile with this name already exists. Select OK to update it, or Cancel to create another profile with the same name.",
+    profileNamePrompt: "Name this object profile so you can continue the conversation later.",
+    profileFoundToast: "Updated this object profile",
+    profileCreatedToast: "Created object profile",
+    profileMigratedToast: "Legacy history has been organized into object profiles",
     goAnalyzeBtn: "Start Analysis",
     promptRecord: "Debug Prompt Record",
     reportRecord: "Visual Report Record",
@@ -856,6 +902,7 @@ const MAX_MODEL_IMAGE_DATA_URL_LENGTH = 3.5 * 1024 * 1024;
 const MAX_HISTORY_RECORDS = 20;
 const MAX_HISTORY_RAW_JSON_LENGTH = 12000;
 const MAX_HISTORY_PROMPT_LENGTH = 12000;
+const MAX_OBJECT_PROFILES = 30;
 const SCENE_CONFIG = {
   刚认识: {
     theory: "本报告参考成人依恋、社会渗透、关系边界与低压靠近相关框架，仅用于沟通参考，不判断关系结果。",
@@ -1412,10 +1459,11 @@ function getHistory() {
   try {
     const records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     if (!Array.isArray(records)) return [];
-    const compactRecords = records.map(compactHistoryRecord).slice(0, MAX_HISTORY_RECORDS);
+    const compactRecords = normalizeHistoryStorage(records);
     if (JSON.stringify(records) !== JSON.stringify(compactRecords)) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(compactRecords));
+        if (records.some((record) => record?.type && record.type !== "object-profile")) showToast(t("profileMigratedToast"));
       } catch (migrationError) {
         console.warn("历史记录迁移保存失败，将继续使用内存中的精简记录。", migrationError);
       }
@@ -1430,7 +1478,7 @@ function getHistory() {
 
 function saveHistory(records) {
   try {
-    const compactRecords = records.map(compactHistoryRecord).slice(0, MAX_HISTORY_RECORDS);
+    const compactRecords = normalizeHistoryStorage(records);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(compactRecords));
     return true;
   } catch (error) {
@@ -1447,8 +1495,31 @@ function updateDebugPromptVisibility() {
 
 function compactHistoryRecord(record) {
   if (!record || typeof record !== "object") return record;
+  if (record.type === "object-profile") return compactObjectProfile(record);
   if (record.type === "report") return compactReportRecord(record);
   return compactPromptRecord(record);
+}
+
+function normalizeHistoryStorage(records) {
+  const sourceRecords = Array.isArray(records) ? records : [];
+  const profiles = [];
+  const legacyRecords = [];
+
+  sourceRecords.forEach((record) => {
+    if (!record || typeof record !== "object") return;
+    if (record.type === "object-profile") {
+      profiles.push(compactObjectProfile(record));
+    } else if (record.type === "report") {
+      legacyRecords.push(record);
+    }
+  });
+
+  legacyRecords.forEach((record) => mergeLegacyReportIntoProfiles(profiles, record));
+
+  return profiles
+    .map(compactObjectProfile)
+    .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
+    .slice(0, MAX_OBJECT_PROFILES);
 }
 
 function compactPromptRecord(record) {
@@ -1508,6 +1579,263 @@ function compactReportRecord(record) {
     followups: normalizeFollowupHistory(record.followups),
     scriptFeedback: normalizeScriptFeedback(record.scriptFeedback || reportData?.scriptFeedback),
   };
+}
+
+function normalizeProfileName(name, records = []) {
+  const value = String(name || "").trim();
+  if (value) return truncateText(value, 120);
+  const unnamedBase = t("profileUnnamedPrefix");
+  const existingIndexes = records
+    .map((record) => String(record.targetName || ""))
+    .map((label) => Number(label.replace(unnamedBase, "").trim()))
+    .filter((number) => Number.isFinite(number) && number > 0);
+  const nextIndex = existingIndexes.length ? Math.max(...existingIndexes) + 1 : 1;
+  return `${unnamedBase} ${nextIndex}`;
+}
+
+function getProfileMatchKey(name) {
+  return String(name || "").trim().toLowerCase();
+}
+
+function normalizeLatestReportSummary(data = {}, context = {}) {
+  const communicationAdvice = normalizeStringArray(data.communicationAdvice).slice(0, 6);
+  const approachStyle = normalizeStringArray(data.approachStyle).slice(0, 6);
+  const riskPoints = normalizeStringArray(data.riskPoints).slice(0, 6);
+  const evidenceChain = normalizeEvidenceChain(data.evidenceChain).slice(0, 6);
+  const metrics = normalizeSceneMetrics(data.sceneMetrics).slice(0, 6);
+  const opening = getOpeningLine(approachStyle, communicationAdvice);
+  return {
+    createdAt: new Date().toISOString(),
+    reportSummary: truncateText(context.reportSummary || data.basicProfile?.personaSummary || "", 900),
+    firstSignal: truncateText(data.basicProfile?.oneSentence || "", 260),
+    recommendedOpening: truncateText(opening || "", 260),
+    metrics,
+    evidenceChain,
+    communicationAdvice,
+    approachStyle,
+    riskPoints,
+    basicProfile: data.basicProfile || {},
+    scores: data.scores || {},
+    bigFive: data.bigFive || {},
+    personaTags: normalizeStringArray(data.personaTags).slice(0, 10),
+    avatarVisualCues: normalizeStringArray(data.avatarVisualCues).slice(0, 8),
+    disclaimer: truncateText(data.disclaimer || DISCLAIMER, 300),
+    scenario: data.scenario || context.relationshipStage || "",
+    selectedGoal: data.selectedGoal || context.selectedGoals || "",
+    selectedStatus: data.selectedStatus || context.selectedStatuses || "",
+  };
+}
+
+function buildProfileAnalysisItem(data = {}, context = {}) {
+  const latest = normalizeLatestReportSummary(data, context);
+  return {
+    id: createId(),
+    createdAt: latest.createdAt,
+    firstSignal: latest.firstSignal,
+    recommendedOpening: latest.recommendedOpening,
+    reportSummary: truncateText(latest.reportSummary, 600),
+    relationshipStage: truncateText(context.relationshipStage || data.scenario || "", 120),
+    selectedGoals: truncateText(context.selectedGoals || data.selectedGoal || "", 180),
+    selectedStatuses: truncateText(context.selectedStatuses || data.selectedStatus || "", 180),
+  };
+}
+
+function buildObjectProfileFromReport(data = {}, relationshipContext = {}, records = []) {
+  const context = compactRelationshipContext(relationshipContext || data.relationshipContext || buildRelationshipContext({}, data));
+  const now = new Date().toISOString();
+  const targetName = normalizeProfileName(context.targetName, records);
+  const latestReport = normalizeLatestReportSummary(data, context);
+  return compactObjectProfile({
+    id: createId(),
+    type: "object-profile",
+    targetName,
+    createdAt: now,
+    updatedAt: now,
+    currentProfile: {
+      relationshipStage: context.relationshipStage,
+      selectedGoals: context.selectedGoals,
+      selectedStatuses: context.selectedStatuses,
+      signature: context.signature,
+      userQuestion: context.userQuestion,
+      imageInsights: context.imageInsights,
+      recommendedTone: context.recommendedTone,
+      avoidTone: context.avoidTone,
+    },
+    latestReport,
+    analyses: [buildProfileAnalysisItem(data, context)],
+    followups: normalizeFollowupHistory(data.followups),
+    phraseFeedback: normalizeScriptFeedback(data.scriptFeedback),
+    stats: {
+      analysisCount: 1,
+      followupCount: normalizeFollowupHistory(data.followups).length,
+      copiedCount: normalizeScriptFeedback(data.scriptFeedback).filter((item) => item.copiedAt).length,
+      usedCount: normalizeScriptFeedback(data.scriptFeedback).filter((item) => item.feedback === "used" || item.usedAt).length,
+    },
+  });
+}
+
+function compactObjectProfile(profile) {
+  const currentProfile = profile.currentProfile || {};
+  const latestReport = profile.latestReport || {};
+  const analyses = Array.isArray(profile.analyses) ? profile.analyses : [];
+  const followups = normalizeFollowupHistory(profile.followups);
+  const phraseFeedback = normalizeScriptFeedback(profile.phraseFeedback || profile.scriptFeedback);
+  const stats = profile.stats || {};
+  return {
+    id: profile.id || createId(),
+    type: "object-profile",
+    targetName: truncateText(profile.targetName || normalizeProfileName("", []), 120),
+    createdAt: profile.createdAt || new Date().toISOString(),
+    updatedAt: profile.updatedAt || profile.createdAt || new Date().toISOString(),
+    currentProfile: {
+      relationshipStage: truncateText(currentProfile.relationshipStage || "", 120),
+      selectedGoals: truncateText(currentProfile.selectedGoals || "", 180),
+      selectedStatuses: truncateText(currentProfile.selectedStatuses || "", 180),
+      signature: truncateText(currentProfile.signature || "", 600),
+      userQuestion: truncateText(currentProfile.userQuestion || "", 360),
+      imageInsights: truncateText(currentProfile.imageInsights || "", 900),
+      recommendedTone: truncateText(currentProfile.recommendedTone || "轻松、低压、暧昧但不油腻", 180),
+      avoidTone: truncateText(currentProfile.avoidTone || "查岗、逼问、表白、连续追问", 180),
+    },
+    latestReport: {
+      createdAt: latestReport.createdAt || profile.updatedAt || profile.createdAt || new Date().toISOString(),
+      reportSummary: truncateText(latestReport.reportSummary || "", 900),
+      firstSignal: truncateText(latestReport.firstSignal || "", 260),
+      recommendedOpening: truncateText(latestReport.recommendedOpening || "", 260),
+      metrics: normalizeSceneMetrics(latestReport.metrics || latestReport.sceneMetrics).slice(0, 6),
+      evidenceChain: normalizeEvidenceChain(latestReport.evidenceChain).slice(0, 6),
+      communicationAdvice: normalizeStringArray(latestReport.communicationAdvice).slice(0, 6),
+      approachStyle: normalizeStringArray(latestReport.approachStyle).slice(0, 6),
+      riskPoints: normalizeStringArray(latestReport.riskPoints).slice(0, 6),
+      basicProfile: latestReport.basicProfile || {},
+      scores: latestReport.scores || {},
+      bigFive: latestReport.bigFive || {},
+      personaTags: normalizeStringArray(latestReport.personaTags).slice(0, 10),
+      avatarVisualCues: normalizeStringArray(latestReport.avatarVisualCues).slice(0, 8),
+      disclaimer: truncateText(latestReport.disclaimer || DISCLAIMER, 300),
+      scenario: latestReport.scenario || currentProfile.relationshipStage || "",
+      selectedGoal: latestReport.selectedGoal || currentProfile.selectedGoals || "",
+      selectedStatus: latestReport.selectedStatus || currentProfile.selectedStatuses || "",
+    },
+    analyses: analyses.slice(0, 20).map((item) => ({
+      id: item.id || createId(),
+      createdAt: item.createdAt || new Date().toISOString(),
+      firstSignal: truncateText(item.firstSignal || "", 260),
+      recommendedOpening: truncateText(item.recommendedOpening || "", 260),
+      reportSummary: truncateText(item.reportSummary || "", 600),
+      relationshipStage: truncateText(item.relationshipStage || "", 120),
+      selectedGoals: truncateText(item.selectedGoals || "", 180),
+      selectedStatuses: truncateText(item.selectedStatuses || "", 180),
+    })),
+    followups,
+    phraseFeedback,
+    stats: {
+      analysisCount: Number(stats.analysisCount || analyses.length || 0),
+      followupCount: Number(stats.followupCount || followups.length || 0),
+      copiedCount: Number(stats.copiedCount || phraseFeedback.filter((item) => item.copiedAt).length || 0),
+      usedCount: Number(stats.usedCount || phraseFeedback.filter((item) => item.feedback === "used" || item.usedAt).length || 0),
+    },
+  };
+}
+
+function mergeLegacyReportIntoProfiles(profiles, record) {
+  let reportData = record.reportData || null;
+  if (!reportData && record.rawJson) {
+    try {
+      reportData = normalizeReportData(JSON.parse(record.rawJson));
+    } catch (error) {
+      console.warn("旧报告 JSON 迁移失败，已跳过该条记录。", error);
+    }
+  }
+  if (!reportData) return;
+  const context = compactRelationshipContext(record.relationshipContext || reportData.relationshipContext || buildRelationshipContext({}, reportData));
+  const targetName = normalizeProfileName(context.targetName, profiles);
+  const key = getProfileMatchKey(targetName);
+  const index = profiles.findIndex((profile) => getProfileMatchKey(profile.targetName) === key);
+  const legacyProfile = buildObjectProfileFromReport({
+    ...reportData,
+    followups: normalizeFollowupHistory(record.followups || reportData.followups),
+    scriptFeedback: normalizeScriptFeedback(record.scriptFeedback || reportData.scriptFeedback),
+  }, { ...context, targetName }, profiles);
+  legacyProfile.createdAt = record.createdAt || legacyProfile.createdAt;
+  legacyProfile.updatedAt = record.createdAt || legacyProfile.updatedAt;
+  legacyProfile.latestReport.createdAt = record.createdAt || legacyProfile.latestReport.createdAt;
+  legacyProfile.analyses = legacyProfile.analyses.map((item) => ({ ...item, createdAt: record.createdAt || item.createdAt }));
+  if (index === -1) {
+    profiles.push(legacyProfile);
+    return;
+  }
+  profiles[index] = updateObjectProfileWithReport(profiles[index], reportData, context, {
+    followups: normalizeFollowupHistory(record.followups || reportData.followups),
+    phraseFeedback: normalizeScriptFeedback(record.scriptFeedback || reportData.scriptFeedback),
+    createdAt: record.createdAt,
+  });
+}
+
+function updateObjectProfileWithReport(profile, data = {}, relationshipContext = {}, options = {}) {
+  const context = compactRelationshipContext(relationshipContext || data.relationshipContext || buildRelationshipContext({}, data));
+  const latestReport = normalizeLatestReportSummary(data, context);
+  if (options.createdAt) latestReport.createdAt = options.createdAt;
+  const nextAnalysis = buildProfileAnalysisItem(data, context);
+  if (options.createdAt) nextAnalysis.createdAt = options.createdAt;
+  const existingFollowups = normalizeFollowupHistory(profile.followups);
+  const nextFollowups = normalizeFollowupHistory([...(options.followups || []), ...existingFollowups]);
+  const existingFeedback = normalizeScriptFeedback(profile.phraseFeedback);
+  const nextFeedback = normalizeScriptFeedback([...(options.phraseFeedback || []), ...existingFeedback]);
+  const analyses = [nextAnalysis, ...(profile.analyses || [])].slice(0, 20);
+  return compactObjectProfile({
+    ...profile,
+    targetName: profile.targetName || context.targetName,
+    updatedAt: latestReport.createdAt,
+    currentProfile: {
+      relationshipStage: context.relationshipStage,
+      selectedGoals: context.selectedGoals,
+      selectedStatuses: context.selectedStatuses,
+      signature: context.signature,
+      userQuestion: context.userQuestion,
+      imageInsights: context.imageInsights,
+      recommendedTone: context.recommendedTone,
+      avoidTone: context.avoidTone,
+    },
+    latestReport,
+    analyses,
+    followups: nextFollowups,
+    phraseFeedback: nextFeedback,
+    stats: {
+      analysisCount: Number(profile.stats?.analysisCount || 0) + 1,
+      followupCount: nextFollowups.length,
+      copiedCount: nextFeedback.filter((item) => item.copiedAt).length,
+      usedCount: nextFeedback.filter((item) => item.feedback === "used" || item.usedAt).length,
+    },
+  });
+}
+
+function objectProfileToReportData(profile) {
+  const compactProfile = compactObjectProfile(profile);
+  const latest = compactProfile.latestReport;
+  return normalizeReportData({
+    basicProfile: {
+      oneSentence: latest.firstSignal || latest.basicProfile?.oneSentence || t("fallbackOneSentence"),
+      personaSummary: latest.reportSummary || latest.basicProfile?.personaSummary || t("fallbackPersonaSummary"),
+      confidence: latest.basicProfile?.confidence || "中",
+      confidenceReason: latest.basicProfile?.confidenceReason || compactProfile.currentProfile.imageInsights || t("fallbackConfidenceReason"),
+    },
+    scores: latest.scores,
+    bigFive: latest.bigFive,
+    personaTags: latest.personaTags,
+    avatarVisualCues: latest.avatarVisualCues,
+    communicationAdvice: latest.communicationAdvice,
+    riskPoints: latest.riskPoints,
+    approachStyle: latest.approachStyle,
+    sceneMetrics: latest.metrics,
+    evidenceChain: latest.evidenceChain,
+    disclaimer: latest.disclaimer,
+    scenario: latest.scenario || compactProfile.currentProfile.relationshipStage,
+    selectedGoal: latest.selectedGoal || compactProfile.currentProfile.selectedGoals,
+    selectedStatus: latest.selectedStatus || compactProfile.currentProfile.selectedStatuses,
+    followups: compactProfile.followups,
+    scriptFeedback: compactProfile.phraseFeedback,
+  });
 }
 
 function compactRelationshipContext(context) {
@@ -1647,13 +1975,31 @@ function updateCurrentReportFeedback(nextEntry, statKey = "") {
   const records = getHistory();
   const recordIndex = records.findIndex((record) => record.id === recordId);
   if (recordIndex === -1) return;
-  records[recordIndex] = {
-    ...records[recordIndex],
-    scriptFeedback: renderedReportData.scriptFeedback,
-    reportData: records[recordIndex].reportData
-      ? { ...records[recordIndex].reportData, scriptFeedback: renderedReportData.scriptFeedback }
-      : records[recordIndex].reportData,
-  };
+  const record = records[recordIndex];
+  records[recordIndex] = record.type === "object-profile"
+    ? compactObjectProfile({
+      ...record,
+      updatedAt: new Date().toISOString(),
+      phraseFeedback: renderedReportData.scriptFeedback,
+      latestReport: {
+        ...record.latestReport,
+        communicationAdvice: renderedReportData.communicationAdvice,
+        approachStyle: renderedReportData.approachStyle,
+        riskPoints: renderedReportData.riskPoints,
+      },
+      stats: {
+        ...(record.stats || {}),
+        copiedCount: renderedReportData.scriptFeedback.filter((item) => item.copiedAt).length,
+        usedCount: renderedReportData.scriptFeedback.filter((item) => item.feedback === "used" || item.usedAt).length,
+      },
+    })
+    : {
+      ...record,
+      scriptFeedback: renderedReportData.scriptFeedback,
+      reportData: record.reportData
+        ? { ...record.reportData, scriptFeedback: renderedReportData.scriptFeedback }
+        : record.reportData,
+    };
   saveHistory(records);
   renderHistory();
 }
@@ -1679,10 +2025,18 @@ function updateCurrentFollowup(followupId, patch = {}) {
   const records = getHistory();
   const index = records.findIndex((record) => record.id === recordId);
   if (index === -1) return;
-  records[index] = {
-    ...records[index],
-    followups: renderedReportData.followups,
-  };
+  const record = records[index];
+  records[index] = record.type === "object-profile"
+    ? compactObjectProfile({
+      ...record,
+      updatedAt: new Date().toISOString(),
+      followups: renderedReportData.followups,
+      stats: { ...(record.stats || {}), followupCount: renderedReportData.followups.length },
+    })
+    : {
+      ...record,
+      followups: renderedReportData.followups,
+    };
   saveHistory(records);
   renderHistory();
 }
@@ -1701,10 +2055,19 @@ function updateCurrentFollowupStorage() {
   const records = getHistory();
   const index = records.findIndex((record) => record.id === recordId);
   if (index === -1) return;
-  records[index] = {
-    ...records[index],
-    followups: normalizeFollowupHistory(renderedReportData.followups),
-  };
+  const followups = normalizeFollowupHistory(renderedReportData.followups);
+  const record = records[index];
+  records[index] = record.type === "object-profile"
+    ? compactObjectProfile({
+      ...record,
+      updatedAt: new Date().toISOString(),
+      followups,
+      stats: { ...(record.stats || {}), followupCount: followups.length },
+    })
+    : {
+      ...record,
+      followups,
+    };
   saveHistory(records);
   renderHistory();
 }
@@ -3588,33 +3951,53 @@ function appendFollowupToHistory(recordId, relationshipContext, followupItem) {
   const index = records.findIndex((record) => record.id === recordId);
   if (index === -1) return;
   const record = records[index];
-  records[index] = {
-    ...record,
-    relationshipContext: compactRelationshipContext(record.relationshipContext || relationshipContext),
-    followups: normalizeFollowupHistory([followupItem, ...(record.followups || [])]),
-  };
+  const followups = normalizeFollowupHistory([followupItem, ...(record.followups || [])]);
+  records[index] = record.type === "object-profile"
+    ? compactObjectProfile({
+      ...record,
+      updatedAt: new Date().toISOString(),
+      followups,
+      stats: { ...(record.stats || {}), followupCount: followups.length },
+    })
+    : {
+      ...record,
+      relationshipContext: compactRelationshipContext(record.relationshipContext || relationshipContext),
+      followups,
+    };
   saveHistory(records);
   renderHistory();
 }
 
 function saveReportRecord(data, rawJson, relationshipContext = null) {
-  const compactData = compactReportData(data);
   const context = compactRelationshipContext(relationshipContext || data.relationshipContext || buildRelationshipContext({}, data));
-  const record = {
-    id: createId(),
-    type: "report",
-    createdAt: new Date().toISOString(),
-    oneSentence: data.basicProfile.oneSentence,
-    confidence: data.basicProfile.confidence,
-    scores: data.scores,
-    bigFive: data.bigFive,
-    rawJson,
-    reportData: compactData,
-    relationshipContext: context,
-    followups: normalizeFollowupHistory(data.followups),
-    scriptFeedback: normalizeScriptFeedback(data.scriptFeedback),
-  };
-  const saved = saveHistory([record, ...getHistory()].slice(0, MAX_HISTORY_RECORDS));
+  const records = getHistory();
+  let targetName = String(context.targetName || "").trim();
+  if (!targetName) {
+    const defaultName = normalizeProfileName("", records);
+    targetName = String(window.prompt(t("profileNamePrompt"), defaultName) || defaultName).trim() || defaultName;
+  }
+  targetName = normalizeProfileName(targetName, records);
+  const matchIndex = records.findIndex((record) => record.type === "object-profile" && getProfileMatchKey(record.targetName) === getProfileMatchKey(targetName));
+  let record = null;
+
+  if (matchIndex >= 0) {
+    const shouldUpdate = window.confirm(t("profileUpdateConfirm"));
+    if (shouldUpdate) {
+      record = updateObjectProfileWithReport(records[matchIndex], data, { ...context, targetName }, {
+        followups: normalizeFollowupHistory(data.followups),
+        phraseFeedback: normalizeScriptFeedback(data.scriptFeedback),
+      });
+      records[matchIndex] = record;
+    } else {
+      record = buildObjectProfileFromReport(data, { ...context, targetName }, records);
+      records.unshift(record);
+    }
+  } else {
+    record = buildObjectProfileFromReport(data, { ...context, targetName }, records);
+    records.unshift(record);
+  }
+
+  const saved = saveHistory(records);
   if (saved) incrementFeedbackStat("generatedCount");
   renderHistory();
   return saved ? record : null;
@@ -3672,12 +4055,85 @@ function renderHistory() {
   }
 
   historyList.innerHTML = records.map((record) => {
-    const date = new Date(record.createdAt);
+    const date = new Date(record.updatedAt || record.createdAt);
     const type = record.type || "prompt";
     const isExpanded = expandedHistoryId === record.id;
+    if (type === "object-profile") return renderObjectProfileCard(record, date, isExpanded);
     if (type === "report") return renderReportHistoryCard(record, date);
     return renderPromptHistoryCard(record, date, isExpanded);
   }).join("");
+}
+
+function renderObjectProfileCard(profile, date, isExpanded) {
+  const compactProfile = compactObjectProfile(profile);
+  const latest = compactProfile.latestReport;
+  const current = compactProfile.currentProfile;
+  const stats = compactProfile.stats || {};
+  return `
+    <article class="history-card object-profile-card">
+      <div class="history-top">
+        <div>
+          <span class="record-type">${t("objectProfileRecord")}</span>
+          <h3>${escapeHtml(compactProfile.targetName)}</h3>
+          <time datetime="${escapeHtml(compactProfile.updatedAt)}">${t("profileUpdatedAt")}：${date.toLocaleString(currentLanguage === "en" ? "en-US" : "zh-CN")}</time>
+        </div>
+        <span class="scenario-tag">${escapeHtml(translateScenario(current.relationshipStage || latest.scenario || ""))}</span>
+      </div>
+      <p class="profile-latest-read">${escapeHtml(latest.firstSignal || t("limitedEvidenceText"))}</p>
+      <ul class="history-meta">
+        <li>${t("profileCurrentStage")}：${escapeHtml(translateScenario(current.relationshipStage || latest.scenario || ""))}</li>
+        <li>${t("profileCurrentStatus")}：${escapeHtml(current.selectedStatuses || latest.selectedStatus || t("emptyField"))}</li>
+        <li>${t("profileAnalysisCount")}：${Number(stats.analysisCount || compactProfile.analyses.length || 0)}</li>
+        <li>${t("profileFollowupCount")}：${Number(stats.followupCount || compactProfile.followups.length || 0)}</li>
+      </ul>
+      ${isExpanded ? renderObjectProfileDetail(compactProfile) : ""}
+      <div class="history-actions">
+        <button class="button small view-profile-history" type="button" data-id="${escapeHtml(compactProfile.id)}">${isExpanded ? t("collapsePrompt") : t("profileView")}</button>
+        <button class="button small continue-followup-history" type="button" data-id="${escapeHtml(compactProfile.id)}">${t("continueFollowup")}</button>
+        <button class="button small danger delete-history" type="button" data-id="${escapeHtml(compactProfile.id)}">${t("profileDelete")}</button>
+      </div>
+    </article>
+  `;
+}
+
+function renderObjectProfileDetail(profile) {
+  const latest = profile.latestReport;
+  const metrics = normalizeSceneMetrics(latest.metrics).slice(0, 4);
+  const analyses = (profile.analyses || []).slice(0, 6);
+  const followups = normalizeFollowupHistory(profile.followups).slice(0, 6);
+  const feedback = normalizeScriptFeedback(profile.phraseFeedback).slice(0, 6);
+  return `
+    <div class="object-profile-detail">
+      <section>
+        <h4>${t("profileLatestRead")}</h4>
+        <p>${escapeHtml(latest.firstSignal || t("limitedEvidenceText"))}</p>
+      </section>
+      <section>
+        <h4>${t("profileLatestOpening")}</h4>
+        <p>${escapeHtml(latest.recommendedOpening || t("emptyField"))}</p>
+      </section>
+      <section>
+        <h4>${t("profileCoreSignals")}</h4>
+        <div class="profile-signal-chips">
+          ${metrics.map((item) => `<span>${escapeHtml(item.label)} ${clampScore(item.score)}</span>`).join("") || `<span>${t("emptyField")}</span>`}
+        </div>
+      </section>
+      <details class="history-feedback-summary profile-timeline">
+        <summary>${t("profileTimeline")}</summary>
+        <div>
+          ${analyses.length ? analyses.map((item) => `
+            <p><strong>${t("profileAnalysisTimeline")}</strong> · ${new Date(item.createdAt).toLocaleString(currentLanguage === "en" ? "en-US" : "zh-CN")}：${escapeHtml(compactText(item.firstSignal || item.reportSummary, 120))}</p>
+          `).join("") : `<p>${t("profileTimelineEmpty")}</p>`}
+          ${followups.map((item) => `
+            <p><strong>${t("profileFollowupTimeline")}</strong>：${escapeHtml(compactText(item.latestReply, 42))} → ${escapeHtml(compactText(item.recommendedReply, 80))}</p>
+          `).join("")}
+          ${feedback.map((item) => `
+            <p><strong>${t("profileFeedbackTimeline")}</strong>：${escapeHtml(compactText(item.text, 80))}${item.feedback ? ` · ${escapeHtml(item.feedback)}` : ""}</p>
+          `).join("")}
+        </div>
+      </details>
+    </div>
+  `;
 }
 
 function renderPromptHistoryCard(record, date, isExpanded) {
@@ -3781,6 +4237,26 @@ function handleHistoryClick(event) {
     renderHistory();
     return;
   }
+  if (button.classList.contains("view-profile-history")) {
+    expandedHistoryId = expandedHistoryId === id ? "" : id;
+    const reportData = objectProfileToReportData(record);
+    reportData._historyRecordId = record.id;
+    reportData.relationshipContext = compactRelationshipContext({
+      ...(record.currentProfile || {}),
+      targetName: record.targetName,
+      relationshipStage: record.currentProfile?.relationshipStage,
+      selectedGoals: record.currentProfile?.selectedGoals,
+      selectedStatuses: record.currentProfile?.selectedStatuses,
+      reportSummary: record.latestReport?.reportSummary,
+      evidenceChain: record.latestReport?.evidenceChain,
+    });
+    reportData.followups = normalizeFollowupHistory(record.followups);
+    reportData.scriptFeedback = normalizeScriptFeedback(record.phraseFeedback);
+    renderHistory();
+    renderVisualReport(reportData);
+    document.querySelector("#visual-report").scrollIntoView({ behavior: "smooth" });
+    return;
+  }
   if (button.classList.contains("copy-history")) {
     copyText(record.prompt);
     return;
@@ -3796,11 +4272,23 @@ function handleHistoryClick(event) {
     return;
   }
   if (button.classList.contains("continue-followup-history")) {
-    const reportData = record.reportData || normalizeReportData(JSON.parse(record.rawJson));
+    const reportData = record.type === "object-profile"
+      ? objectProfileToReportData(record)
+      : record.reportData || normalizeReportData(JSON.parse(record.rawJson));
     reportData._historyRecordId = record.id;
-    reportData.relationshipContext = record.relationshipContext || buildRelationshipContext({}, reportData);
+    reportData.relationshipContext = record.type === "object-profile"
+      ? compactRelationshipContext({
+        ...(record.currentProfile || {}),
+        targetName: record.targetName,
+        relationshipStage: record.currentProfile?.relationshipStage,
+        selectedGoals: record.currentProfile?.selectedGoals,
+        selectedStatuses: record.currentProfile?.selectedStatuses,
+        reportSummary: record.latestReport?.reportSummary,
+        evidenceChain: record.latestReport?.evidenceChain,
+      })
+      : record.relationshipContext || buildRelationshipContext({}, reportData);
     reportData.followups = normalizeFollowupHistory(record.followups);
-    reportData.scriptFeedback = normalizeScriptFeedback(record.scriptFeedback || reportData.scriptFeedback);
+    reportData.scriptFeedback = normalizeScriptFeedback(record.phraseFeedback || record.scriptFeedback || reportData.scriptFeedback);
     renderVisualReport(reportData);
     const followupCard = document.querySelector("#followupCard");
     followupCard?.scrollIntoView({ behavior: "smooth", block: "center" });
