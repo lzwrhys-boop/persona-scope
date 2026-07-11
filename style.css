@@ -2990,6 +2990,87 @@ pre {
   line-height: 1.72;
 }
 
+.script-feedback {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 10px;
+  min-width: 0;
+}
+
+.script-feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.feedback-chip,
+.script-feedback-status {
+  padding: 6px 9px;
+  border: 1px solid rgba(159, 181, 232, 0.12);
+  border-radius: 999px;
+  color: rgba(154, 168, 197, 0.78);
+  background: rgba(255, 255, 255, 0.026);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.feedback-chip {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.feedback-chip:hover,
+.feedback-chip.active {
+  color: rgba(238, 253, 255, 0.96);
+  border-color: rgba(95, 244, 255, 0.36);
+  background: rgba(95, 244, 255, 0.08);
+}
+
+.script-feedback-status {
+  color: rgba(200, 250, 255, 0.72);
+}
+
+.used-followup-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(95, 244, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.used-followup-panel strong {
+  color: rgba(245, 248, 255, 0.92);
+  font-size: 13px;
+}
+
+.used-followup-panel small,
+.used-followup-panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.used-followup-panel p span,
+.used-followup-result > span {
+  color: rgba(200, 250, 255, 0.8);
+  font-weight: 800;
+}
+
+.used-reply-input {
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+}
+
+.used-followup-result {
+  display: grid;
+  gap: 10px;
+  margin-top: 2px;
+}
+
 .copy-line-btn {
   align-self: center;
   min-height: 36px;
@@ -3465,6 +3546,33 @@ pre {
   color: var(--muted);
   background: rgba(255, 255, 255, 0.03);
   font-size: 12px;
+}
+
+.history-feedback-summary {
+  border: 1px solid rgba(159, 181, 232, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.history-feedback-summary summary {
+  padding: 10px 12px;
+  color: var(--cyan);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.history-feedback-summary div {
+  display: grid;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.history-feedback-summary p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .history-prompt {

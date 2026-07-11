@@ -1,4 +1,5 @@
 const STORAGE_KEY = "personascope.history.v3";
+const FEEDBACK_STATS_STORAGE_KEY = "personascope.feedbackStats.v1";
 const LANGUAGE_STORAGE_KEY = "personascope.language";
 const ACCESS_TOKEN_STORAGE_KEY = "personascope.accessToken";
 const DISCLAIMER = "PersonaScope 仅基于用户提供的视觉呈现与补充信息生成沟通画像，用于辅助理解第一印象和沟通风格倾向，仅供沟通参考。";
@@ -215,6 +216,18 @@ const translations = {
     firstReadTitle: "第一眼信号",
     openingLineTitle: "推荐开场",
     copyLineBtn: "复制话术",
+    feedbackUseful: "有用",
+    feedbackUnsuitable: "不太适合",
+    feedbackUsed: "我用了这句",
+    feedbackCopied: "已复制",
+    feedbackUsedAt: "已标记使用",
+    usedReplyTitle: "对方后来怎么回",
+    usedReplyPlaceholder: "粘贴对方的回复，继续生成下一句",
+    usedReplyButton: "继续接话",
+    usedReplyLoading: "正在生成...",
+    usedReplyEmptyToast: "请先粘贴对方的回复",
+    usedReplyLatest: "对方回复",
+    usedReplyResult: "后续接话建议",
     replyStrategyTitle: "对方这样回，你可以这样接",
     replyNoResponse: "对方没有回复",
     replyShort: "对方只回很短",
@@ -584,6 +597,18 @@ const translations = {
     firstReadTitle: "First Signal",
     openingLineTitle: "Recommended Opening",
     copyLineBtn: "Copy Line",
+    feedbackUseful: "Useful",
+    feedbackUnsuitable: "Not quite",
+    feedbackUsed: "I used this",
+    feedbackCopied: "Copied",
+    feedbackUsedAt: "Marked as used",
+    usedReplyTitle: "What did they reply after that?",
+    usedReplyPlaceholder: "Paste their reply to generate the next line",
+    usedReplyButton: "Continue Reply",
+    usedReplyLoading: "Generating...",
+    usedReplyEmptyToast: "Please paste their reply first",
+    usedReplyLatest: "Their reply",
+    usedReplyResult: "Follow-up suggestion",
     replyStrategyTitle: "If They Reply Like This",
     replyNoResponse: "They do not reply",
     replyShort: "They reply briefly",
@@ -1428,6 +1453,7 @@ function compactReportData(data) {
     scenario: data.scenario,
     selectedGoal: data.selectedGoal,
     selectedStatus: data.selectedStatus,
+    scriptFeedback: normalizeScriptFeedback(data.scriptFeedback),
   };
 }
 
@@ -1447,6 +1473,7 @@ function compactReportRecord(record) {
     reportData,
     relationshipContext: compactRelationshipContext(record.relationshipContext || reportData?.relationshipContext || buildRelationshipContext({}, reportData || {})),
     followups: normalizeFollowupHistory(record.followups),
+    scriptFeedback: normalizeScriptFeedback(record.scriptFeedback || reportData?.scriptFeedback),
   };
 }
 
@@ -1494,6 +1521,139 @@ function normalizeFollowupResult(data) {
       reason: String(data?.avoidReply?.reason || "").trim(),
     },
   };
+}
+
+function getDefaultFeedbackStats() {
+  return {
+    generatedCount: 0,
+    copiedCount: 0,
+    usedCount: 0,
+    followupCount: 0,
+    usefulCount: 0,
+    unsuitableCount: 0,
+  };
+}
+
+function getFeedbackStats() {
+  try {
+    return { ...getDefaultFeedbackStats(), ...(JSON.parse(localStorage.getItem(FEEDBACK_STATS_STORAGE_KEY)) || {}) };
+  } catch (error) {
+    return getDefaultFeedbackStats();
+  }
+}
+
+function saveFeedbackStats(stats) {
+  try {
+    localStorage.setItem(FEEDBACK_STATS_STORAGE_KEY, JSON.stringify({ ...getDefaultFeedbackStats(), ...stats }));
+  } catch (error) {
+    console.warn("反馈统计保存失败。", error);
+  }
+}
+
+function incrementFeedbackStat(key, amount = 1) {
+  const stats = getFeedbackStats();
+  stats[key] = Number(stats[key] || 0) + amount;
+  saveFeedbackStats(stats);
+}
+
+function getScriptFeedbackId(sourceType, text) {
+  const seed = `${sourceType || "suggestion"}:${String(text || "").trim()}`;
+  let hash = 0;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = ((hash << 5) - hash + seed.charCodeAt(index)) | 0;
+  }
+  return `sf_${Math.abs(hash).toString(36)}`;
+}
+
+function normalizeScriptFeedback(items) {
+  return (Array.isArray(items) ? items : []).slice(0, 80).map((item) => {
+    const text = truncateText(item?.text || "", 500);
+    const sourceType = item?.sourceType || "suggestion";
+    return {
+      id: item?.id || getScriptFeedbackId(sourceType, text),
+      text,
+      sourceType,
+      feedback: ["useful", "unsuitable", "used"].includes(item?.feedback) ? item.feedback : "",
+      copiedAt: item?.copiedAt || "",
+      usedAt: item?.usedAt || "",
+      latestReply: truncateText(item?.latestReply || "", 500),
+      followupResult: item?.followupResult ? normalizeFollowupResult(item.followupResult) : null,
+    };
+  }).filter((item) => item.text);
+}
+
+function getScriptFeedbackEntry(text, sourceType) {
+  const id = getScriptFeedbackId(sourceType, text);
+  return normalizeScriptFeedback(renderedReportData?.scriptFeedback).find((item) => item.id === id) || null;
+}
+
+function updateCurrentReportFeedback(nextEntry, statKey = "") {
+  if (!renderedReportData || !nextEntry?.text) return;
+  const feedback = normalizeScriptFeedback(renderedReportData.scriptFeedback);
+  const index = feedback.findIndex((item) => item.id === nextEntry.id);
+  if (index >= 0) {
+    feedback[index] = { ...feedback[index], ...nextEntry };
+  } else {
+    feedback.unshift(nextEntry);
+  }
+  renderedReportData.scriptFeedback = normalizeScriptFeedback(feedback);
+  if (statKey) incrementFeedbackStat(statKey);
+
+  const recordId = renderedReportData._historyRecordId;
+  if (!recordId) return;
+  const records = getHistory();
+  const recordIndex = records.findIndex((record) => record.id === recordId);
+  if (recordIndex === -1) return;
+  records[recordIndex] = {
+    ...records[recordIndex],
+    scriptFeedback: renderedReportData.scriptFeedback,
+    reportData: records[recordIndex].reportData
+      ? { ...records[recordIndex].reportData, scriptFeedback: renderedReportData.scriptFeedback }
+      : records[recordIndex].reportData,
+  };
+  saveHistory(records);
+  renderHistory();
+}
+
+function recordScriptCopy(text, sourceType) {
+  const existing = getScriptFeedbackEntry(text, sourceType);
+  updateCurrentReportFeedback({
+    ...(existing || {}),
+    id: getScriptFeedbackId(sourceType, text),
+    text,
+    sourceType,
+    copiedAt: new Date().toISOString(),
+  }, "copiedCount");
+}
+
+function recordScriptFeedback(text, sourceType, feedback) {
+  const existing = getScriptFeedbackEntry(text, sourceType);
+  const now = new Date().toISOString();
+  const nextEntry = {
+    ...(existing || {}),
+    id: getScriptFeedbackId(sourceType, text),
+    text,
+    sourceType,
+    feedback,
+  };
+  let statKey = "";
+  const changed = existing?.feedback !== feedback;
+  if (feedback === "used") {
+    nextEntry.usedAt = now;
+    statKey = changed ? "usedCount" : "";
+  } else if (feedback === "useful" && changed) {
+    statKey = "usefulCount";
+  } else if (feedback === "unsuitable" && changed) {
+    statKey = "unsuitableCount";
+  }
+  updateCurrentReportFeedback(nextEntry, statKey);
+}
+
+function getFeedbackPayloadFromElement(element) {
+  const root = element.closest(".script-feedback") || element.closest("[data-script-source-type]");
+  const text = root?.dataset.scriptText || element.dataset.copyText || "";
+  const sourceType = root?.dataset.scriptSourceType || element.dataset.scriptSourceType || "suggestion";
+  return { text, sourceType };
 }
 
 function buildRelationshipContext(input = {}, reportData = {}) {
@@ -2453,6 +2613,7 @@ function normalizeReportData(data) {
     approachStyle: normalizeStringArray(getFirstValue(data, ["approachStyle", "approach", "approach_style", "approaches", "接近方式", "适合接近方式"]), ["style", "content", "text", "value", "title", "方式"]),
     sceneMetrics: normalizeSceneMetrics(getFirstValue(data, ["sceneMetrics", "scene_metrics", "scenarioMetrics", "场景维度", "专业维度"])),
     evidenceChain: normalizeEvidenceChain(getFirstValue(data, ["evidenceChain", "evidence_chain", "evidence", "proofs", "证据链", "依据"])),
+    scriptFeedback: normalizeScriptFeedback(getFirstValue(data, ["scriptFeedback", "script_feedback", "话术反馈"])),
     disclaimer: coerceText(getFirstValue(data, ["disclaimer", "免责声明"]), ["text", "content", "value"]) || DISCLAIMER,
   };
 }
@@ -2781,11 +2942,46 @@ function getOpeningLine(approachStyle, communicationAdvice) {
   return candidates.find((item) => /“|”|"|「|」|可以|建议|先|Hi|Hello|你好|我/.test(item)) || candidates[0] || t("emptyApproach");
 }
 
-function renderCopyableLine(line, prominent = false) {
+function renderScriptFeedbackControls(line, sourceType) {
+  if (!sourceType) return "";
+  const entry = getScriptFeedbackEntry(line, sourceType);
+  const id = getScriptFeedbackId(sourceType, line);
+  const feedback = entry?.feedback || "";
+  const followup = entry?.followupResult;
+  return `
+    <div class="script-feedback" data-script-id="${escapeHtml(id)}" data-script-source-type="${escapeHtml(sourceType)}" data-script-text="${escapeHtml(line)}">
+      <div class="script-feedback-actions" aria-label="${currentLanguage === "en" ? "Line feedback" : "话术反馈"}">
+        ${entry?.copiedAt ? `<span class="script-feedback-status">${t("feedbackCopied")}</span>` : ""}
+        <button class="feedback-chip ${feedback === "useful" ? "active" : ""}" type="button" data-feedback-value="useful">${t("feedbackUseful")}</button>
+        <button class="feedback-chip ${feedback === "unsuitable" ? "active" : ""}" type="button" data-feedback-value="unsuitable">${t("feedbackUnsuitable")}</button>
+        <button class="feedback-chip ${feedback === "used" ? "active" : ""}" type="button" data-feedback-value="used">${t("feedbackUsed")}</button>
+      </div>
+      ${feedback === "used" ? `
+        <div class="used-followup-panel">
+          <strong>${t("usedReplyTitle")}</strong>
+          ${entry?.usedAt ? `<small>${t("feedbackUsedAt")}</small>` : ""}
+          ${entry?.latestReply ? `<p><span>${t("usedReplyLatest")}：</span>${escapeHtml(entry.latestReply)}</p>` : ""}
+          <textarea class="used-reply-input" rows="2" placeholder="${escapeHtml(t("usedReplyPlaceholder"))}"></textarea>
+          <button class="button small used-reply-btn" type="button">${t("usedReplyButton")}</button>
+          ${followup?.recommendedReply ? `
+            <div class="used-followup-result">
+              <span>${t("usedReplyResult")}</span>
+              ${renderFollowupResult(followup, { withFeedback: false })}
+            </div>
+          ` : ""}
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+
+function renderCopyableLine(line, prominent = false, options = {}) {
+  const sourceType = options.sourceType || "";
   return `
     <div class="${prominent ? "opening-line-box" : "copyable-line"}">
       <p>${escapeHtml(line)}</p>
-      <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(line)}">${t("copyLineBtn")}</button>
+      <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(line)}" data-script-source-type="${escapeHtml(sourceType)}">${t("copyLineBtn")}</button>
+      ${options.withFeedback === false ? "" : renderScriptFeedbackControls(line, sourceType)}
     </div>
   `;
 }
@@ -2898,7 +3094,7 @@ function renderCopyableScripts(communicationAdvice, approachStyle, riskPoints, s
             ${renderCollapsibleScriptList({
               id: "script-opening-more",
               items: openingItems.slice(0, 3),
-              renderItem: (item) => renderCopyableLine(item),
+              renderItem: (item) => renderCopyableLine(item, false, { sourceType: "suggestion" }),
             })}
           </div>
           <div class="script-tab-panel script-panel-reply">
@@ -3017,14 +3213,15 @@ function renderReplyStrategies(scenario, approachStyle) {
   `;
 }
 
-function renderFollowupResult(result) {
+function renderFollowupResult(result, options = {}) {
   const data = normalizeFollowupResult(result);
+  const withFeedback = options.withFeedback !== false;
   if (!data.recommendedReply) return "";
   return `
     <div class="followup-result">
       <section>
         <h4>${t("followupRecommended")}</h4>
-        ${renderCopyableLine(data.recommendedReply, true)}
+        ${renderCopyableLine(data.recommendedReply, true, { sourceType: "followup", withFeedback })}
       </section>
       <section>
         <h4>${t("followupAlternatives")}</h4>
@@ -3032,8 +3229,7 @@ function renderFollowupResult(result) {
           ${data.alternativeReplies.map((item) => `
             <div>
               <strong>${escapeHtml(item.label)}</strong>
-              <p>${escapeHtml(item.text)}</p>
-              <button class="button small copy-line-btn" type="button" data-copy-text="${escapeHtml(item.text)}">${t("copyLineBtn")}</button>
+              ${renderCopyableLine(item.text, false, { sourceType: "followup", withFeedback })}
             </div>
           `).join("")}
         </div>
@@ -3146,7 +3342,7 @@ function renderVisualReport(data) {
 
           <article class="dashboard-card glass-card opening-card">
             <h3>${t("openingLineTitle")}</h3>
-            ${renderCopyableLine(openingLine, true)}
+            ${renderCopyableLine(openingLine, true, { sourceType: "opening" })}
             ${renderUnifiedDisclosure({
               title: currentLanguage === "en" ? "Why this opening" : "为什么这样开场",
               summary: compactText(openingReason, 86),
@@ -3202,6 +3398,7 @@ async function handleFollowupGenerate(button) {
     };
     renderedReportData.followups = normalizeFollowupHistory([followupItem, ...(renderedReportData.followups || [])]);
     appendFollowupToHistory(card?.dataset.recordId, relationshipContext, followupItem);
+    incrementFeedbackStat("followupCount");
     await new Promise((resolve) => window.setTimeout(resolve, 420));
     if (output) output.innerHTML = renderFollowupHistory(renderedReportData.followups);
     input.value = "";
@@ -3212,6 +3409,44 @@ async function handleFollowupGenerate(button) {
     showToast(t("errorFollowupFailed"));
   } finally {
     followupProgressController = null;
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+async function handleUsedReplyGenerate(button) {
+  const feedbackRoot = button.closest(".script-feedback");
+  const input = feedbackRoot?.querySelector(".used-reply-input");
+  const latestReply = input?.value.trim() || "";
+  if (!feedbackRoot || !latestReply) {
+    showToast(t("usedReplyEmptyToast"));
+    return;
+  }
+  const text = feedbackRoot.dataset.scriptText || "";
+  const sourceType = feedbackRoot.dataset.scriptSourceType || "suggestion";
+  const relationshipContext = compactRelationshipContext(renderedReportData?.relationshipContext || buildRelationshipContext({}, renderedReportData || {}));
+  button.disabled = true;
+  const originalText = button.textContent;
+  button.textContent = t("usedReplyLoading");
+  try {
+    const result = await runFollowup(relationshipContext, latestReply);
+    const existing = getScriptFeedbackEntry(text, sourceType);
+    updateCurrentReportFeedback({
+      ...(existing || {}),
+      id: getScriptFeedbackId(sourceType, text),
+      text,
+      sourceType,
+      feedback: "used",
+      usedAt: existing?.usedAt || new Date().toISOString(),
+      latestReply,
+      followupResult: result,
+    }, "followupCount");
+    showToast(t("toastFollowupSuccess"));
+    renderVisualReport(renderedReportData);
+  } catch (error) {
+    console.warn("Used-line followup failed:", error);
+    showToast(t("errorFollowupFailed"));
+  } finally {
     button.disabled = false;
     button.textContent = originalText;
   }
@@ -3247,8 +3482,10 @@ function saveReportRecord(data, rawJson, relationshipContext = null) {
     reportData: compactData,
     relationshipContext: context,
     followups: normalizeFollowupHistory(data.followups),
+    scriptFeedback: normalizeScriptFeedback(data.scriptFeedback),
   };
   const saved = saveHistory([record, ...getHistory()].slice(0, MAX_HISTORY_RECORDS));
+  if (saved) incrementFeedbackStat("generatedCount");
   renderHistory();
   return saved ? record : null;
 }
@@ -3340,6 +3577,25 @@ function renderPromptHistoryCard(record, date, isExpanded) {
   `;
 }
 
+function renderFeedbackHistorySummary(record) {
+  const feedbackItems = normalizeScriptFeedback(record.scriptFeedback);
+  if (!feedbackItems.length) return "";
+  const copied = feedbackItems.filter((item) => item.copiedAt);
+  const used = feedbackItems.filter((item) => item.feedback === "used" || item.usedAt);
+  const withReplies = feedbackItems.filter((item) => item.latestReply || item.followupResult?.recommendedReply);
+  return `
+    <details class="history-feedback-summary">
+      <summary>${currentLanguage === "en" ? "Script feedback" : "话术反馈"} · ${feedbackItems.length}</summary>
+      <div>
+        ${copied.length ? `<p>${currentLanguage === "en" ? "Copied" : "已复制"}：${escapeHtml(compactText(copied.map((item) => item.text).join(" / "), 90))}</p>` : ""}
+        ${used.length ? `<p>${currentLanguage === "en" ? "Used" : "已标记使用"}：${escapeHtml(compactText(used.map((item) => item.text).join(" / "), 90))}</p>` : ""}
+        ${withReplies.length ? `<p>${t("usedReplyLatest")}：${escapeHtml(compactText(withReplies.map((item) => item.latestReply).filter(Boolean).join(" / "), 90))}</p>` : ""}
+        ${withReplies.map((item) => item.followupResult?.recommendedReply ? `<p>${t("usedReplyResult")}：${escapeHtml(compactText(item.followupResult.recommendedReply, 90))}</p>` : "").join("")}
+      </div>
+    </details>
+  `;
+}
+
 function renderReportHistoryCard(record, date) {
   return `
     <article class="history-card report-history-card">
@@ -3355,6 +3611,7 @@ function renderReportHistoryCard(record, date) {
         <li>${t("totalScore")}：${Object.values(record.scores || {}).map(clampScore).join(" / ")}</li>
         <li>${t("bigFiveLabel")}：${Object.values(record.bigFive || {}).map(clampScore).join(" / ")}</li>
       </ul>
+      ${renderFeedbackHistorySummary(record)}
       <div class="history-actions">
         <button class="button small view-report-history" type="button" data-id="${escapeHtml(record.id)}">${t("viewReport")}</button>
         <button class="button small continue-followup-history" type="button" data-id="${escapeHtml(record.id)}">${t("continueFollowup")}</button>
@@ -3403,6 +3660,7 @@ function handleHistoryClick(event) {
     reportData._historyRecordId = record.id;
     reportData.relationshipContext = record.relationshipContext || buildRelationshipContext({}, reportData);
     reportData.followups = normalizeFollowupHistory(record.followups);
+    reportData.scriptFeedback = normalizeScriptFeedback(record.scriptFeedback || reportData.scriptFeedback);
     renderVisualReport(reportData);
     document.querySelector("#visual-report").scrollIntoView({ behavior: "smooth" });
     return;
@@ -3412,6 +3670,7 @@ function handleHistoryClick(event) {
     reportData._historyRecordId = record.id;
     reportData.relationshipContext = record.relationshipContext || buildRelationshipContext({}, reportData);
     reportData.followups = normalizeFollowupHistory(record.followups);
+    reportData.scriptFeedback = normalizeScriptFeedback(record.scriptFeedback || reportData.scriptFeedback);
     renderVisualReport(reportData);
     const followupCard = document.querySelector("#followupCard");
     followupCard?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -3572,6 +3831,20 @@ visualReportOutput.addEventListener("click", (event) => {
     handleFollowupGenerate(followupButton);
     return;
   }
+  const usedReplyButton = event.target.closest(".used-reply-btn");
+  if (usedReplyButton) {
+    handleUsedReplyGenerate(usedReplyButton);
+    return;
+  }
+  const feedbackButton = event.target.closest("[data-feedback-value]");
+  if (feedbackButton) {
+    const { text, sourceType } = getFeedbackPayloadFromElement(feedbackButton);
+    if (text) {
+      recordScriptFeedback(text, sourceType, feedbackButton.dataset.feedbackValue);
+      renderVisualReport(renderedReportData);
+    }
+    return;
+  }
   const collapseButton = event.target.closest(".collapse-details-btn");
   if (collapseButton) {
     const details = collapseButton.closest("details");
@@ -3580,6 +3853,10 @@ visualReportOutput.addEventListener("click", (event) => {
   }
   const button = event.target.closest("[data-copy-text]");
   if (!button) return;
+  if (button.dataset.scriptSourceType) {
+    recordScriptCopy(button.dataset.copyText || "", button.dataset.scriptSourceType);
+    renderVisualReport(renderedReportData);
+  }
   copyText(button.dataset.copyText || "");
 });
 if (heroExampleLink) heroExampleLink.addEventListener("click", handleHeroExampleClick);
