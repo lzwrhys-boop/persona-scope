@@ -1717,7 +1717,7 @@ h3 {
 
 .analysis-layout {
   display: grid;
-  grid-template-columns: minmax(0, 0.96fr) minmax(360px, 1.04fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 24px;
   align-items: start;
 }
@@ -1730,7 +1730,21 @@ h3 {
 
 .input-card {
   display: grid;
+  grid-column: span 7;
   gap: 18px;
+}
+
+.result-card {
+  position: sticky;
+  top: 92px;
+  grid-column: span 5;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: clamp(520px, 68vh, 680px);
+  background:
+    radial-gradient(circle at 78% 16%, rgba(95, 244, 255, 0.09), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.035));
 }
 
 label {
@@ -2247,7 +2261,8 @@ textarea:focus {
 
 .result-header {
   position: relative;
-  margin-bottom: 20px;
+  flex: 0 0 auto;
+  margin-bottom: 0;
 }
 
 .result-header h3 {
@@ -2260,18 +2275,24 @@ textarea:focus {
 }
 
 .analysis-preview {
-  display: grid;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
   gap: 16px;
 }
 
 .analysis-waiting {
   position: relative;
-  min-height: 360px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 22px;
   overflow: hidden;
-  padding: 34px;
+  padding: clamp(28px, 4vh, 44px) 28px 28px;
   border: 1px solid rgba(159, 181, 232, 0.11);
   border-radius: 24px;
   background:
@@ -2306,6 +2327,8 @@ textarea:focus {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
+  margin-top: auto;
+  padding-top: 22px;
 }
 
 .analysis-cue-list span,
@@ -2320,8 +2343,9 @@ textarea:focus {
 }
 
 .analysis-loading {
-  min-height: 360px;
   display: grid;
+  flex: 1 1 auto;
+  min-height: 0;
   align-content: center;
   justify-items: center;
   gap: 14px;
@@ -2517,6 +2541,7 @@ textarea:focus {
 
 .analysis-preview-result {
   display: grid;
+  flex: 1 1 auto;
   gap: 16px;
 }
 
@@ -3875,6 +3900,16 @@ pre {
   .analysis-layout,
   .json-workspace {
     grid-template-columns: 1fr;
+  }
+
+  .input-card,
+  .result-card {
+    grid-column: auto;
+  }
+
+  .result-card {
+    position: static;
+    min-height: clamp(420px, 58vh, 560px);
   }
 
   .report-top-grid {
